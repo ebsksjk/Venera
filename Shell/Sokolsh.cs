@@ -16,6 +16,8 @@ namespace Venera.Shell
                 new About(),
                 new Help(),
                 new Clear(),
+                new Programs.Type(),
+                new Echo()
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

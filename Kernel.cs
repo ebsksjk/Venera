@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Cosmos.System.ScanMaps;
 using Venera.Shell;
 using Sys = Cosmos.System;
 
@@ -10,7 +11,7 @@ namespace Venera
     public class Kernel : Sys.Kernel
     {
         public static string OS_NAME = "Venera";
-        public static string OS_VERSION = "1.0";
+        public static string OS_VERSION = "0.1";
 
         private static Environment<string> _environment;
 
@@ -18,8 +19,9 @@ namespace Venera
 
         protected override void BeforeRun()
         {
-            Console.WriteLine("Cosmos booted successfully. Type a line of text to get it echoed back.");
-
+            Console.WriteLine("Welcome on Venera");
+            // in BeforeRun() or when user calls a "command"
+            SetKeyboardScanMap(new DE_Standard());
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, "/");
         }

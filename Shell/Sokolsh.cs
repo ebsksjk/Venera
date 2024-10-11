@@ -8,14 +8,17 @@ namespace Venera.Shell
 
     public class Sokolsh
     {
-        //private readonly Dictionary<string, BuiltIn> builtins = new Dictionary<string, BuiltIn>();
-
         // Built-ins must be defined explicitly here because reflections are not available
         // in a COSMOS environment and this is the most easy solution.
-        List<BuiltIn> availableBuiltIns = new()
+        private static readonly List<BuiltIn> _availableBuiltIns = new()
             {
-                new Pwd()
+                new Pwd(),
+                new About(),
+                new Help(),
+                new Clear(),
             };
+
+        public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }
 
         public Sokolsh()
         {
@@ -50,7 +53,7 @@ namespace Venera.Shell
 
         private bool FindBuiltIn(string name, out BuiltIn result)
         {
-            foreach (BuiltIn builtIn in availableBuiltIns)
+            foreach (BuiltIn builtIn in _availableBuiltIns)
             {
                 if (builtIn.Name == name)
                 {

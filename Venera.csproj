@@ -21,17 +21,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Dep\CosmosELFCore\Kernel.cs.txt" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Include="Dep\CosmosELFCore\Kernel.cs.txt" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
+		<PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
+		<PackageReference Include="XSharp" Version="10.0.0" />
     </ItemGroup>
 
 </Project>

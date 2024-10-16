@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Cosmos.System.ScanMaps;
+using CosmosELF;
+using CosmosELFCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Cosmos.System.ScanMaps;
-using CosmosELF;
-using CosmosELFCore;
 using Venera.Shell;
 using Sys = Cosmos.System;
 
@@ -20,7 +20,7 @@ namespace Venera
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
         protected override void BeforeRun()
-        {   
+        {
             unsafe
             {
                 fixed (byte* ptr = TestFile.test_so)
@@ -50,7 +50,7 @@ namespace Venera
             }
             Console.WriteLine("Welcome on Venera");
             // in BeforeRun() or when user calls a "command"
-            SetKeyboardScanMap(new DE_Standard());
+
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, "/");
         }

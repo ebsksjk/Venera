@@ -1,8 +1,7 @@
-﻿using Cosmos.System.ScanMaps;
+﻿using Cosmos.System.FileSystem.VFS;
 using CosmosELF;
 using CosmosELFCore;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Venera.Shell;
@@ -18,6 +17,8 @@ namespace Venera
         private static Environment<string> _environment;
 
         public static Environment<string> GlobalEnvironment { get => _environment; }
+
+        public static Sys.FileSystem.CosmosVFS FileSystem;
 
         protected override void BeforeRun()
         {
@@ -48,11 +49,15 @@ namespace Venera
 
                 }
             }
+
+            FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
+            VFSManager.RegisterVFS(FileSystem);
+
             Console.WriteLine("Welcome on Venera");
             // in BeforeRun() or when user calls a "command"
 
             _environment = new();
-            _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, "/");
+            _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
         }
 
         protected override void Run()

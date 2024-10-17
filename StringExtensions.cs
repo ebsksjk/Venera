@@ -28,5 +28,14 @@ namespace Venera
 
             return str;
         }
+
+        public static string EnsureBackslash(this string str)
+        {
+            if (!str.EndsWith(@"\"))
+            {
+                str += @"\";
+            }
+            return str;
+        }
     }
 }

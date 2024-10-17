@@ -4,9 +4,13 @@ using System.Text;
 
 namespace CosmosELFCore
 {
+
+    //class to pass arguments to the exe being run
     public unsafe class ArgumentWriter
     {
         private BinaryWriter _writer;
+
+
 
         public ArgumentWriter()
         {
@@ -17,6 +21,7 @@ namespace CosmosELFCore
             }
 
             _writer = new BinaryWriter(new MemoryStream((byte*) Invoker.Stack));
+            //warum? fucked up. weird. 
             _writer.BaseStream.Posistion = 50;
         }
 

@@ -12,9 +12,11 @@ namespace CosmosELFCore
     public static unsafe class Invoker
     {
         public static uint Offset;
+        //hilfe
         public static uint eax, ebx, ecx, edx, esi, edi, esp, ebp;
-        public static uint* Stack = (uint*)Heap.Alloc(1024);
+        public static uint* Stack = (uint*)Heap.Alloc(1024); //das ist static, also MÜSSEN wir irgendwie mallloc usw implementen
 
+        //ja lol
         public static void Dump()
         {
             Console.WriteLine(
@@ -25,6 +27,7 @@ namespace CosmosELFCore
             }
         }
 
+        //hier sind die plug method header
         [PlugMethod(Assembler = typeof(PlugStoreState))]
         public static void StoreState()
         {
@@ -52,6 +55,7 @@ namespace CosmosELFCore
     [Plug(Target = typeof(Invoker))]
     public class PlugStoreState : AssemblerMethod
     {
+        //wir passen die pseudo register in die tatsächlichen register
         public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
         {
             XS.LiteralCode($"mov [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.eax))}], eax");
@@ -64,6 +68,7 @@ namespace CosmosELFCore
 
 
     [Plug(Target = typeof(Invoker))]
+    //wir laden die tatsächlichen Register in die Pseudo-Register
     public class PlugLoadState : AssemblerMethod
     {
         public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
@@ -82,19 +87,21 @@ namespace CosmosELFCore
     {
         public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
         {
+            //laden der pseudo esp & ebp
             XS.LiteralCode($"mov [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.esp))}], esp");
             XS.LiteralCode($"mov [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.ebp))}], ebp");
 
             XS.LiteralCode($"mov eax, [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.Stack))}]");
-            XS.LiteralCode("add eax, 50");
+            XS.LiteralCode("add eax, 50"); //hier sind die komischen 50 wieder
             XS.LiteralCode("mov esp, eax");
             XS.LiteralCode("mov ebp, eax");
             XS.LiteralCode($"mov eax, [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.Offset))}]");
-            XS.LiteralCode("Call eax");
+            XS.LiteralCode("Call eax"); //wir callen den entry point der method?
 
             XS.LiteralCode($"mov ecx, [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.Stack))}]");
             XS.LiteralCode("mov dword [ecx], eax");
 
+            //speichern der register esp & ebp
             XS.LiteralCode($"mov esp, [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.esp))}]");
             XS.LiteralCode($"mov ebp, [{LabelName.GetStaticFieldName(typeof(Invoker), nameof(Invoker.ebp))}]");
         }

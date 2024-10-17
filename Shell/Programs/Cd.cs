@@ -30,7 +30,6 @@ namespace Venera.Shell.Programs
             {
                 help = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
             }
-            Console.WriteLine(help);
 
 
             try

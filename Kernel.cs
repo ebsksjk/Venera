@@ -34,6 +34,10 @@ namespace Venera
 
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
+
+            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["affeaffeaffe"], "tty_puts");
+            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
+            ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
         }
 
         protected override void Run()

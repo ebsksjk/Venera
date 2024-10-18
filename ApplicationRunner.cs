@@ -2,50 +2,38 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using XSharp.Assembler.x86;
 
-namespace Venera
-{
-
-    /*
-    unsafe
-            {
-                fixed (byte* ptr = TestFile.test_so)
-                {
-                    var exe = new UnmanagedExecutable(ptr);
-                    exe.Load();
-                    exe.Link();
-
-                    Console.WriteLine("Executing");
-                    new ArgumentWriter();
-                    exe.Invoke("tty_clear");
-
-                    new ArgumentWriter()
-                        .Push(5)  //fg
-                        .Push(15); //bg
-                    exe.Invoke("tty_set_color");
-
-                    fixed (byte* str = Encoding.ASCII.GetBytes("Hello World"))
-                    {
-                        new ArgumentWriter()
-                            .Push((uint)str);
-                        exe.Invoke("tty_puts");
-                    }
-
-
-                }
-     
-     */
+namespace Venera {
     public static class ApplicationRunner {
         private class Application {
-            String name;
+            String name = null;
             const String entrypoint = "main";
             //FILE
-            byte[] mCode;
+            byte[] mCode = null;
 
-            String[] args;
+            String[] args = null;
 
             public Application(String _name, byte[] _mCode, String[] _args) {
-                name = _name; mCode = _mCode; args = _args;
+                Kernel.PrintDebug("trying to create new application! name: " + _name + " args: ");
+                if(_args != null)
+                {
+                    foreach (String _arg in _args)
+                    {
+                        Kernel.PrintDebug(_arg);
+                    }
+                }
+                
+                this.name = _name; this.mCode = _mCode; this.args = _args;
+
+                if (this.args != null)
+                {
+                    Kernel.PrintDebug("real args");
+                    foreach (String arg in args)
+                    {
+                        Kernel.PrintDebug(arg);
+                    }
+                }
             }
 
             public int runEntryPoint(string entry){
@@ -57,7 +45,7 @@ namespace Venera
                         exe.Load();
                         exe.Link();
 
-                        Console.WriteLine("Executing " + entry + " @ " + name);
+                        Kernel.PrintDebug("Executing " + entry + " @ " + name);
                         ArgumentWriter aw = new ArgumentWriter();
                         if (args != null) {
                             foreach (String arg in args) {
@@ -67,9 +55,9 @@ namespace Venera
                             }
                         }
 
-                        Console.WriteLine("Invoke!");
+                        Kernel.PrintDebug("Invoke!");
                         exe.Invoke(entry);
-                        Console.WriteLine("Invoked!");
+                        Kernel.PrintDebug("Invoked!");
 
                         return 0;
                     }
@@ -85,12 +73,18 @@ namespace Venera
 
                         ArgumentWriter aw = new ArgumentWriter();
 
-                        foreach(String arg in args) {
-                            fixed (byte* str = Encoding.ASCII.GetBytes(arg)) {
-                                aw.Push((uint)str);
+                        if (args != null)
+                        {
+                            foreach (String arg in args)
+                            {
+                                fixed (byte* str = Encoding.ASCII.GetBytes(arg))
+                                {
+                                    aw.Push((uint)str);
+                                }
                             }
                         }
 
+                        Kernel.PrintDebug("Invoking " + entrypoint + " @ " + name);
                         exe.Invoke(entrypoint);
 
                         return 0;
@@ -117,13 +111,13 @@ namespace Venera
         }
 
         public static int runApplicationEntryPoint(String aName, byte[] aCode, String[] args, String entryPoint) {
-            Console.WriteLine("received request to run " + entryPoint + " @ " + aName);
+            Kernel.PrintDebug("received request to run " + entryPoint + " @ " + aName);
             Application cApp = new Application(aName, aCode, args);
-            Console.WriteLine("created new Application!");
+            Kernel.PrintDebug("created new Application!");
             int ret = 0;
 
             int pid = ProcessTable.registerProcess(aName);
-            Console.WriteLine("registered process with pid: " + pid);
+            Kernel.PrintDebug("registered process with pid: " + pid);
 
             Console.Write("Executing... pid: " + pid);
             ret = cApp.runEntryPoint(entryPoint);
@@ -142,9 +136,9 @@ namespace Venera
         static List<Process> _processTable = new();
 
         public static int registerProcess(String name) {
-            Console.WriteLine("received request to register a process " + name);
+            Kernel.PrintDebug("received request to register a process " + name);
             _processTable.Add(new Process(++cPID, name));
-            Console.WriteLine(name + " is registered with PID " + cPID);
+            Kernel.PrintDebug(name + " is registered with PID " + cPID);
             return cPID;
         }
 
@@ -161,7 +155,7 @@ namespace Venera
         //public DateTime start;
 
         public Process(int _pid, String _name) {
-            Console.WriteLine("Creating Process " + _name + " with pid " + _pid);
+            Kernel.PrintDebug("Creating Process " + _name + " with pid " + _pid);
             pid = _pid;
             //start = DateTime.Now;
         }

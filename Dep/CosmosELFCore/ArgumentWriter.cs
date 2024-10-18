@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -51,6 +52,13 @@ namespace CosmosELFCore
         } 
 
         public ArgumentWriter Push(uint c)
+        {
+            Kernel.PrintDebug("arg writer got arg: " + c);
+            _writer.Write(c);
+            return this;
+        }
+
+        public ArgumentWriter Push(string c)
         {
             _writer.Write(c);
             return this;

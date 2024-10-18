@@ -1,9 +1,13 @@
-﻿using Cosmos.System.FileSystem.VFS;
+﻿using Cosmos.HAL.Drivers.Video;
+using Cosmos.System.FileSystem.VFS;
+using Cosmos.System.Graphics;
 using CosmosELF;
 using CosmosELFCore;
 using System;
+using System.Drawing;
 using System.Text;
 using System.Threading;
+using Venera.Graphics;
 using Venera.Shell;
 using Sys = Cosmos.System;
 
@@ -19,6 +23,8 @@ namespace Venera
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
         public static Sys.FileSystem.CosmosVFS FileSystem;
+        public static Chromat Chromat;
+
 
         protected override void BeforeRun()
         {
@@ -53,15 +59,17 @@ namespace Venera
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);
 
-            Console.WriteLine("Welcome on Venera");
-            // in BeforeRun() or when user calls a "command"
-
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
+
+            Chromat = new Chromat();
         }
 
         protected override void Run()
         {
+            Chromat.Display();
+            Chromat.DrawText("Hello world GUI!");
+
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();
 

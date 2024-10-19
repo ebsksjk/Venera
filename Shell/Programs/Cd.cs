@@ -20,21 +20,24 @@ namespace Venera.Shell.Programs
                 return ExitCode.Error;
             }
 
-            string help;
+            string path;
 
             if (args[0].StartsWith(@"\"))
             {
-                help = $"0:{args[0]}";
+                //if it is an absolute path
+                path = $"0:{args[0]}";
             }
             else
             {
-                help = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
+                //if it is a relative path
+                //convert it into the corresponding absolute path
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
             }
 
 
             try
             {
-                Cosmos.System.FileSystem.Listing.DirectoryEntry dir = Kernel.FileSystem.GetDirectory(help) 
+                Cosmos.System.FileSystem.Listing.DirectoryEntry dir = Kernel.FileSystem.GetDirectory(path) 
                     ?? throw new Exception();
 
                 if (dir.mEntryType != Cosmos.System.FileSystem.Listing.DirectoryEntryTypeEnum.Directory)

@@ -17,7 +17,16 @@ namespace Venera.Shell.Programs
 
             foreach (Cosmos.System.FileSystem.Disk disk in disks)
             {
-                Console.WriteLine($"{disk.Host.Type} ({disk.Size} bytes:");
+                string type = disk.Host.Type switch
+                {
+                    //determining the Type of the mounted disk
+                    Cosmos.HAL.BlockDevice.BlockDeviceType.HardDrive => "HDD",
+                    Cosmos.HAL.BlockDevice.BlockDeviceType.RemovableCD => "CD",
+                    _ => "Removable"
+                };
+
+                Console.WriteLine($"{type} ({disk.Size} bytes:");
+
 
                 foreach (ManagedPartition part in disk.Partitions)
                 {

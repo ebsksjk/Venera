@@ -18,7 +18,7 @@ namespace Venera.Shell.Programs
             int wait = 60;
             if (args.Length > 0)
             {
-                int.TryParse(args[0], out wait);
+                _ = int.TryParse(args[0], out wait);
                 if (args[0] == "now")
                 {
                     wait = 0;

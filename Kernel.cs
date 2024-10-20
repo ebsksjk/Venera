@@ -1,6 +1,4 @@
 ﻿using Cosmos.System.FileSystem.VFS;
-using CosmosELF;
-using CosmosELFCore;
 using System;
 using System.Text;
 using System.Threading;
@@ -23,8 +21,8 @@ namespace Venera
         protected override void BeforeRun()
         {
 
-            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
-            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
 
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);
@@ -35,9 +33,9 @@ namespace Venera
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
 
-            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["affeaffeaffe"], "tty_puts");
-            ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
-            ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["affeaffeaffe"], "tty_puts");
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
+            //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
         }
 
         protected override void Run()

@@ -37,5 +37,30 @@ namespace Venera
             }
             return str;
         }
+
+        public static bool IsDriveId(this string str)
+        {
+
+            // The string must be exactly 3 characters long to match the pattern "[0-9]:\"
+            if (str.Length != 3)
+            {
+                return false;
+            }
+
+            // Check if the first character is a digit (0-9)
+            if (str[0] < '0' || str[0] > '9')
+            {
+                return false;
+            }
+
+            // Check if the second character is a colon ':'
+            if (str[1] != ':')
+            {
+                return false;
+            }
+
+            return true;
+
+        }
     }
 }

@@ -19,6 +19,8 @@
         <Profile>VMware</Profile>
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
+        <CompressionType>Gzip</CompressionType>
+        <VMWareEdition>Workstation</VMWareEdition>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,5 +30,9 @@
 		<PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
 		<PackageReference Include="XSharp" Version="10.0.0" />
     </ItemGroup>
+
+	<ItemGroup>
+		<None Include="isoFiles\*" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 
 </Project>

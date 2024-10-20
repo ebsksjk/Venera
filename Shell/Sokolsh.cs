@@ -21,6 +21,9 @@ namespace Venera.Shell
                 new Disk(),
                 new Ls(),
                 new Mkdir(),
+                new Cd(),
+                new Reboot(),
+                new Shutdown(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

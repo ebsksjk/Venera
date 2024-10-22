@@ -24,6 +24,7 @@ namespace Venera.Shell
                 new Cd(),
                 new Reboot(),
                 new Shutdown(),
+                new Cat(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
-    internal class Cd : BuiltIn
+    internal class Cat : BuiltIn
     {
-        public override string Name => "cd";
+        public override string Name => "cat";
 
-        public override string Description => "change current directory";
+        public override string Description => "output plaintext from files";
 
         public override ExitCode Execute(string[] args)
         {
             if (args.Length == 0)
             {
-                Console.WriteLine($"Sokolsh: cd: No Argument provided");
+                Console.WriteLine($"Sokolsh: cat: No Argument provided");
                 return ExitCode.Error;
             }
 
@@ -34,25 +35,18 @@ namespace Venera.Shell.Programs
                 path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
             }
 
-
             try
             {
-                Cosmos.System.FileSystem.Listing.DirectoryEntry dir = Kernel.FileSystem.GetDirectory(path) 
-                    ?? throw new Exception();
 
-                if (dir.mEntryType != Cosmos.System.FileSystem.Listing.DirectoryEntryTypeEnum.Directory)
-                {
-                    Console.WriteLine($"Sokolsh: cd: {args} is not a directory");
-                    return ExitCode.Error;
-                }
+                Console.WriteLine(File.ReadAllText(path));
 
-                Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{dir.mFullPath.ToString().EnsureBackslash()}");
             }
             catch (Exception)
             {
-                Console.WriteLine($"Sokolsh: cd: {args} File or Directory does not exist");
+                Console.WriteLine($"Sokolsh: cat: File {path} does not exist");
                 return ExitCode.Error;
             }
+            
             return ExitCode.Success;
         }
     }

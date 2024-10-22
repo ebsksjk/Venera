@@ -70,7 +70,7 @@ namespace Venera.VoPo
             {
                 return;
             }
-
+            /*
             try
             {
                 unsafe
@@ -122,10 +122,11 @@ namespace Venera.VoPo
             catch (Exception ex)
             {
                 Kernel.PrintDebug($"Error: {ex.Message}");
-            }
+            }*/
         }
 
         // Helper method to read a structure from the binary reader
+        /*
         private static T ReadStruct<T>(CosmosELFCore.BinaryReader reader)
         {
             byte[] bytes = reader.ReadBytes(Marshal.SizeOf<T>());
@@ -133,6 +134,6 @@ namespace Venera.VoPo
             T theStruct = Marshal.PtrToStructure<T>(handle.AddrOfPinnedObject());
             handle.Free();
             return theStruct;
-        }
+        }*/
     }
 }

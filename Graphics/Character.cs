@@ -7,5 +7,10 @@ namespace Venera.Graphics
         public char Symbol { get; set; }
         public Color ForegroundColor { get; set; }
         public Color BackgroundColor { get; set; }
+
+        public override string ToString()
+        {
+            return Symbol.ToString();
+        }
     }
 }

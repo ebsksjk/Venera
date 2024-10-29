@@ -22,9 +22,10 @@ namespace Venera.Graphics
     public class Cursor
     {
         private Chromat _chromat;
-        private int _cursorPosition;
 
         public BlinkingStyle Style { get; set; }
+
+        public int LinearCursorPosition { get; private set; }
 
         /// <summary>
         /// Get the (X, Y) coordinate of the current cursur <b>on the grid</b>.
@@ -34,8 +35,8 @@ namespace Venera.Graphics
             get
             {
                 return (
-                    X: Math.Abs((int)(_cursorPosition % _chromat.Width) + 1),
-                    Y: Math.Abs((int)(_cursorPosition / _chromat.Height) + 1)
+                    X: Math.Abs((int)(LinearCursorPosition % _chromat.Screen.Width) + 1),
+                    Y: Math.Abs((int)(LinearCursorPosition / _chromat.Screen.Height) + 1)
                 );
             }
         }
@@ -54,12 +55,27 @@ namespace Venera.Graphics
             }
         }
 
+        /// <summary>
+        /// Move the cursor to the right.
+        /// </summary>
+        /// <param name="cells">How many cells on the horizontal. Positive values for the right and negative to move to the left.</param>
+        public void MoveHorizontal(int cells)
+        {
+            // If we reached the bottom right corner.
+            if (LinearCursorPosition > (_chromat.Screen.Width * _chromat.Screen.Height))
+            {
+                // TODO: Scroll screen
+                LinearCursorPosition = _chromat.Grid.Width * (_chromat.Grid.Height - 1);
+            }
+            LinearCursorPosition += cells;
+        }
+
         public Cursor(Chromat chromat, BlinkingStyle blinkingStyle = BlinkingStyle.Default)
         {
             Style = blinkingStyle;
 
             _chromat = chromat;
-            _cursorPosition = 0;
+            LinearCursorPosition = 0;
         }
     }
 }

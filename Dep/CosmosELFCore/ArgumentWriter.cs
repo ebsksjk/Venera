@@ -1,12 +1,17 @@
-﻿using System;
+﻿using Cosmos.System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CosmosELFCore
 {
+
+    //class to pass arguments to the exe being run
     public unsafe class ArgumentWriter
     {
         private BinaryWriter _writer;
+
+
 
         public ArgumentWriter()
         {
@@ -17,6 +22,7 @@ namespace CosmosELFCore
             }
 
             _writer = new BinaryWriter(new MemoryStream((byte*) Invoker.Stack));
+            //warum? fucked up. weird. 
             _writer.BaseStream.Posistion = 50;
         }
 
@@ -46,6 +52,13 @@ namespace CosmosELFCore
         } 
 
         public ArgumentWriter Push(uint c)
+        {
+            Kernel.PrintDebug("arg writer got arg: " + c);
+            _writer.Write(c);
+            return this;
+        }
+
+        public ArgumentWriter Push(string c)
         {
             _writer.Write(c);
             return this;

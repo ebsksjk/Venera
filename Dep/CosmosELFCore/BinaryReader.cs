@@ -18,6 +18,8 @@ namespace CosmosELFCore
             return (byte) BaseStream.Read();
         }
 
+
+        //oh wow. fucked up. wow.
         public string ReadString()
         {
             string ret = "";

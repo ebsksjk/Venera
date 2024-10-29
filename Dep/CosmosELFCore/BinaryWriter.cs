@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cosmos.System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,7 +24,10 @@ namespace CosmosELFCore
         public void WriteBytes(string str)
         {
             for (int i = 0; i < str.Length; i++)
+            {
+                Kernel.PrintDebug("" + str[i]);
                 Write((byte)str[i]);
+            }
         }
         public void Write(int data)
         {
@@ -35,6 +40,9 @@ namespace CosmosELFCore
         public void Write(uint data)
         {
             byte[] bits = BitConverter.GetBytes(data);
+
+            Kernel.PrintDebug("pushing str " + System.Text.Encoding.UTF8.GetString(bits));
+
             foreach (byte b in bits)
             {
                 BaseStream.Write(b);

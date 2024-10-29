@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Cosmos.System.FileSystem;
 
 namespace Venera.Shell.Programs
 {
@@ -21,6 +23,18 @@ namespace Venera.Shell.Programs
             }
 
             string path;
+
+            if (StringExtensions.IsDriveId(args[0]))
+            {
+                if (Kernel.FileSystem.IsValidDriveId(args[0]))
+                {
+                    Console.WriteLine($"Sokolsh: cd: {args[0]} is a valid drive Id!!!");
+                }
+
+                Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{args[0]}");
+
+                return ExitCode.Success;
+            }
 
             if (args[0].StartsWith(@"\"))
             {
@@ -50,7 +64,7 @@ namespace Venera.Shell.Programs
             }
             catch (Exception)
             {
-                Console.WriteLine($"Sokolsh: cd: {args} File or Directory does not exist");
+                Console.WriteLine($"Sokolsh: cd: {args[0]} File or Directory does not exist");
                 return ExitCode.Error;
             }
             return ExitCode.Success;

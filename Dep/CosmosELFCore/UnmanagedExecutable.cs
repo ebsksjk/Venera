@@ -7,9 +7,9 @@ namespace CosmosELFCore
 {
     public unsafe class UnmanagedExecutable
     {
-        private MemoryStream _stream;
-        private ElfFile _elf;
-        private byte* _finalExecutible;
+        private MemoryStream _stream;       //this is the original file
+        private ElfFile _elf;               //this is the parsed file
+        private byte* _finalExecutible;     //this is the final loaded executable
 
         public UnmanagedExecutable(byte* elfbin)
         {

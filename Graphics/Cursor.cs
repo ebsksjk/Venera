@@ -27,24 +27,39 @@ namespace Venera.Graphics
         public BlinkingStyle Style { get; set; }
 
         /// <summary>
-        /// Get the (X, Y) coordinate of the current cursur on the grid.
+        /// Get the (X, Y) coordinate of the current cursur <b>on the grid</b>.
         /// </summary>
         public (int X, int Y) Position
         {
             get
             {
                 return (
-                    X: (int)(_cursorPosition / _chromat.Width),
-                    Y: (int)(_cursorPosition % _chromat.Height)
+                    X: Math.Abs((int)(_cursorPosition % _chromat.Width) + 1),
+                    Y: Math.Abs((int)(_cursorPosition / _chromat.Height) + 1)
                 );
             }
         }
 
-        public Cursor(Chromat chromat, BlinkingStyle blinkingStyle)
+        /// <summary>
+        /// Get the (X, Y) coordinate of the current cursur <b>on screen space</b>.
+        /// </summary>
+        public (int X, int Y) RealPosition
+        {
+            get
+            {
+                return (
+                    X: Math.Abs(Position.X * _chromat.TextWidth),
+                    Y: Math.Abs(Position.Y * _chromat.TextHeight)
+                );
+            }
+        }
+
+        public Cursor(Chromat chromat, BlinkingStyle blinkingStyle = BlinkingStyle.Default)
         {
             Style = blinkingStyle;
 
             _chromat = chromat;
+            _cursorPosition = 0;
         }
     }
 }

@@ -25,7 +25,6 @@ namespace Venera
         public static Sys.FileSystem.CosmosVFS FileSystem;
         public static Chromat Chromat;
 
-
         protected override void BeforeRun()
         {
             unsafe
@@ -67,8 +66,7 @@ namespace Venera
 
         protected override void Run()
         {
-            Chromat.Display();
-            Chromat.DrawText("Hello world GUI!");
+            Chromat.Loop();
 
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();

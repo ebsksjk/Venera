@@ -1,5 +1,6 @@
 ﻿using Cosmos.System.FileSystem.VFS;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Venera.Shell;
@@ -21,7 +22,7 @@ namespace Venera
         protected override void BeforeRun()
         {
 
-            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test.so"), null, "tty_clear");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
 
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
@@ -40,6 +41,8 @@ namespace Venera
 
         protected override void Run()
         {
+            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "tty_clear");
+            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();
 

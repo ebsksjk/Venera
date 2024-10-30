@@ -145,11 +145,15 @@ namespace CosmosELFCore
                     Invoker.CallCode();
                     Invoker.LoadState();
 
-                    break;
-                }
+                    return Invoker.Stack[0];
+                } 
             }
 
-            return Invoker.Stack[0];
+            Console.WriteLine($"The function/entrypoint {function} could not be found in the current executable." +
+                        $" It may be spelled incorrectly, does not exist or the file is corrupted");
+            return 999;
+
+
         }
     }
 }

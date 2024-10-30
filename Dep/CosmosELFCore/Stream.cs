@@ -6,7 +6,7 @@ namespace CosmosELFCore
 {
     public class Stream
     {
-        public uint Posistion = 0;
+        public uint Position = 0;
 
         public virtual int Read()
         {

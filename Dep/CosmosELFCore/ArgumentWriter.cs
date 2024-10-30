@@ -23,7 +23,7 @@ namespace CosmosELFCore
 
             _writer = new BinaryWriter(new MemoryStream((byte*) Invoker.Stack));
             //warum? fucked up. weird. 
-            _writer.BaseStream.Posistion = 50;
+            _writer.BaseStream.Position = 50;
         }
 
 
@@ -53,7 +53,7 @@ namespace CosmosELFCore
 
         public ArgumentWriter Push(uint c)
         {
-            Kernel.PrintDebug("arg writer got arg: " + c);
+            //Kernel.PrintDebug("arg writer got arg: " + c);
             _writer.Write(c);
             return this;
         }

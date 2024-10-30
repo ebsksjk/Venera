@@ -15,12 +15,12 @@ namespace Venera {
             String[] args = null;
 
             public Application(String _name, byte[] _mCode, String[] _args) {
-                Kernel.PrintDebug("trying to create new application! name: " + _name + " args: ");
+                //Kernel.PrintDebug("trying to create new application! name: " + _name + " args: ");
                 if(_args != null)
                 {
                     foreach (String _arg in _args)
                     {
-                        Kernel.PrintDebug(_arg);
+                        //Kernel.PrintDebug(_arg);
                     }
                 }
                 
@@ -28,10 +28,10 @@ namespace Venera {
 
                 if (this.args != null)
                 {
-                    Kernel.PrintDebug("real args");
+                    //Kernel.PrintDebug("real args");
                     foreach (String arg in args)
                     {
-                        Kernel.PrintDebug(arg);
+                        //Kernel.PrintDebug(arg);
                     }
                 }
             }
@@ -45,7 +45,7 @@ namespace Venera {
                         exe.Load();
                         exe.Link();
 
-                        Kernel.PrintDebug("Executing " + entry + " @ " + name);
+                        //Kernel.PrintDebug("Executing " + entry + " @ " + name);
                         ArgumentWriter aw = new ArgumentWriter();
                         if (args != null) {
                             foreach (String arg in args) {
@@ -55,9 +55,9 @@ namespace Venera {
                             }
                         }
 
-                        Kernel.PrintDebug("Invoke!");
+                        //Kernel.PrintDebug("Invoke!");
                         exe.Invoke(entry);
-                        Kernel.PrintDebug("Invoked!");
+                        //Kernel.PrintDebug("Invoked!");
 
                         return 0;
                     }
@@ -84,7 +84,7 @@ namespace Venera {
                             }
                         }
 
-                        Kernel.PrintDebug("Invoking " + entrypoint + " @ " + name);
+                        //Kernel.PrintDebug("Invoking " + entrypoint + " @ " + name);
                         exe.Invoke(entrypoint);
 
                         return 0;
@@ -111,13 +111,13 @@ namespace Venera {
         }
 
         public static int runApplicationEntryPoint(String aName, byte[] aCode, String[] args, String entryPoint) {
-            Kernel.PrintDebug("received request to run " + entryPoint + " @ " + aName);
+            //Kernel.PrintDebug("received request to run " + entryPoint + " @ " + aName);
             Application cApp = new Application(aName, aCode, args);
-            Kernel.PrintDebug("created new Application!");
+            //Kernel.PrintDebug("created new Application!");
             int ret = 0;
 
             int pid = ProcessTable.registerProcess(aName);
-            Kernel.PrintDebug("registered process with pid: " + pid);
+            //Kernel.PrintDebug("registered process with pid: " + pid);
 
             Console.Write("Executing... pid: " + pid);
             ret = cApp.runEntryPoint(entryPoint);
@@ -136,9 +136,9 @@ namespace Venera {
         static List<Process> _processTable = new();
 
         public static int registerProcess(String name) {
-            Kernel.PrintDebug("received request to register a process " + name);
+            //Kernel.PrintDebug("received request to register a process " + name);
             _processTable.Add(new Process(++cPID, name));
-            Kernel.PrintDebug(name + " is registered with PID " + cPID);
+            //Kernel.PrintDebug(name + " is registered with PID " + cPID);
             return cPID;
         }
 
@@ -155,7 +155,7 @@ namespace Venera {
         //public DateTime start;
 
         public Process(int _pid, String _name) {
-            Kernel.PrintDebug("Creating Process " + _name + " with pid " + _pid);
+            //Kernel.PrintDebug("Creating Process " + _name + " with pid " + _pid);
             pid = _pid;
             //start = DateTime.Now;
         }

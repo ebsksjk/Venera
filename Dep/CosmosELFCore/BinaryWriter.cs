@@ -25,7 +25,7 @@ namespace CosmosELFCore
         {
             for (int i = 0; i < str.Length; i++)
             {
-                Kernel.PrintDebug("" + str[i]);
+                //Kernel.PrintDebug("" + str[i]);
                 Write((byte)str[i]);
             }
         }
@@ -41,7 +41,7 @@ namespace CosmosELFCore
         {
             byte[] bits = BitConverter.GetBytes(data);
 
-            Kernel.PrintDebug("pushing str " + System.Text.Encoding.UTF8.GetString(bits));
+            //Kernel.PrintDebug("pushing str " + System.Text.Encoding.UTF8.GetString(bits));
 
             foreach (byte b in bits)
             {

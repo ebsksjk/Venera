@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Venera.Shell;
 using System.IO;
 using CosmosELFCore;
@@ -20,12 +16,11 @@ namespace Venera.VoPo
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: elfinfo <path>");
+                Console.WriteLine("Usage: elffile <args>");
                 return ExitCode.Error;
             }
 
             string path;
-            ElfFile elffile = null;
 
             if (args[0].StartsWith(@"\"))
             {
@@ -42,37 +37,11 @@ namespace Venera.VoPo
             try
             {   
                 Console.WriteLine($"Opening file {path}!");
-                string file_content = File.ReadAllText(path);
-                byte[] binfile = Encoding.ASCII.GetBytes(file_content);
-
-                unsafe
-                {
-                    fixed (byte* bin = binfile)
-                    {
-                        Console.WriteLine("Reading file ...");
-                        CosmosELFCore.MemoryStream memoryStream = new CosmosELFCore.MemoryStream(bin);
-                        Console.WriteLine("initialized memory stream!");
-
-                        elffile = new ElfFile(memoryStream);
-                        Console.WriteLine("File opened successfully!");
-
-                        Elf32Ehdr hdr = elffile.ElfHeader;
-
-                        Console.WriteLine($"Type: {hdr.Type}");
-                        Console.WriteLine($"Machine: {hdr.Machine}");
-                        Console.WriteLine($"Version: {hdr.Version}");
-                        Console.WriteLine($"Entry: {hdr.Entry}");
-                        Console.WriteLine($"Phoff: {hdr.Phoff}");
-                        Console.WriteLine($"Shoff: {hdr.Shoff}");
-                        Console.WriteLine($"Flags: {hdr.Flags}");
-                        Console.WriteLine($"Ehsize: {hdr.Ehsize}");
-                        Console.WriteLine($"Phentsize: {hdr.Phentsize}");
-                        Console.WriteLine($"Phnum: {hdr.Phnum}");
-                        Console.WriteLine($"Shentsize: {hdr.Shentsize}");
-                        Console.WriteLine($"Shnum: {hdr.Shnum}");
-                        Console.WriteLine($"Shstrndx: {hdr.Shstrndx}");
-                    }
-                }
+                byte[] binfile = File.ReadAllBytes(path);
+                ElfParser p = new ElfParser(binfile);
+                p.printHeader();
+                p.printSectionHeaders();
+                p.printSymbols();
             }
 
             catch (Exception)

@@ -74,7 +74,7 @@ namespace CosmosELFCore
                 if (header.Type == SectionType.NotPresentInFile)
                 {
                     //update the meta data
-                    header.Offset = writer.BaseStream.Posistion;
+                    header.Offset = writer.BaseStream.Position;
 
                     for (int i = 0; i < header.Size; i++)
                     {
@@ -85,10 +85,10 @@ namespace CosmosELFCore
                 {
                     //read the data from the original file
                     var reader = new BinaryReader(_stream);
-                    reader.BaseStream.Posistion = header.Offset;
+                    reader.BaseStream.Position = header.Offset;
 
                     //update the meta data
-                    header.Offset = writer.BaseStream.Posistion;
+                    header.Offset = writer.BaseStream.Position;
 
                     //write the data from the old file into the loaded executable
                     for (int i = 0; i < header.Size; i++)

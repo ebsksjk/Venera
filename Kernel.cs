@@ -42,10 +42,10 @@ namespace Venera
 
         protected override void Run()
         {
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "tty_clear");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "tty_clear");
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
             //ApplicationRunner.runApplication("ctest", File.ReadAllBytes("1:\\test.so"), null);
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");
 
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();

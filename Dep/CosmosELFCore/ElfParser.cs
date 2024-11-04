@@ -92,5 +92,13 @@ namespace CosmosELFCore
             }
         }
 
+        public void printStringTable()
+        {
+            foreach (var entry in elffile._stringTables)
+            {
+                Console.WriteLine($"String: {entry}");
+            }
+        }
+
     }
 }

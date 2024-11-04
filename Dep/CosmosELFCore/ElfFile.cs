@@ -21,18 +21,18 @@ namespace CosmosELFCore
         public List<Elf32Sym> Symbols { get; set; } = new List<Elf32Sym>();
 
         // List of offsets to string tables in the ELF file
-        private List<uint> _stringTables = new List<uint>();
+        public List<uint> _stringTables = new List<uint>();
 
         // Resolves a name from a section and offset within the ELF file
         public string ResolveName(Elf32Shdr section, uint offset, MemoryStream stream)
         {
             //Kernel.PrintDebug($"resolving names at {offset}");
-            if (section == null) return "";
+            if (section == null) return "nu";
 
             if(_stringTables == null || _stringTables.Count == 0)
             {
                 //Kernel.PrintDebug("No string tables found!");
-                return "";
+                return "na";
             }
 
             // Save the current position of the stream
@@ -42,13 +42,13 @@ namespace CosmosELFCore
             if (section.Type != SectionType.SymbolTable)
             {
                 //Kernel.PrintDebug("section type is not symbol table!!");
-                stream.Position = _stringTables[0] + offset;
+                stream.Position = (_stringTables[0] + offset)-1;
                 //Kernel.PrintDebug("set stream position: " + stream.Position);
             }
             else
             {
                 //Kernel.PrintDebug("section type is symbol table!!");
-                stream.Position = _stringTables[1] + offset;
+                stream.Position = (_stringTables[1] + offset) - 1;
             }
 
             // Read the name from the stream
@@ -56,7 +56,7 @@ namespace CosmosELFCore
             var reader = new BinaryReader(stream);
             //Kernel.PrintDebug("created new binary reader! && trying to read string");
             var s = reader.ReadString();
-            //Kernel.PrintDebug($"read string: {s}");
+            Kernel.PrintDebug($"read string: {s}");
 
             // Restore the original position of the stream
             stream.Position = old;
@@ -75,7 +75,10 @@ namespace CosmosELFCore
             // Load the section headers
             var header = (Elf32_Shdr*)(stream.Pointer + ElfHeader.Shoff);
 
-            //Kernel.PrintDebug("Reading Sections...");
+            Kernel.PrintDebug("Reading Sections...");
+            Kernel.PrintDebug($"ElfHeader.Shnum: {ElfHeader.Shnum}");
+            Kernel.PrintDebug($"ElfHeader.Shoff: {ElfHeader.Shoff}");
+            Kernel.PrintDebug($"ElfHeader.sh size: {ElfHeader.Shentsize}");
             // Iterate through each section header
             for (int i = 0; i < ElfHeader.Shnum; i++)
             {

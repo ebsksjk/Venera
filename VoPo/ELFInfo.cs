@@ -42,6 +42,8 @@ namespace Venera.VoPo
                 p.printHeader();
                 p.printSectionHeaders();
                 p.printSymbols();
+                //p.printRelocationInformation();
+                p.printStringTable();
             }
 
             catch (Exception)

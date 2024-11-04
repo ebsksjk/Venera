@@ -35,4 +35,8 @@
 		<None Include="isoFiles\*" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="isoFiles\" />
+	</ItemGroup>
+
 </Project>

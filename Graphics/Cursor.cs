@@ -36,7 +36,7 @@ namespace Venera.Graphics
             {
                 return (
                     X: Math.Abs((int)(LinearCursorPosition % _chromat.Screen.Width) + 1),
-                    Y: Math.Abs((int)(LinearCursorPosition / _chromat.Screen.Height) + 1)
+                    Y: Math.Abs((int)(LinearCursorPosition / _chromat.Screen.Height) + 3)
                 );
             }
         }
@@ -66,7 +66,9 @@ namespace Venera.Graphics
             {
                 // TODO: Scroll screen
                 LinearCursorPosition = _chromat.Grid.Width * (_chromat.Grid.Height - 1);
+                return;
             }
+
             LinearCursorPosition += cells;
         }
 

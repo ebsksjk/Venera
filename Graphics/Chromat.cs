@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Venera.Shell;
+using XSharp.x86;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Venera.Graphics
@@ -30,6 +31,13 @@ namespace Venera.Graphics
         private CGSSurface surface;
 
         /// <summary>
+        /// The purpose of this field is to store a local map of already rendered characters.
+        /// Once a char has been rendered, the result is stored here for faster re-use. The
+        /// int is the ascii table index.
+        /// </summary>
+        private Dictionary<int, GlyphResult> fontCache;
+
+        /// <summary>
         /// A list of functions that need to be executed in sequence inside our render loop.
         /// </summary>
         private List<Action> renderQueue;
@@ -47,6 +55,8 @@ namespace Venera.Graphics
 
         public int TextWidth { get; private set; }
         public int TextHeight { get; private set; }
+        public int TextKerning { get; private set; }
+        public int TextLsb { get; private set; }
 
         public Cursor Cursor { get; private set; }
 
@@ -69,19 +79,22 @@ namespace Venera.Graphics
 
             TextWidth = noto.CalculateWidth("A", FontSize);
 
-            // Since we're doing monospace here, the size of each char should stay the same. So we don't
-            // need to repeat this calculation for each char, however this should be done for sans and
-            // sans-serif fonts later.
+            // Since we're doing monospace here, the size and kerning of each char should stay the same.
+            // So we don't need to repeat this calculation for each char, however this should be done
+            // for sans and sans-serif fonts later.
             foreach (Rune r in "A".EnumerateRunes())
             {
                 noto.GetGlyphHMetrics(r, FontSize, out int advWidth, out int lsb);
+                noto.GetKerning(r, "B".EnumerateRunes().First(), FontSize, out int kerning);
                 TextHeight = advWidth;
+                TextLsb = lsb;
+                TextKerning = kerning;
             }
 
             Kernel.PrintDebug($"Font loaded. Metrics: {TextWidth}x{TextHeight} px");
 
             Grid = ((int)Screen.Width / TextWidth, (int)Screen.Height / TextHeight);
-            Kernel.PrintDebug($"Generate grid of {Grid.Width}x{Grid.Height} ({Grid.Width * Grid.Height}) cells ...");
+            Kernel.PrintDebug($"Generate grid of {Grid.Width}x{Grid.Height} ({Grid.Width * Grid.Height} cells) ...");
             textBuffer = new Character[Grid.Width * Grid.Height];
             textBuffer2 = new Character[Grid.Width * Grid.Height];
             Kernel.PrintDebug("Grid generated.");
@@ -96,30 +109,27 @@ namespace Venera.Graphics
                         int i = (row * Grid.Width) + col;
 
                         if (textBuffer[i] == null)
-                            return;
-
-                        Kernel.PrintDebug($"{textBuffer[i]}, {textBuffer2[i]}");
+                            continue;
 
                         // Skip draw if character at this position remains unchanged.
                         if (textBuffer2[i] != null && textBuffer2[i].Symbol == textBuffer[i].Symbol)
                         {
-                            Kernel.PrintDebug($"Ignore draw call at {col}x{row}");
-                            return;
+                            //Kernel.PrintDebug($"Ignore draw call at {col}x{row}");
+                            continue;
                         }
 
-                        int x = col * (TextWidth);
+                        int x = col * (TextWidth + 2);
                         int y = row * (TextHeight + 2);
-                        //Kernel.PrintDebug($"Write {textBuffer[i].Symbol} at {x}x{y}");
-                        noto.DrawToSurface(surface, FontSize, x, y, textBuffer[i].Symbol.ToString(), textBuffer[i].ForegroundColor);
 
+                        DrawCharacter(surface, FontSize, x, y, textBuffer[i].Symbol.ToString(), textBuffer[i].ForegroundColor);
                     }
                 }
 
-                // Copy the last rendered frame into a copy to optimize draw calls above.
-                //Array.Copy(textBuffer, textBuffer2, Grid.Width * Grid.Height);
-                canvas.Display();
+                // Copy the last rendered frame to optimize draw calls above.
+                Array.Copy(textBuffer, textBuffer2, Grid.Width * Grid.Height);
             });
 
+            fontCache = new();
             canvas = FullScreenCanvas.GetFullScreenCanvas(new Mode(Screen.Width, Screen.Height, ColorDepth.ColorDepth32));
             surface = new CGSSurface(canvas);
 
@@ -131,7 +141,7 @@ namespace Venera.Graphics
             while (true)
             {
                 long beginRender = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                canvas.Clear(Color.Blue);
+                //canvas.Clear(Color.Blue);
 
                 DrawText("THE END IS NEVER ");
 
@@ -142,7 +152,7 @@ namespace Venera.Graphics
                 long endRender = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 long deltaTime = endRender - beginRender;
 
-                Kernel.PrintDebug($"Rendering {renderQueue.Count} queue objects took {deltaTime}ms");
+                //Kernel.PrintDebug($"Rendering {renderQueue.Count} queue objects took {deltaTime}ms");
             }
         }
 
@@ -163,5 +173,40 @@ namespace Venera.Graphics
 
             Cursor.MoveHorizontal(text.Length);
         }
+
+        /// <summary>
+        /// Custom implementation of <seealso cref="TTFFont.DrawToSurface(ITTFSurface, int, int, int, string, Color)"/> to include
+        /// caching of bitmaps to speed up rendering.
+        /// </summary>
+        private void DrawCharacter(ITTFSurface surface, int px, int x, int y, string text, Color color)
+        {
+            int offX = 0;
+
+            Rune prevRune = new Rune('\0');
+
+            foreach (Rune c in text.EnumerateRunes())
+            {
+                // Try to get glyph (and with it its bitmap) from cache, or else render.
+                if (!fontCache.TryGetValue(c.Value, out GlyphResult g))
+                {
+                    GlyphResult? gMaybe = noto.RenderGlyphAsBitmap(c, color, px);
+                    if (!gMaybe.HasValue) continue;
+
+                    g = gMaybe.Value;
+                    fontCache.Add(c.Value, g);
+                }
+
+                offX += TextLsb + TextKerning;
+                surface.DrawBitmap(g.bmp, x + offX, y + g.offY);
+
+                if (TextKerning > 0)
+                    offX -= TextLsb;
+                else
+                    offX += TextHeight - TextLsb;
+
+                prevRune = c;
+            }
+        }
+
     }
 }

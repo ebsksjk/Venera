@@ -62,6 +62,7 @@ namespace CosmosELFCore
 
                 if (section.Name == null)
                 {
+                    Console.WriteLine("Section: ");
                     continue;
                 }
 

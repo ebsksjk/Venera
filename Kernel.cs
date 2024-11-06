@@ -1,4 +1,5 @@
-﻿using Cosmos.System.FileSystem.VFS;
+﻿using Cosmos.HAL;
+using Cosmos.System.FileSystem.VFS;
 using CosmosELF;
 using System;
 using System.IO;
@@ -38,6 +39,7 @@ namespace Venera
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["affeaffeaffe"], "tty_puts");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
+            SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
         }
 
         protected override void Run()

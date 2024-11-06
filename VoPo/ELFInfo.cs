@@ -40,10 +40,10 @@ namespace Venera.VoPo
                 byte[] binfile = File.ReadAllBytes(path);
                 ElfParser p = new ElfParser(binfile);
                 p.printHeader();
-                p.printSectionHeaders();
-                p.printSymbols();
+                //p.printSectionHeaders();
+                //p.printSymbols();
                 //p.printRelocationInformation();
-                p.printStringTable();
+                //p.printStringTable();
             }
 
             catch (Exception)

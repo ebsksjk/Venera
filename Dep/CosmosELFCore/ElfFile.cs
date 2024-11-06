@@ -71,57 +71,15 @@ namespace CosmosELFCore
             // Load the main ELF header
             ElfHeader = new Elf32Ehdr((Elf32_Ehdr*)stream.Pointer);
 
-            //Kernel.PrintDebug("Getting Section headers...");
-            // Load the section headers
-            var header = (Elf32_Shdr*)(stream.Pointer + ElfHeader.Shoff);
-
-            Kernel.PrintDebug("Reading Sections...");
-            Kernel.PrintDebug($"ElfHeader.Shnum: {ElfHeader.Shnum}");
-            Kernel.PrintDebug($"ElfHeader.Shoff: {ElfHeader.Shoff}");
-            Kernel.PrintDebug($"ElfHeader.sh size: {ElfHeader.Shentsize}");
-            // Iterate through each section header
-            for (int i = 0; i < ElfHeader.Shnum; i++)
+            //add the first string table
+            stream.Position = ElfHeader.Shstrndx;
+            _stringTables.Add(stream.Position);
+            
+            stream.Position = ElfHeader.Shoff;
+            for(int i = 0; i < ElfHeader.Shnum; i++)
             {
-                var x = new Elf32Shdr(&header[i]);
-                if (x.Type == SectionType.StringTable)
-                {
-                    //Kernel.PrintDebug("String table found!");
-                    _stringTables.Add(x.Offset);
-                }
-                SectionHeaders.Add(x);
-            }
-
-            //Kernel.PrintDebug("Resolving names...");
-            // Resolve names and process sub-data for each section
-            for (var index = 0; index < SectionHeaders.Count; index++)
-            {
-                var sectionHeader = SectionHeaders[index];
-                //Kernel.PrintDebug($"Resolving names at {sectionHeader.NameOffset}");
-                sectionHeader.Name = ResolveName(sectionHeader, sectionHeader.NameOffset, stream);
-
-                // Process relocation and symbol table sections
-                switch (sectionHeader.Type)
-                {
-                    case SectionType.Relocation:
-                        for (int i = 0; i < sectionHeader.Size / sectionHeader.Entsize; i++)
-                        {
-                            RelocationInformation.Add(new Elf32Rel(
-                                    (Elf32_Rel*)(stream.Pointer + sectionHeader.Offset + i * sectionHeader.Entsize))
-                            { Section = index });
-                        }
-                        break;
-
-                    case SectionType.SymbolTable:
-                        for (int i = 0; i < sectionHeader.Size / sectionHeader.Entsize; i++)
-                        {
-                            var x = new Elf32Sym(
-                                (Elf32_Sym*)(stream.Pointer + sectionHeader.Offset + i * sectionHeader.Entsize));
-                            //Kernel.PrintDebug($"Resolving names at {x.NameOffset}");
-                            x.Name = ResolveName(sectionHeader, x.NameOffset, stream);
-                            Symbols.Add(x);
-                        }
-                        break;
-                }
+                SectionHeaders.Add(new Elf32Shdr((Elf32_Shdr*)stream.Pointer));
+                stream.Position += ElfHeader.Shentsize;
             }
         }
     }

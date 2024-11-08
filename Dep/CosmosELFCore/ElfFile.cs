@@ -26,14 +26,6 @@ namespace CosmosELFCore
         // Resolves a name from a section and offset within the ELF file
         public string ResolveName(Elf32Shdr section, uint offset, MemoryStream stream)
         {
-            //Kernel.PrintDebug($"resolving names at {offset}");
-            if (section == null) return "nu";
-
-            if(_stringTables == null || _stringTables.Count == 0)
-            {
-                //Kernel.PrintDebug("No string tables found!");
-                return "na";
-            }
 
             // Save the current position of the stream
             var old = stream.Position;
@@ -41,14 +33,16 @@ namespace CosmosELFCore
             // Determine the position in the stream to read the name from
             if (section.Type != SectionType.SymbolTable)
             {
-                //Kernel.PrintDebug("section type is not symbol table!!");
-                stream.Position = (_stringTables[0] + offset)-1;
+                Kernel.PrintDebug("section type is not symbol table!!");
+                //hier is was faul
+                stream.Position = (_stringTables[0] + (offset));
                 //Kernel.PrintDebug("set stream position: " + stream.Position);
             }
             else
             {
                 //Kernel.PrintDebug("section type is symbol table!!");
-                stream.Position = (_stringTables[1] + offset) - 1;
+                //stream.Position = (_stringTables[1] + offset);
+                return "nein";
             }
 
             // Read the name from the stream
@@ -56,7 +50,7 @@ namespace CosmosELFCore
             var reader = new BinaryReader(stream);
             //Kernel.PrintDebug("created new binary reader! && trying to read string");
             var s = reader.ReadString();
-            Kernel.PrintDebug($"read string: {s}");
+            //Kernel.PrintDebug($"read string: {s}");
 
             // Restore the original position of the stream
             stream.Position = old;
@@ -71,15 +65,28 @@ namespace CosmosELFCore
             // Load the main ELF header
             ElfHeader = new Elf32Ehdr((Elf32_Ehdr*)stream.Pointer);
 
-            //add the first string table
-            stream.Position = ElfHeader.Shstrndx;
-            _stringTables.Add(stream.Position);
-            
-            stream.Position = ElfHeader.Shoff;
-            for(int i = 0; i < ElfHeader.Shnum; i++)
+            var header = (Elf32_Shdr*)(stream.Pointer + ElfHeader.Shoff);
+
+            for (int i = 0; i < ElfHeader.Shnum; i++)
             {
-                SectionHeaders.Add(new Elf32Shdr((Elf32_Shdr*)stream.Pointer));
-                stream.Position += ElfHeader.Shentsize;
+                var x = new Elf32Shdr(&header[i]);
+                if (x.Type == SectionType.StringTable) _stringTables.Add(x.Offset);
+                SectionHeaders.Add(x);
+            }
+
+            foreach(var i in SectionHeaders)
+            {
+                if (i.Type == SectionType.SymbolTable || i.Type == SectionType.StringTable) continue;
+                var name = ResolveName(i, i.NameOffset, stream);
+                Kernel.PrintDebug($"section name: {name} @ offset {i.NameOffset}");
+                if (i.Type == SectionType.SymbolTable)
+                {
+                    var symtab = (Elf32_Sym*)(stream.Pointer + i.Offset);
+                    for (int j = 0; j < i.Size / i.Entsize; j++)
+                    {
+                        Symbols.Add(new Elf32Sym(&symtab[j]));
+                    }
+                }
             }
         }
     }

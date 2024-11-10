@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Venera.Shell;
 using System.IO;
 using CosmosELFCore;
@@ -11,7 +7,7 @@ namespace Venera.VoPo
 {
     public class ELFInfo : BuiltIn
     {
-        public override string Name => "elfinfo";
+        public override string Name => "readelf";
 
         public override string Description => "Display information about an elf file.";
 
@@ -20,64 +16,73 @@ namespace Venera.VoPo
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: elfinfo <path>");
+                Console.WriteLine("Usage: elffile [-Shrts] <args>");
                 return ExitCode.Error;
             }
 
             string path;
-            ElfFile elffile = null;
+            bool displayHeader = false;
+            bool displaySections = false;
+            bool displaySymbols = false;
+            bool displayRelocation = false;
+            bool displayStringTable = false;
 
-            if (args[0].StartsWith(@"\"))
+            if (args[^1].StartsWith(@"\"))
             {
                 //if it is an absolute path
-                path = $"0:{args[0]}";
+                path = $"0:{args[^1]}";
             }
             else
             {
                 //if it is a relative path
                 //convert it into the corresponding absolute path
-                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[^1]}";
             }
 
+            for(var i = 0; i < args.Length-1; i++)
+            {
+                switch (args[i])
+                {
+                    case "-h":
+                        displayHeader = true;
+                        break;
+                    case "-S":
+                        displaySections = true;
+                        break;
+                    case "-s":
+                        displaySymbols = true;
+                        break;
+                    case "-r":
+                        displayRelocation = true;
+                        break;
+                    case "-t":
+                        displayStringTable = true;
+                        break;
+                    default:
+                        Console.WriteLine($"Sokolsh: elfino: Invalid argument {args[i]}");
+                        return ExitCode.Error;
+                }
+            }
             try
             {   
                 Console.WriteLine($"Opening file {path}!");
-                string file_content = File.ReadAllText(path);
-                byte[] binfile = Encoding.ASCII.GetBytes(file_content);
-
-                unsafe
-                {
-                    fixed (byte* bin = binfile)
-                    {
-                        Console.WriteLine("Reading file ...");
-                        CosmosELFCore.MemoryStream memoryStream = new CosmosELFCore.MemoryStream(bin);
-                        Console.WriteLine("initialized memory stream!");
-
-                        elffile = new ElfFile(memoryStream);
-                        Console.WriteLine("File opened successfully!");
-
-                        Elf32Ehdr hdr = elffile.ElfHeader;
-
-                        Console.WriteLine($"Type: {hdr.Type}");
-                        Console.WriteLine($"Machine: {hdr.Machine}");
-                        Console.WriteLine($"Version: {hdr.Version}");
-                        Console.WriteLine($"Entry: {hdr.Entry}");
-                        Console.WriteLine($"Phoff: {hdr.Phoff}");
-                        Console.WriteLine($"Shoff: {hdr.Shoff}");
-                        Console.WriteLine($"Flags: {hdr.Flags}");
-                        Console.WriteLine($"Ehsize: {hdr.Ehsize}");
-                        Console.WriteLine($"Phentsize: {hdr.Phentsize}");
-                        Console.WriteLine($"Phnum: {hdr.Phnum}");
-                        Console.WriteLine($"Shentsize: {hdr.Shentsize}");
-                        Console.WriteLine($"Shnum: {hdr.Shnum}");
-                        Console.WriteLine($"Shstrndx: {hdr.Shstrndx}");
-                    }
-                }
+                byte[] binfile = File.ReadAllBytes(path);
+                ElfParser p = new ElfParser(binfile);
+                if(displayHeader)
+                    p.printHeader();
+                if(displaySections)
+                    p.printSectionHeaders();
+                if(displaySymbols)
+                    p.printSymbols();
+                if(displayRelocation)
+                    p.printRelocationInformation();
+                if (displayStringTable)
+                    p.printStringTable();
             }
 
             catch (Exception)
             {
-                Console.WriteLine($"Sokolsh: elfino: File {path} does not exist or is broken");
+                Console.WriteLine($"Sokolsh: readelf: File {path} does not exist or is broken");
                 return ExitCode.Error;
             }
 

@@ -12,28 +12,12 @@ namespace Venera {
             //FILE
             byte[] mCode = null;
 
-            String[] args = null;
+            List<Object> args = null;
 
-            public Application(String _name, byte[] _mCode, String[] _args) {
-                Kernel.PrintDebug("trying to create new application! name: " + _name + " args: ");
-                if(_args != null)
-                {
-                    foreach (String _arg in _args)
-                    {
-                        Kernel.PrintDebug(_arg);
-                    }
-                }
+            public Application(String _name, byte[] _mCode, List<Object> _args) {
+                //Kernel.PrintDebug("trying to create new application! name: " + _name + " args: ");
                 
                 this.name = _name; this.mCode = _mCode; this.args = _args;
-
-                if (this.args != null)
-                {
-                    Kernel.PrintDebug("real args");
-                    foreach (String arg in args)
-                    {
-                        Kernel.PrintDebug(arg);
-                    }
-                }
             }
 
             public int runEntryPoint(string entry){
@@ -45,19 +29,46 @@ namespace Venera {
                         exe.Load();
                         exe.Link();
 
-                        Kernel.PrintDebug("Executing " + entry + " @ " + name);
+                        //Kernel.PrintDebug("Executing " + entry + " @ " + name);
                         ArgumentWriter aw = new ArgumentWriter();
                         if (args != null) {
-                            foreach (String arg in args) {
-                                fixed (byte* str = Encoding.ASCII.GetBytes(arg)) {
-                                    aw.Push((uint)str);
+                            foreach (Object arg in args) { 
+                                switch (arg) {
+                                    case char _ when arg is char:
+                                        Kernel.PrintDebug("Pushing char: " + arg);
+                                        aw.Push((char)arg);
+                                        break;
+                                    case byte _ when arg is byte:
+                                        aw.Push((byte)arg);
+                                        break;
+                                    case short _ when arg is short:
+                                        aw.Push((short)arg);
+                                        break;
+                                    case int _ when arg is int:
+                                        aw.Push((int)arg);
+                                        break;
+                                    case uint _ when arg is uint:
+                                        aw.Push((uint)arg);
+                                        break;
+                                    case string _ when arg is string:
+                                        unsafe
+                                        {
+                                            fixed (byte* str = Encoding.ASCII.GetBytes((string)arg))
+                                            {
+                                                aw.Push((uint)str);
+                                            }
+                                        }
+                                    break;
+                                    default:
+                                        Console.WriteLine("Unknown argument type: " + arg.GetType());
+                                        return -1;
                                 }
                             }
                         }
 
-                        Kernel.PrintDebug("Invoke!");
+                        //Kernel.PrintDebug("Invoke!");
                         exe.Invoke(entry);
-                        Kernel.PrintDebug("Invoked!");
+                        //Kernel.PrintDebug("Invoked!");
 
                         return 0;
                     }
@@ -75,16 +86,33 @@ namespace Venera {
 
                         if (args != null)
                         {
-                            foreach (String arg in args)
+                            foreach (Object arg in args)
                             {
-                                fixed (byte* str = Encoding.ASCII.GetBytes(arg))
+                                switch (arg)
                                 {
-                                    aw.Push((uint)str);
+                                    case char _ when arg is char:
+                                        aw.Push((char)arg);
+                                        break;
+                                    case byte _ when arg is byte:
+                                        aw.Push((byte)arg);
+                                        break;
+                                    case short _ when arg is short:
+                                        aw.Push((short)arg);
+                                        break;
+                                    case int _ when arg is int:
+                                        aw.Push((int)arg);
+                                        break;
+                                    case uint _ when arg is uint:
+                                        aw.Push((uint)arg);
+                                        break;
+                                    default:
+                                        Console.WriteLine("Unknown argument type: " + arg.GetType());
+                                        return -1;
                                 }
                             }
                         }
 
-                        Kernel.PrintDebug("Invoking " + entrypoint + " @ " + name);
+                        //Kernel.PrintDebug("Invoking " + entrypoint + " @ " + name);
                         exe.Invoke(entrypoint);
 
                         return 0;
@@ -94,7 +122,7 @@ namespace Venera {
             }
         }
 
-        public static int runApplication(String aName, byte[] aCode, String[] args){
+        public static int runApplication(String aName, byte[] aCode, List<Object> args){
             Application cApp = new Application(aName, aCode, args);
             int ret;
 
@@ -103,26 +131,26 @@ namespace Venera {
             Console.Write("Executing... pid: " + pid);
             ret = cApp.run();
 
-            Console.Write("ya!");
+            //Console.Write("ya!");
             ProcessTable.unregisterProcess(pid);
 
             return ret;
 
         }
 
-        public static int runApplicationEntryPoint(String aName, byte[] aCode, String[] args, String entryPoint) {
-            Kernel.PrintDebug("received request to run " + entryPoint + " @ " + aName);
+        public static int runApplicationEntryPoint(String aName, byte[] aCode, List<Object> args, String entryPoint) {
+            //Kernel.PrintDebug("received request to run " + entryPoint + " @ " + aName);
             Application cApp = new Application(aName, aCode, args);
-            Kernel.PrintDebug("created new Application!");
+            //Kernel.PrintDebug("created new Application!");
             int ret = 0;
 
             int pid = ProcessTable.registerProcess(aName);
-            Kernel.PrintDebug("registered process with pid: " + pid);
+            //Kernel.PrintDebug("registered process with pid: " + pid);
 
             Console.Write("Executing... pid: " + pid);
             ret = cApp.runEntryPoint(entryPoint);
 
-            Console.Write("ya!");
+            //Console.Write("ya!");
             ProcessTable.unregisterProcess(pid);
 
             return ret;
@@ -136,9 +164,9 @@ namespace Venera {
         static List<Process> _processTable = new();
 
         public static int registerProcess(String name) {
-            Kernel.PrintDebug("received request to register a process " + name);
+            //Kernel.PrintDebug("received request to register a process " + name);
             _processTable.Add(new Process(++cPID, name));
-            Kernel.PrintDebug(name + " is registered with PID " + cPID);
+            //Kernel.PrintDebug(name + " is registered with PID " + cPID);
             return cPID;
         }
 
@@ -155,7 +183,7 @@ namespace Venera {
         //public DateTime start;
 
         public Process(int _pid, String _name) {
-            Kernel.PrintDebug("Creating Process " + _name + " with pid " + _pid);
+            //Kernel.PrintDebug("Creating Process " + _name + " with pid " + _pid);
             pid = _pid;
             //start = DateTime.Now;
         }

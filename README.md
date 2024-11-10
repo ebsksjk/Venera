@@ -4,3 +4,4 @@
 # Venera
 A take on operating systems, using CosmOS. 
 
+For instructions on how to compile executables for Venera, see VoPo/CompileGoodies/Readme.md.

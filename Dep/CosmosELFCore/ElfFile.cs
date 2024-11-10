@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using Cosmos.System;
 
@@ -24,35 +25,27 @@ namespace CosmosELFCore
         public List<uint> _stringTables = new List<uint>();
 
         // Resolves a name from a section and offset within the ELF file
-        public string ResolveName(Elf32Shdr section, uint offset, MemoryStream stream)
+        public string ResolveSectionName(Elf32Shdr section, uint offset, MemoryStream stream)
         {
-
-            // Save the current position of the stream
             var old = stream.Position;
-
-            // Determine the position in the stream to read the name from
-            if (section.Type != SectionType.SymbolTable)
-            {
-                Kernel.PrintDebug("section type is not symbol table!!");
-                //hier is was faul
-                stream.Position = (_stringTables[0] + (offset));
-                //Kernel.PrintDebug("set stream position: " + stream.Position);
-            }
-            else
-            {
-                //Kernel.PrintDebug("section type is symbol table!!");
-                //stream.Position = (_stringTables[1] + offset);
-                return "nein";
-            }
+            stream.Position = (_stringTables[0] + (offset));
 
             // Read the name from the stream
-            //Kernel.PrintDebug("creating new binary reader");
             var reader = new BinaryReader(stream);
-            //Kernel.PrintDebug("created new binary reader! && trying to read string");
             var s = reader.ReadString();
-            //Kernel.PrintDebug($"read string: {s}");
+            stream.Position = old;
 
-            // Restore the original position of the stream
+            return s;
+        }
+
+        public string ResolveSymbolName(Elf32Sym symbol, MemoryStream stream)
+        {
+            var old = stream.Position;
+            stream.Position = (_stringTables[1] + (symbol.NameOffset));
+
+            // Read the name from the stream
+            var reader = new BinaryReader(stream);
+            var s = reader.ReadString();
             stream.Position = old;
 
             return s;
@@ -65,28 +58,41 @@ namespace CosmosELFCore
             // Load the main ELF header
             ElfHeader = new Elf32Ehdr((Elf32_Ehdr*)stream.Pointer);
 
+            var stringtable = (Elf32_Shdr*)(stream.Pointer + ElfHeader.Shoff + (ElfHeader.Shstrndx * ElfHeader.Shentsize));
+            _stringTables.Add(new Elf32Shdr(stringtable).Offset);
             var header = (Elf32_Shdr*)(stream.Pointer + ElfHeader.Shoff);
+
 
             for (int i = 0; i < ElfHeader.Shnum; i++)
             {
                 var x = new Elf32Shdr(&header[i]);
-                if (x.Type == SectionType.StringTable) _stringTables.Add(x.Offset);
+                if (x.Type == SectionType.StringTable && i != ElfHeader.Shstrndx) _stringTables.Add(x.Offset);
                 SectionHeaders.Add(x);
             }
 
+            int index = 0;
             foreach(var i in SectionHeaders)
             {
-                if (i.Type == SectionType.SymbolTable || i.Type == SectionType.StringTable) continue;
-                var name = ResolveName(i, i.NameOffset, stream);
-                Kernel.PrintDebug($"section name: {name} @ offset {i.NameOffset}");
+                var name = ResolveSectionName(i, i.NameOffset, stream);
+                i.Name = name;
+                //Kernel.PrintDebug($"section name: {name} @ offset {i.NameOffset}");
                 if (i.Type == SectionType.SymbolTable)
                 {
-                    var symtab = (Elf32_Sym*)(stream.Pointer + i.Offset);
                     for (int j = 0; j < i.Size / i.Entsize; j++)
                     {
-                        Symbols.Add(new Elf32Sym(&symtab[j]));
+                        var curSym = new Elf32Sym((Elf32_Sym*)(stream.Pointer + i.Offset + j * i.Entsize));
+                        var syName = ResolveSymbolName(curSym, stream);
+                        //Kernel.PrintDebug($"symbol name: {syName} @ offset {curSym.NameOffset}");
+                        curSym.Name = syName;
+                        Symbols.Add(curSym);
+                    }
+                } else if(i.Type == SectionType.Relocation) {
+                    for (int j = 0; j < i.Size / i.Entsize; j++)
+                    {
+                        RelocationInformation.Add(new Elf32Rel((Elf32_Rel*)(stream.Pointer + i.Offset + j * i.Entsize)){ Section = index });
                     }
                 }
+                index++;
             }
         }
     }

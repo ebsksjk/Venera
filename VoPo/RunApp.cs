@@ -18,27 +18,27 @@ namespace Venera.VoPo
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: runapp <args> [-e <eps>]");
+                Console.WriteLine("Usage: runapp [-e <eps>] <args> ");
                 return ExitCode.Error;
             }
 
             string path;
             List<string> entrypoints = new List<string>();
 
-            if (args[0].StartsWith(@"\"))
+            if (args[^1].StartsWith(@"\"))
             {
                 //if it is an absolute path
-                path = $"0:{args[0]}";
+                path = $"0:{args[^1]}";
             }
             else
             {
                 //if it is a relative path
                 //convert it into the corresponding absolute path
-                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[^1]}";
             }
 
-            if(args.Length > 1 && args[1] == "-e") {
-                for (int i = 2; i < args.Length; i++)
+            if(args.Length > 1 && args[0] == "-e") {
+                for (int i = 1; i < args.Length -1; i++)
                 {
                     entrypoints.Add(args[i].Trim());
                 }

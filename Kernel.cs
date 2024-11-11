@@ -1,5 +1,7 @@
 ﻿using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
+using Cosmos.System.Network.Config;
+using Cosmos.System.Network.IPv4.UDP.DHCP;
 using CosmosELF;
 using System;
 using System.IO;
@@ -40,6 +42,13 @@ namespace Venera
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
+
+            using (var xClient = new DHCPClient())
+            {
+                /** Send a DHCP Discover packet **/
+                //This will automatically set the IP config after DHCP response
+                xClient.SendDiscoverPacket();
+            }
         }
 
         protected override void Run()

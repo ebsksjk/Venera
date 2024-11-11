@@ -1,4 +1,5 @@
-﻿using Cosmos.HAL.Drivers.Video;
+﻿using Cosmos.HAL;
+using Cosmos.HAL.Drivers.Video;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
 using CosmosELF;
@@ -27,33 +28,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
-            unsafe
-            {
-                fixed (byte* ptr = TestFile.test_so)
-                {
-                    var exe = new UnmanagedExecutable(ptr);
-                    exe.Load();
-                    exe.Link();
-
-                    Console.WriteLine("Executing");
-                    new ArgumentWriter();
-                    exe.Invoke("tty_clear");
-
-                    new ArgumentWriter()
-                        .Push(5)  //fg
-                        .Push(15); //bg
-                    exe.Invoke("tty_set_color");
-
-                    fixed (byte* str = Encoding.ASCII.GetBytes("Hello World"))
-                    {
-                        new ArgumentWriter()
-                            .Push((uint)str);
-                        exe.Invoke("tty_puts");
-                    }
-
-
-                }
-            }
+            SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
 
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);

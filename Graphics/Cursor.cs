@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XSharp.Assembler.x86;
 
 namespace Venera.Graphics
 {
@@ -61,11 +56,15 @@ namespace Venera.Graphics
         /// <param name="cells">How many cells on the horizontal. Positive values for the right and negative to move to the left.</param>
         public void MoveHorizontal(int cells)
         {
+            Kernel.PrintDebug($"{LinearCursorPosition} > {_chromat.Grid.Width * (_chromat.Grid.Height)}");
             // If we reached the bottom right corner.
-            if (LinearCursorPosition > (_chromat.Screen.Width * _chromat.Screen.Height))
+            if (LinearCursorPosition > (_chromat.Grid.Width * (_chromat.Grid.Height)))
             {
                 // TODO: Scroll screen
-                LinearCursorPosition = _chromat.Grid.Width * (_chromat.Grid.Height - 1);
+                LinearCursorPosition = _chromat.Grid.Width * (_chromat.Grid.Height);
+                Kernel.PrintDebug("Scroll!");
+
+                _chromat.ScrollDown();
                 return;
             }
 

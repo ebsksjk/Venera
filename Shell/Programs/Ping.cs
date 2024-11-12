@@ -23,44 +23,38 @@ namespace Venera.Shell.Programs
             string[] split = args[0].Split('.');
             byte[] ip = new byte[4];
 
-            if (split.Length != 4)
+            if (split.Length == 4)
             {
-                if (IsValidDomain(args[0]))
+                for (int i = 0; i < 4; i++)
                 {
-                    using (var xClient = new DnsClient())
+                    if (!byte.TryParse(split[i], out byte octet))
                     {
-                        xClient.Connect(new Address(1, 1, 1, 1));
-
-                        /** Send DNS ask for a single domain name **/
-                        xClient.SendAsk(args[0]);
-
-                        Address d = xClient.Receive();
-
-                        if (d == null)
-                        {
-                            Console.WriteLine($"ping: {args[0]}: Name or service not known");
-                            return ExitCode.Error;
-                        }
-
-                        ip = d.ToByteArray();
+                        Console.WriteLine($"Sokolsh: ping: Destination address contains invalid octet: {split[i]}");
+                        return ExitCode.Success;
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Sokolsh: ping: Destination address must contain 4 octets or be a valid domain.");
-                    return ExitCode.Error;
+
+                    ip[i] = octet;
                 }
             }
-
-            for (int i = 0; i < 4; i++)
+            else
             {
-                if (!byte.TryParse(split[i], out byte octet))
+                using (var xClient = new DnsClient())
                 {
-                    Console.WriteLine($"Sokolsh: ping: Destination address contains invalid octet: {split[i]}");
-                    return ExitCode.Success;
-                }
+                    xClient.Connect(new Address(1, 1, 1, 1));
 
-                ip[i] = octet;
+                    /** Send DNS ask for a single domain name **/
+                    xClient.SendAsk(args[0]);
+
+                    Address d = xClient.Receive();
+
+                    if (d == null)
+                    {
+                        Console.WriteLine($"ping: {args[0]}: Name or service not known");
+                        return ExitCode.Error;
+                    }
+
+                    ip = d.ToByteArray();
+                }
             }
 
             Address dest = new(ip[0], ip[1], ip[2], ip[3]);
@@ -87,7 +81,7 @@ namespace Venera.Shell.Programs
                     }
                     else
                     {
-                        Console.WriteLine($"Received from {dest}: icmp_seq={i} time={time}ms");
+                        Console.WriteLine($"Received from {endpoint.Address.ToString()}: icmp_seq={i} time={time}ms");
                     }
                 }
             }

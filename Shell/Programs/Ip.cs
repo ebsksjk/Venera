@@ -16,28 +16,34 @@ namespace Venera.Shell.Programs
             Console.WriteLine($"IPv4 address:\t{NetworkConfiguration.CurrentAddress.ToString()}");
 
             // THESE ERROR OUT? LIKE WTF?! DO NOT UNCOMMENT UNTIL FURTHER INVESTIGATION.
-            //if (NetworkConfiguration.CurrentNetworkConfig.IPConfig == null)
-            //{
-            //    Console.WriteLine($"Subnet mask:\tN/A");
-            //    Console.WriteLine($"Gateway:\tN/A");
-            //}
-            //else
-            //{
-            //    if (NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask == null)
-            //    {
-            //        Console.WriteLine($"Subnet mask:\tN/A");
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine($"Subnet mask:\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask}");
-            //    }
+            if (NetworkConfiguration.CurrentNetworkConfig.IPConfig == null)
+            {
+                Console.WriteLine($"Subnet mask:\tN/A");
+                Console.WriteLine($"Gateway:\t\tN/A");
+            }
+            else
+            {
+                if (NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask == null)
+                {
+                    Console.WriteLine($"Subnet mask:\tN/A");
+                }
+                else
+                {
+                    Console.WriteLine($"Subnet mask:\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask.ToString()}");
+                }
 
-            //    Console.WriteLine($"Gateway:\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.DefaultGateway}");
-            //}
+                Console.WriteLine($"Gateway:\t\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.DefaultGateway.ToString()}");
+            }
 
-            //Console.WriteLine($"MAC address:\t{NetworkConfiguration.CurrentNetworkConfig.Device.MACAddress} ({NetworkConfiguration.CurrentNetworkConfig.Device.Name})");
-            //Console.WriteLine($"DNS servers:\t{String.Join(", ", DNSConfig.DNSNameservers)}");
-            Console.WriteLine("\n=== [ CHECKS ] ===");
+            Console.WriteLine($"MAC address:\t{NetworkConfiguration.CurrentNetworkConfig.Device.MACAddress.ToString()} ({NetworkConfiguration.CurrentNetworkConfig.Device.Name.ToString()})");
+            Console.Write($"DNS servers:\t");
+
+            foreach (Address dns in DNSConfig.DNSNameservers)
+            {
+                Console.Write($"{dns.ToString()} ");
+            }
+
+            Console.WriteLine("\n\n=== [ CHECKS ] ===");
             Console.Write("Internet connectivity check: ");
 
             using (var xClient = new ICMPClient())

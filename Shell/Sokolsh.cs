@@ -27,6 +27,7 @@ namespace Venera.Shell
                 new Cat(),
                 new Ip(),
                 new Ping(),
+                new Sputnik(),
                 new VoPo.ELFInfo(),
                 new VoPo.RunApp(),
             };

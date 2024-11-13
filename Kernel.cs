@@ -1,7 +1,8 @@
-﻿using Cosmos.System.FileSystem.VFS;
+﻿using Cosmos.HAL;
+using Cosmos.System.FileSystem.VFS;
 using CosmosELF;
-using CosmosELFCore;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Venera.Shell;
@@ -22,33 +23,9 @@ namespace Venera
 
         protected override void BeforeRun()
         {
-            unsafe
-            {
-                fixed (byte* ptr = TestFile.test_so)
-                {
-                    var exe = new UnmanagedExecutable(ptr);
-                    exe.Load();
-                    exe.Link();
 
-                    Console.WriteLine("Executing");
-                    new ArgumentWriter();
-                    exe.Invoke("tty_clear");
-
-                    new ArgumentWriter()
-                        .Push(5)  //fg
-                        .Push(15); //bg
-                    exe.Invoke("tty_set_color");
-
-                    fixed (byte* str = Encoding.ASCII.GetBytes("Hello World"))
-                    {
-                        new ArgumentWriter()
-                            .Push((uint)str);
-                        exe.Invoke("tty_puts");
-                    }
-
-
-                }
-            }
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test.so"), null, "tty_clear");
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
 
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);
@@ -58,10 +35,20 @@ namespace Venera
 
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
+
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["affeaffeaffe"], "tty_puts");
+            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
+            //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
+            SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
         }
 
         protected override void Run()
         {
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "tty_clear");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
+            //ApplicationRunner.runApplication("ctest", File.ReadAllBytes("1:\\test.so"), null);
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");
+
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();
 

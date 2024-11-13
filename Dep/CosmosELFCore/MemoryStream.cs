@@ -14,11 +14,11 @@ namespace CosmosELFCore
         }
         public override void Write(byte dat)
         {
-            Pointer[Posistion++] = dat;
+            Pointer[Position++] = dat;
         }
         public override int Read()
         {
-            return Pointer[Posistion++];
+            return Pointer[Position++];
         }
     }
 }

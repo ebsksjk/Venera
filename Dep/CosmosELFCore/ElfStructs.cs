@@ -40,22 +40,22 @@ namespace CosmosELFCore
         [FieldOffset(44)] public ushort e_phnum;
         [FieldOffset(46)] public ushort e_shentsize;
         [FieldOffset(48)] public ushort e_shnum;
-        [FieldOffset(50)] public ushort e_shstrndx;
+        [FieldOffset(50)] public ushort e_shstrndx; // Index of the section header string table
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct Elf32_Shdr
     {
-        [FieldOffset(0)] public uint sh_name;
-        [FieldOffset(4)] public uint sh_type;
-        [FieldOffset(8)] public uint sh_flags;
-        [FieldOffset(12)] public uint sh_addr;
-        [FieldOffset(16)] public uint sh_offset;
-        [FieldOffset(20)] public uint sh_size;
-        [FieldOffset(24)] public uint sh_link;
-        [FieldOffset(28)] public uint sh_info;
-        [FieldOffset(32)] public uint sh_addralign;
-        [FieldOffset(36)] public uint sh_entsize;
+        [FieldOffset(0)] public uint sh_name;       // Offset to the name of the section
+        [FieldOffset(4)] public uint sh_type;       // Type of the section
+        [FieldOffset(8)] public uint sh_flags;      // Flags of the section
+        [FieldOffset(12)] public uint sh_addr;      // Address of the section
+        [FieldOffset(16)] public uint sh_offset;    // Offset of the section
+        [FieldOffset(20)] public uint sh_size;      // Size of the section
+        [FieldOffset(24)] public uint sh_link;      // Link to another section
+        [FieldOffset(28)] public uint sh_info;      // Additional information
+        [FieldOffset(32)] public uint sh_addralign; // Alignment of the section
+        [FieldOffset(36)] public uint sh_entsize;   // Size of each entry
     }
 
     public enum SectionType

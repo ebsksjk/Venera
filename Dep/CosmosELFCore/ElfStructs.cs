@@ -97,6 +97,8 @@ namespace CosmosELFCore
         None = 0, // No type
         Object = 1, // Variables, arrays, etc.
         Function = 2,  // Methods or functions
+        Section = 3,
+        File = 4,
         Common = 5
     }
 

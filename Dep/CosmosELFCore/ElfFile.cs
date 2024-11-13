@@ -41,8 +41,14 @@ namespace CosmosELFCore
         public string ResolveSymbolName(Elf32Sym symbol, MemoryStream stream)
         {
             var old = stream.Position;
-            stream.Position = (_stringTables[1] + (symbol.NameOffset));
-
+            if (symbol.Type == SymbolType.Section)
+            {
+                stream.Position = (_stringTables[0] + (symbol.NameOffset));
+            }
+            else
+            {
+                stream.Position = (_stringTables[1] + (symbol.NameOffset));
+            }
             // Read the name from the stream
             var reader = new BinaryReader(stream);
             var s = reader.ReadString();

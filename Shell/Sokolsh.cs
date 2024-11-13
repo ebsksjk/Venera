@@ -27,6 +27,7 @@ namespace Venera.Shell
                 new Cat(),
                 new VoPo.ELFInfo(),
                 new VoPo.RunApp(),
+                new VoPo.faketop(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

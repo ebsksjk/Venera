@@ -18,12 +18,13 @@ namespace Venera.VoPo
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: runapp [-e <eps>] <args> ");
+                Console.WriteLine("Usage: runapp [-e <ep>] -a [args] <args> ");
                 return ExitCode.Error;
             }
 
             string path;
-            List<string> entrypoints = new List<string>();
+            string entrypoints = "main";
+            List<Object> arguments = new List<Object>();
 
             if (args[^1].StartsWith(@"\"))
             {
@@ -38,16 +39,35 @@ namespace Venera.VoPo
             }
 
             if(args.Length > 1 && args[0] == "-e") {
-                for (int i = 1; i < args.Length -1; i++)
+                entrypoints = args[1];
+            }
+
+            if ((args.Length > 1 || args.Length > 3) && (args[2] == "-a" || args[0] == "-a"))
+            {
+                int index = 0;
+                index = (args[0] == "-a") ? 1 : 3;
+
+                for (int i = index; i < args.Length -1 ; i++)
                 {
-                    entrypoints.Add(args[i].Trim());
+                    if (int.TryParse(args[i], out int result))
+                    {
+                        Kernel.PrintDebug($"Pushing int: {result}");
+                        arguments.Add((object)result);
+                    }
+                    else
+                    {
+                        Kernel.PrintDebug($"Pushing string: {args[i]}");
+                        arguments.Add((object)args[i]);
+                    }
                 }
             }
 
-            foreach(string v in entrypoints)
+            foreach (var arg in arguments)
             {
-                ApplicationRunner.runApplicationEntryPoint("runapp", File.ReadAllBytes(path), null, v);
+                Kernel.PrintDebug($"Argument: {arg}");
             }
+
+            ApplicationRunner.runApplicationEntryPoint($"runapp call", File.ReadAllBytes(path), arguments, entrypoints, path);
 
             return ExitCode.Success;
         }

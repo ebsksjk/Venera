@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Venera.Shell;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Venera
@@ -38,7 +40,25 @@ namespace Venera
             return str;
         }
 
-        public static bool IsDriveId(this string str)
+        public static string AbsoluteOrRelativePath(this string str)
+        {
+            string path;
+            string drive = str.Split(":").First();
+            if (drive != null)
+            {
+                //if it is an absolute path
+                path = $"{drive}:{str.Split(":").Last()}";
+            }
+            else
+            {
+                //if it is a relative path
+                //convert it into the corresponding absolute path
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{str}";
+            }
+            return path;
+        }
+
+            public static bool IsDriveId(this string str)
         {
 
             // The string must be exactly 3 characters long to match the pattern "[0-9]:\"

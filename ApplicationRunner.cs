@@ -182,6 +182,7 @@ namespace Venera {
 
         public static void unregisterProcess(int PID) {
             _processTable.RemoveAll(x => x.pid  == PID);
+            File.Delete("0:\\Sys\\proc\\" + PID);
         }
 
 

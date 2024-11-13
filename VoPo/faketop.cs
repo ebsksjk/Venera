@@ -26,6 +26,8 @@ namespace Venera.VoPo
 
             foreach (string process in processList)
             {
+                if(string.IsNullOrWhiteSpace(process)) continue;
+
                 List<string> processInfo = process.Split(" ").ToList();
                 Console.WriteLine($"PID: {processInfo[0]} | Name: {processInfo[1]} | entrypoint: {processInfo[2]} | path: {processInfo[3]} | start: {processInfo[4]}");
             }

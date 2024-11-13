@@ -43,6 +43,23 @@ namespace Venera
             if (!Directory.Exists("0:\\Sys\\proc"))
             {
                 Directory.CreateDirectory("0:\\Sys\\proc");
+            } else if (Directory.GetFiles("0:\\Sys\\proc").Length != 0 )
+            {
+                string[] pList = Directory.GetFiles("0:\\Sys\\proc");
+                if (!(pList.Length == 0 || pList == null))
+                {
+                    foreach (string p in pList)
+                    {
+                        if (p == null) continue;
+
+                        Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
+                        File.Delete($"0:\\Sys\\proc\\{p}");
+                    }
+                }
+            }
+            if(File.Exists("0:\\Sys\\PT"))
+            {
+                File.Delete("0:\\Sys\\PT");
             }
 
             ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");

@@ -12,6 +12,7 @@ namespace Sputnik.Proxy
             DotEnv.Load(options: new(probeForEnv: true));
 
             IDictionary<string, string> settings = DotEnv.Read();
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             if (!EnvReader.TryGetStringValue("OPENROUTER_API_KEY", out string apiKey))
             {

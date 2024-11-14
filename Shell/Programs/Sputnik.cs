@@ -14,6 +14,11 @@ namespace Venera.Shell.Programs
 
         public override ExitCode Execute(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Sputnik: You must provide the IP address of the AI proxy.");
+            }
+
             IsReachable();
 
             TcpClient client = new TcpClient();
@@ -21,7 +26,7 @@ namespace Venera.Shell.Programs
             NetworkStream stream;
             try
             {
-                client.Connect("172.28.160.1", 9999);
+                client.Connect(args[0], 9999);
                 stream = client.GetStream();
             }
             catch (Exception e)

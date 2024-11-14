@@ -45,6 +45,14 @@ namespace Sputnik.Proxy
         public int TotalTokens { get; set; }
     }
 
+    public class ResponsePricing
+    {
+        public string prompt { get; set; }
+        public string completion { get; set; }
+        public string image { get; set; }
+        public string request { get; set; }
+    }
+
     public interface IChoice
     {
         string FinishReason { get; set; }

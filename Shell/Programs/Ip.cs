@@ -15,7 +15,6 @@ namespace Venera.Shell.Programs
         {
             Console.WriteLine($"IPv4 address:\t{NetworkConfiguration.CurrentAddress.ToString()}");
 
-            // THESE ERROR OUT? LIKE WTF?! DO NOT UNCOMMENT UNTIL FURTHER INVESTIGATION.
             if (NetworkConfiguration.CurrentNetworkConfig.IPConfig == null)
             {
                 Console.WriteLine($"Subnet mask:\tN/A");

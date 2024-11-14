@@ -10,12 +10,14 @@ namespace Sputnik.Proxy;
 public class TcpServer
 {
     private TcpListener _listener;
+    private OpenRouter _openRouter;
     private bool _isRunning;
     private readonly ConcurrentDictionary<TcpClient, Task> _clients = new ConcurrentDictionary<TcpClient, Task>();
 
     public TcpServer(string ipAddress, int port)
     {
         _listener = new TcpListener(IPAddress.Parse(ipAddress), port);
+        _openRouter = new OpenRouter("mistralai/mixtral-8x7b-instruct");
     }
 
     public void Start()
@@ -61,19 +63,30 @@ public class TcpServer
 
                 // Convert data received from the client
                 string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                Console.WriteLine($"Received: {message}");
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Req");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"] {message}");
 
-                await foreach (var str in OpenRouter.Prompt(message))
+                DateTime startTime = DateTime.Now;
+                await foreach (var str in _openRouter.Prompt(message))
                 {
-                    Console.Write(str);
-
                     byte[] response = Encoding.ASCII.GetBytes(str);
                     await stream.WriteAsync(response, 0, response.Length);
                 }
+                DateTime endTime = DateTime.Now;
+                TimeSpan duration = endTime - startTime;
+
+                var cost = _openRouter.CalculatePrice();
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("Res");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"] Completed request in {duration.ToString(@"fff")}ms | {_openRouter.LastUsage.TotalTokens} tokens processed => ~{cost.Item1 + cost.Item2} €");
 
                 // Send null-terminator to end stream
                 await stream.WriteAsync([((byte)'E'), ((byte)'O'), ((byte)'F')], 0, 3);
-                Console.WriteLine("Send EOF");
 
             }
         }

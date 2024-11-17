@@ -66,6 +66,8 @@ namespace Venera
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
+
+            VoPo.Interrupts.InterruptHandler.Initialize();
         }
 
         protected override void Run()

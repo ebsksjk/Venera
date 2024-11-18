@@ -1,4 +1,6 @@
-﻿using Cosmos.HAL;
+﻿using Cosmos.Core;
+using Cosmos.Core_Asm;
+using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using CosmosELF;
 using System;
@@ -68,11 +70,16 @@ namespace Venera
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
 
             VoPo.Interrupts.InterruptHandler.Initialize();
+            CPU.UpdateIDT(true);
+            CPU.EnableInterrupts();
+            Console.WriteLine(CPU.GetAmountOfRAM() + " MB");
+            //GetInterruptHandler((byte)0x80);
+            VoPo.Interrupts.InterruptHandler.getVenIntHandler(); 
         }
 
         protected override void Run()
         {
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
             //ApplicationRunner.runApplication("ctest", File.ReadAllBytes("1:\\test.so"), null);
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");

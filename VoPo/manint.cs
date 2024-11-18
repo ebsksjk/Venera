@@ -37,7 +37,7 @@ namespace Venera.VoPo.Interrupts
         {
             public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
             {
-                XS.LiteralCode($"int 0x50");
+                XS.LiteralCode($"int 0x80");
                 XS.LiteralCode($"db 0xF00D");
             }
         }

@@ -2,10 +2,9 @@
 using Cosmos.Core_Asm;
 using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
-using CosmosELF;
+using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
-using System.IO;
-using System.Text;
+using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
 using XSharp.x86.Params;
@@ -26,6 +25,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
+            Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
@@ -69,20 +69,22 @@ namespace Venera
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
 
-            VoPo.Interrupts.InterruptHandler.Initialize();
-            CPU.UpdateIDT(true);
-            CPU.EnableInterrupts();
-            Console.WriteLine(CPU.GetAmountOfRAM() + " MB");
+            //VoPo.Interrupts.InterruptHandler.Initialize();
+            //CPU.UpdateIDT(true);
+            //CPU.EnableInterrupts();
+            //Console.WriteLine(CPU.GetAmountOfRAM() + " MB");
             //GetInterruptHandler((byte)0x80);
-            VoPo.Interrupts.InterruptHandler.getVenIntHandler(); 
+            //VoPo.Interrupts.InterruptHandler.getVenIntHandler(); 
+            using (var xClient = new DHCPClient())
+            {
+                /** Send a DHCP Discover packet **/
+                //This will automatically set the IP config after DHCP response
+                xClient.SendDiscoverPacket();
+            }
         }
 
         protected override void Run()
         {
-            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
-            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
-            //ApplicationRunner.runApplication("ctest", File.ReadAllBytes("1:\\test.so"), null);
-            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");
 
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();

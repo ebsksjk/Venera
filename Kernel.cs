@@ -1,4 +1,6 @@
-﻿using Cosmos.HAL;
+﻿using Cosmos.Core;
+using Cosmos.Core_Asm;
+using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
@@ -67,6 +69,12 @@ namespace Venera
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
 
+            //VoPo.Interrupts.InterruptHandler.Initialize();
+            //CPU.UpdateIDT(true);
+            //CPU.EnableInterrupts();
+            //Console.WriteLine(CPU.GetAmountOfRAM() + " MB");
+            //GetInterruptHandler((byte)0x80);
+            //VoPo.Interrupts.InterruptHandler.getVenIntHandler(); 
             using (var xClient = new DHCPClient())
             {
                 /** Send a DHCP Discover packet **/
@@ -77,10 +85,6 @@ namespace Venera
 
         protected override void Run()
         {
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
-            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), null, "this_does_not_exist");
-            //ApplicationRunner.runApplication("ctest", File.ReadAllBytes("1:\\test.so"), null);
-            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test(1).so"), ["hallo"], "tty_puts");
 
             Sokolsh sokolsh = new Sokolsh();
             sokolsh.Loop();

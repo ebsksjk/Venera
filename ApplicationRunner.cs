@@ -129,7 +129,7 @@ namespace Venera {
 
             int pid = ProcessTable.registerProcess(aName, filename, "main");
 
-            Console.Write("Executing... pid: " + pid);
+            Console.WriteLine("Executing... pid: " + pid);
             ret = cApp.run();
 
             //Console.Write("ya!");
@@ -148,7 +148,7 @@ namespace Venera {
             int pid = ProcessTable.registerProcess(aName, filename, entryPoint);
             //Kernel.PrintDebug("registered process with pid: " + pid);
 
-            Console.Write("Executing... pid: " + pid);
+            Console.WriteLine("Executing... pid: " + pid);
             ret = cApp.runEntryPoint(entryPoint);
 
             //Console.Write("ya!");

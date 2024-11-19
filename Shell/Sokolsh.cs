@@ -30,6 +30,7 @@ namespace Venera.Shell
                 new Sputnik(),
                 new VoPo.ELFInfo(),
                 new VoPo.RunApp(),
+                new VoPo.faketop(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

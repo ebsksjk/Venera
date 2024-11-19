@@ -9,6 +9,7 @@ using System.Threading;
 using Venera.Shell;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
+using System.IO;
 
 namespace Venera
 {

@@ -8,6 +8,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
+using Venera.stasi;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
 
@@ -26,7 +27,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
-            Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
+            //Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
@@ -64,6 +65,19 @@ namespace Venera
             {
                 File.Delete("0:\\Sys\\PT");
             }
+            if(!Directory.Exists("0:\\Venera"))
+            {
+                Directory.CreateDirectory("0:\\Venera");
+            }
+            if(!Directory.Exists("0:\\Users"))
+            {
+                Directory.CreateDirectory("0:\\Users");
+            }
+
+            if(!File.Exists("0:\\Venera\\users.db"))
+            {
+                File.Create("0:\\Venera\\users.db");
+            }
 
             ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
@@ -87,8 +101,7 @@ namespace Venera
         protected override void Run()
         {
 
-            Sokolsh sokolsh = new Sokolsh();
-            sokolsh.Loop();
+            Login.loop();
 
             Console.Clear();
             Console.SetCursorPosition(0, 0);

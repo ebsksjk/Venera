@@ -41,8 +41,9 @@ namespace Venera.Shell
         {
         }
 
-        public void Loop()
+        public void Loop(string homeDir)
         {
+            Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, homeDir);
             while (true)
             {
                 PrintPrefix();

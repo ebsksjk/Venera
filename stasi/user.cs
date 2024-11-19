@@ -15,6 +15,7 @@ namespace Venera.stasi
 
         public static UserObj createUser(string username, string name, string password)
         {
+
             UserObj user = new UserObj(UID, username, name, password, $"0:\\Users\\{username}", DateTime.Now);
 
             if (!File.Exists(db))
@@ -22,7 +23,7 @@ namespace Venera.stasi
                 File.Create(db);
             }
             File.AppendAllText(db, $"{user.cUID};{user.Username};{user.Name};{user.Password};{user.Home}\n");
-            if(!Directory.Exists(user.Home))
+            if (!Directory.Exists(user.Home))
             {
                 Directory.CreateDirectory(user.Home);
             }
@@ -30,7 +31,8 @@ namespace Venera.stasi
             return user;
         }
 
-        public static UserObj getUser(uint uid) {
+        public static UserObj getUser(string username)
+        {
             string Username; //` der Nutzername des Benutzers.
             string Name; //` der Klarname des Benutzers.
             string Password; //` das Passwort des Benutzers.
@@ -40,13 +42,13 @@ namespace Venera.stasi
             foreach (string line in lines)
             {
                 string[] parts = line.Split(';');
-                if (parts[0] == uid.ToString())
+                if (parts[1] == username)
                 {
                     Username = parts[1];
                     Name = parts[2];
                     Password = parts[3];
                     Home = parts[4];
-                    return new UserObj(uid, Username, Name, Password, Home, DateTime.Now);
+                    return new UserObj(uint.Parse(parts[0]), Username, Name, Password, Home, DateTime.Now);
                 }
             }
 
@@ -55,6 +57,15 @@ namespace Venera.stasi
 
         public static bool Exists(string username)
         {
+            if (!File.Exists(db))
+            {
+                return false;
+            }
+            if (new FileInfo(db).Length == 0)
+            {
+                return false;
+            }
+
             string[] lines = File.ReadAllLines(db);
             foreach (string line in lines)
             {
@@ -68,9 +79,22 @@ namespace Venera.stasi
             return false;
         }
 
-
-
-
+        public static void deleteUser(string username)
+        {
+            string[] lines = File.ReadAllLines(db);
+            string[] newLines = new string[lines.Length - 1];
+            int i = 0;
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(';');
+                if (parts[1] != username)
+                {
+                    newLines[i] = line;
+                    i++;
+                }
+            }
+            File.WriteAllLines(db, newLines);
+        }
     }
 
     public class UserObj

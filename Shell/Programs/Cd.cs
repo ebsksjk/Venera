@@ -24,9 +24,10 @@ namespace Venera.Shell.Programs
 
             if (StringExtensions.IsDriveId(args[0]))
             {
-                if (Kernel.FileSystem.IsValidDriveId(args[0]))
+                if (!Kernel.FileSystem.IsValidDriveId(args[0]))
                 {
-                    Console.WriteLine($"Sokolsh: cd: {args[0]} is a valid drive Id!!!");
+                    Console.WriteLine($"Sokolsh: cd: {args[0]} is not a valid drive id");
+                    return ExitCode.Error;
                 }
 
                 Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{args[0]}");
@@ -47,6 +48,11 @@ namespace Venera.Shell.Programs
                     return ExitCode.Error;
                 }
 
+                if(dir.mFullPath.isAccessible() == false)
+                {
+                    Console.WriteLine($"Sokolsh: cd: {args} is not accessible");
+                    return ExitCode.Error;
+                }
                 Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{dir.mFullPath.ToString().EnsureBackslash()}");
             }
             catch (Exception)

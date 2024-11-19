@@ -34,6 +34,10 @@ namespace Venera.Shell
                 new VoPo.Interrupts.manint(),
                 new Kosmovim.kosmovim(),
                 new stasi.useradd(),
+                new stasi.userdel(),
+                new stasi.usermod(),
+                new stasi.userinfo(),
+                new Rm(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

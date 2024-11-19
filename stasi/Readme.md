@@ -31,21 +31,21 @@ Der Befehl fragt interaktiv nach einem Passwort für den neuen Benutzer.
 ## stasi.userdel
 Mit dem Befehl `userdel` können Benutzer gelöscht werden. Der Befehl hat folgende Syntax:
 ```
-userdel <uid>
+userdel <username>
 ```
 
 ## stasi.usermod
 Mit dem Befehl `usermod` können Benutzer bearbeitet werden. Der Befehl hat folgende Syntax:
 ```
-usermod <uid> [-u <username> -n <name> -p <password> -h <home>]
+usermod <username>
 ```
 
 Jedes der Argumente ist hierbei optional.
 
 ## stasi.uid
-Mit dem Befehl `uid` können Informationen über einen Benutzer abgerufen werden. Der Befehl hat folgende Syntax:
+Mit dem Befehl `userinfo` können Informationen über einen Benutzer abgerufen werden. Der Befehl hat folgende Syntax:
 ```
-uid [<username>]
+userinfo [<username>]
 ```
 
 Wird kein Argument übergeben, so wird der aktuelle Benutzer angezeigt.

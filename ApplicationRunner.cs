@@ -168,11 +168,11 @@ namespace Venera {
             //Kernel.PrintDebug("received request to register a process " + name);
             _processTable.Add(new Process(++cPID, name, path));
 
-            StreamWriter file = File.AppendText("0:\\Sys\\PT");
+            StreamWriter file = File.AppendText("0:\\Venera\\Sys\\PT");
             file.WriteLine(cPID + " " + name + " " + entrypoint + " " + path + " " + _processTable[^1].start);
             file.Close();
 
-            FileStream procFile = File.OpenWrite("0:\\Sys\\proc\\" + cPID);
+            FileStream procFile = File.OpenWrite("0:\\Venera\\Sys\\proc\\" + cPID);
             procFile.Write(Encoding.ASCII.GetBytes(cPID + " " + name + " " + entrypoint + " " + path + " " + _processTable[^1].start));
             procFile.Close();
 
@@ -182,7 +182,7 @@ namespace Venera {
 
         public static void unregisterProcess(int PID) {
             _processTable.RemoveAll(x => x.pid  == PID);
-            File.Delete("0:\\Sys\\proc\\" + PID);
+            File.Delete("0:\\Venera\\Sys\\proc\\" + PID);
         }
 
 

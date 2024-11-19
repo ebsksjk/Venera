@@ -17,15 +17,55 @@ namespace Venera.stasi
 
         private static bool login(string username, string password)
         {
+            Kernel.PrintDebug($"checking for {username}+{password}");
+            if (!File.Exists(User.db))
+            {
+                Console.WriteLine("ERROR: users file is non existent. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                return false;
+            }
             string[] lines = File.ReadAllLines(User.db);
+            //Kernel.PrintDebug(File.ReadAllText(User.db));
+            if (lines == null || lines.Length == 0 || lines[0].Length <=1)
+            {
+                Console.WriteLine("ERROR: users file is empty. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                return false;
+            }
             foreach (string line in lines)
             {
+                if (line == null)
+                {
+                    Console.WriteLine("ERROR: users file is empty. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                    return false;
+                }
+
+
                 string[] parts = line.Split(';');
+
+                if (line == null || parts.Length == 0)
+                {
+                    Console.WriteLine("ERROR: users file is empty. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                    return false;
+                }
+
+                //Kernel.PrintDebug($"lline: {line} with len: {line.Length}");
+
+                if (parts[0] == null || parts[1] == null || parts[2] == null || parts[3] == null || parts[4] == null)
+                {
+                    Console.WriteLine("ERROR: users file is corrupted and/or unreadable. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                    return false;
+                }
+
                 if (parts[1] == username && parts[3] == password)
                 {
                     curUID = uint.Parse(parts[0]);
-                    curUser = User.getUser(curUID);
-                    curHome = curUser.Home;
+                    curUser = User.getUser(username);
+                    if(curUser == null)
+                    {
+                        Console.WriteLine("ERROR: users file is corrupted and/or unreadable. This is not expected behaviour and you should not see this error. This is unrecoverable.");
+                        return false;
+                    }
+                    curHome = parts[4];
+                    Kernel.PrintDebug($"logged in as {curUser.Username} with home {curHome}");
                     return true;
                 }
             }
@@ -35,6 +75,11 @@ namespace Venera.stasi
 
         public static void loop()
         {
+            if (!User.Exists("root"))
+            {
+                User.createUser("root", "Rooti McRootikus", "root");
+            }
+
             while (true)
             {
                 Console.Clear();
@@ -49,24 +94,32 @@ namespace Venera.stasi
                 Console.WriteLine("   ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
                 Console.WriteLine();
 
-                if (!User.Exists("root"))
-                {
-                    File.AppendAllText(User.db, "0;root;rooti McRootikus;root;0:\\Users\\root");
-                }
-
-                if (!Directory.Exists("0:\\Users\\root"))
-                {
-                    Directory.CreateDirectory("0:\\Users\\root");
-                }
-
-                Console.SetCursorPosition(Console.WindowWidth / 2 - (17 / 2), 10);
-                Console.WriteLine("Welcome to Venera");
-                Console.WriteLine(" ╔══════════════════════════════════════════════╗ ");
-                Console.Write(" ║  Username: ");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (37 / 2), 10);
+                Console.WriteLine("Welcome on Venera (type quit to exit)");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 11);
+                Console.WriteLine("╔══════════════════════════════════════════════╗");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 12);
+                Console.Write("║  Username: ");
                 string username = Console.ReadLine();
-                Console.Write(" ║  Password: ");
+                if (username == "quit")
+                {
+                    break;
+                }
+                if(username == "PANIC")
+                {
+                    Console.WriteLine("Dropping in an emergency shell... Come back when you fixed this mess...");
+                    curUser = null;
+                    Sokolsh sokolsh = new Sokolsh();
+                    sokolsh.Loop("0:\\");
+                    continue;
+                }
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
+                Console.Write("║  Password: ");
                 string password = Console.ReadLine();
-                Console.WriteLine(" ╚══════════════════════════════════════════════╝ ");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
+                Console.WriteLine("╚══════════════════════════════════════════════╝");
+
+                
 
                 if (login(username, password))
                 {
@@ -78,10 +131,12 @@ namespace Venera.stasi
                 }
                 else
                 {
-                    Console.WriteLine("Login failed");
+                    Console.WriteLine("Login failed. Try again!!!!");
                     Thread.Sleep(500);
                 }
             }
+
+            Console.WriteLine("shutting down uwu!");
         }
     }
 }

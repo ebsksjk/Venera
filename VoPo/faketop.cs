@@ -15,7 +15,7 @@ namespace Venera.VoPo
 
         public override ExitCode Execute(string[] args)
         {
-            string processes = File.ReadAllText("0:\\Sys\\PT");
+            string processes = File.ReadAllText("0:\\Venera\\Sys\\PT");
             List<string> processList = processes.Split("\n").ToList();
 
             if (processList.Count == 0)

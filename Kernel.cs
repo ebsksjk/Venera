@@ -42,30 +42,30 @@ namespace Venera
 
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
-            if (!Directory.Exists("0:\\Sys"))
+            if (!Directory.Exists("0:\\Venera\\Sys"))
             {
-                Directory.CreateDirectory("0:\\Sys");
+                Directory.CreateDirectory("0:\\Venera\\Sys");
             }
-            if (!Directory.Exists("0:\\Sys\\proc"))
+            if (!Directory.Exists("0:\\Venera\\Sys\\proc"))
             {
-                Directory.CreateDirectory("0:\\Sys\\proc");
-            } else if (Directory.GetFiles("0:\\Sys\\proc").Length != 0 )
+                Directory.CreateDirectory("0:\\Venera\\Sys\\proc");
+            } else if (Directory.GetFiles("0:\\Venera\\Sys\\proc").Length != 0 )
             {
-                string[] pList = Directory.GetFiles("0:\\Sys\\proc");
+                string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
                 if (!(pList.Length == 0 || pList == null))
                 {
                     foreach (string p in pList)
                     {
                         if (p == null) continue;
 
-                        Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
-                        File.Delete($"0:\\Sys\\proc\\{p}");
+                        Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
+                        File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
                     }
                 }
             }
-            if(File.Exists("0:\\Sys\\PT"))
+            if(File.Exists("0:\\Venera\\Sys\\PT"))
             {
-                File.Delete("0:\\Sys\\PT");
+                File.Delete("0:\\Venera\\Sys\\PT");
             }
             if(!Directory.Exists("0:\\Venera"))
             {
@@ -76,10 +76,6 @@ namespace Venera
                 Directory.CreateDirectory("0:\\Users");
             }
 
-            if(!File.Exists("0:\\Venera\\users.db"))
-            {
-                File.Create("0:\\Venera\\users.db");
-            }
 
             ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
@@ -112,16 +108,16 @@ namespace Venera
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("System is powering off ...");
             Console.WriteLine("Closing Processes....");
-            File.Delete("0:\\Sys\\PT");
-            string[] pList = Directory.GetFiles("0:\\Sys\\proc");
+            File.Delete("0:\\Venera\\Sys\\PT");
+            string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
             if(!(pList.Length == 0 || pList == null))
             {
                 foreach (string p in pList)
                 {
                     if (p == null) continue;
 
-                    Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
-                    File.Delete($"0:\\Sys\\proc\\{p}");
+                    Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
+                    File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
                 }
             } else
             {

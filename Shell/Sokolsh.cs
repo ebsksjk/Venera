@@ -32,6 +32,7 @@ namespace Venera.Shell
                 new VoPo.RunApp(),
                 new VoPo.faketop(),
                 new VoPo.Interrupts.manint(),
+                new Kosmovim.kosmovim(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

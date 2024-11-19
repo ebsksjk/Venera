@@ -4,6 +4,7 @@ using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;

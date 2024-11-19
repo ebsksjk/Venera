@@ -11,6 +11,7 @@ using Venera.Shell;
 using Venera.stasi;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
+using System.IO;
 
 namespace Venera
 {

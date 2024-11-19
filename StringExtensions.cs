@@ -44,7 +44,7 @@ namespace Venera
         {
             string path;
             string drive = str.Split(":").First();
-            if (drive != null)
+            if (drive != str)
             {
                 //if it is an absolute path
                 path = $"{drive}:{str.Split(":").Last()}";
@@ -55,7 +55,7 @@ namespace Venera
                 //convert it into the corresponding absolute path
                 path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{str}";
             }
-            return path;
+            return path.EnsureBackslash();
         }
 
             public static bool IsDriveId(this string str)

@@ -19,5 +19,10 @@ namespace Venera.Shell
         public abstract string Description { get; }
 
         public abstract ExitCode Execute(string[] args);
+
+        protected string GetApplicationStorage()
+        {
+            return "";
+        }
     }
 }

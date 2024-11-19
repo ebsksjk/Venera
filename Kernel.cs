@@ -22,6 +22,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
+            Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\test.so"), null, "tty_clear");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");

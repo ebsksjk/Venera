@@ -21,19 +21,7 @@ namespace Venera.Shell.Programs
                 return ExitCode.Error;
             }
 
-            string path;
-
-            if (args[0].StartsWith(@"\"))
-            {
-                //if it is an absolute path
-                path = $"0:{args[0]}";
-            }
-            else
-            {
-                //if it is a relative path
-                //convert it into the corresponding absolute path
-                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[0]}";
-            }
+            string path = args[0].AbsoluteOrRelativePath();
 
             try
             {

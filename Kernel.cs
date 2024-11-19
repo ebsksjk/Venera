@@ -12,6 +12,7 @@ using Venera.stasi;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
 using System.IO;
+using System.Text;
 
 namespace Venera
 {
@@ -97,6 +98,9 @@ namespace Venera
                 //This will automatically set the IP config after DHCP response
                 xClient.SendDiscoverPacket();
             }
+            Encoding.RegisterProvider(Cosmos.System.ExtendedASCII.CosmosEncodingProvider.Instance);
+            Console.OutputEncoding = Encoding.GetEncoding(437);
+            Console.InputEncoding = Encoding.GetEncoding(437);
         }
 
         protected override void Run()

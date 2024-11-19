@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Venera.Shell;
+using System.Threading;
 
 namespace Venera.stasi
 {
@@ -34,31 +35,52 @@ namespace Venera.stasi
 
         public static void loop()
         {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
-            File.WriteAllText(User.db, "0;root;rooti mc rootikus;root;0:\\Users\\root");
-            if(!Directory.Exists("0:\\Users\\root"))
+            while (true)
             {
-                Directory.CreateDirectory("0:\\Users\\root");
-            }
-            Console.WriteLine("Welcome to Venera");
-            Console.WriteLine("Please login");
-            Console.Write("Username: ");
-            string username = Console.ReadLine();
-            Console.Write("Password: ");
-            string password = Console.ReadLine();
+                Console.Clear();
+                Console.SetCursorPosition(0, 0);
+                Console.WriteLine();
+                Console.WriteLine("░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░ ");
+                Console.WriteLine("░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                Console.WriteLine(" ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                Console.WriteLine(" ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░");
+                Console.WriteLine("  ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                Console.WriteLine("  ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                Console.WriteLine("   ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                Console.WriteLine();
 
-            if (login(username, password))
-            {
-                Console.WriteLine("Login successful");
-                Sokolsh sokolsh = new Sokolsh();
-                Kernel.PrintDebug(curHome);
-                sokolsh.Loop(curHome);
-                Console.WriteLine("exited loop!!!");
-            }
-            else
-            {
-                Console.WriteLine("Login failed");
+                if (!User.Exists("root"))
+                {
+                    File.AppendAllText(User.db, "0;root;rooti McRootikus;root;0:\\Users\\root");
+                }
+
+                if (!Directory.Exists("0:\\Users\\root"))
+                {
+                    Directory.CreateDirectory("0:\\Users\\root");
+                }
+
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (17 / 2), 10);
+                Console.WriteLine("Welcome to Venera");
+                Console.WriteLine(" ╔══════════════════════════════════════════════╗ ");
+                Console.Write(" ║  Username: ");
+                string username = Console.ReadLine();
+                Console.Write(" ║  Password: ");
+                string password = Console.ReadLine();
+                Console.WriteLine(" ╚══════════════════════════════════════════════╝ ");
+
+                if (login(username, password))
+                {
+                    Console.WriteLine("Login successful");
+                    Sokolsh sokolsh = new Sokolsh();
+                    Kernel.PrintDebug(curHome);
+                    sokolsh.Loop(curHome);
+                    Console.WriteLine("exited loop!!!");
+                }
+                else
+                {
+                    Console.WriteLine("Login failed");
+                    Thread.Sleep(500);
+                }
             }
         }
     }

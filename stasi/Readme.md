@@ -59,7 +59,7 @@ Die Klasse `User` repräsentiert einen Benutzer. Sie hat folgende Eigenschaften:
 - `Password` das Passwort des Benutzers.
 - `Home` der Pfad zum Home-Verzeichnis des Benutzers.
 - `LastLogin` das Datum des letzten Logins des Benutzers.
-- `	db` der Pfad zur users.db.
+- `db` der Pfad zur users.db.
 
 Die Klasse hat folgende Methoden:
 - `User(string username, string name, string password)` erstellt einen neuen Benutzer und speichert seine Informationen in der users.db.
@@ -72,7 +72,7 @@ Die Klasse `Login` repräsentiert die Anmeldung. Sie hat folgende Eigenschaften:
 
 Die Klasse hat folgende Methoden:
 - `Login(string username, string password)` meldet einen Benutzer an.
-- `Logout()` meldet den Benutzer ab.
+- `loop()` führt die Anmeldungsschleife aus.
 
 Login läuft in einer Ebene überhalb von Sokolsh, so dass einem Nutzer beim Start des Systems ein
 Anmeldefenster angezeigt wird.

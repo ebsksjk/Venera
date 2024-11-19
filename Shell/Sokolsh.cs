@@ -33,6 +33,7 @@ namespace Venera.Shell
                 new VoPo.faketop(),
                 new VoPo.Interrupts.manint(),
                 new Kosmovim.kosmovim(),
+                new stasi.useradd(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

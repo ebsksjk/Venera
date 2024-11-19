@@ -10,7 +10,7 @@ namespace Venera.stasi
 {
     static class User
     {
-        public static uint UID = 0; //iterator über die ID aller benutzer
+        public static uint UID = 1; //iterator über die ID aller benutzer
         public const string db = "0:\\Venera\\users.db"; //` der Pfad zur users.db.
 
         public static UserObj createUser(string username, string name, string password)
@@ -53,8 +53,23 @@ namespace Venera.stasi
             throw new Exception("User not found!!");
         }
 
+        public static bool Exists(string username)
+        {
+            string[] lines = File.ReadAllLines(db);
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(';');
+                if (parts[1] == username)
+                {
+                    return true;
+                }
+            }
 
-        
+            return false;
+        }
+
+
+
 
     }
 

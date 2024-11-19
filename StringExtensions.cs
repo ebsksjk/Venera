@@ -55,7 +55,7 @@ namespace Venera
                 //convert it into the corresponding absolute path
                 path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{str}";
             }
-            return path.EnsureBackslash();
+            return path;
         }
 
             public static bool IsDriveId(this string str)

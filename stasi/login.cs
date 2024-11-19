@@ -75,11 +75,6 @@ namespace Venera.stasi
 
         public static void loop()
         {
-            if (!User.Exists("root"))
-            {
-                User.createUser("root", "Rooti McRootikus", "root");
-            }
-
             while (true)
             {
                 Console.Clear();
@@ -119,7 +114,10 @@ namespace Venera.stasi
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
                 Console.WriteLine("╚══════════════════════════════════════════════╝");
 
-                
+                if (!User.Exists("root"))
+                {
+                    User.createUser("root", "Rooti McRootikus", "root");
+                }
 
                 if (login(username, password))
                 {

@@ -1,9 +1,8 @@
 ﻿using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
-using CosmosELF;
+using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
-using System.IO;
-using System.Text;
+using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
 using XSharp.x86.Params;
@@ -24,6 +23,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
+            Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
@@ -66,6 +66,13 @@ namespace Venera
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
+
+            using (var xClient = new DHCPClient())
+            {
+                /** Send a DHCP Discover packet **/
+                //This will automatically set the IP config after DHCP response
+                xClient.SendDiscoverPacket();
+            }
         }
 
         protected override void Run()

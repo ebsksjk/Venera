@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Venera.Shell.Programs;
 
@@ -38,6 +39,55 @@ namespace Venera.Shell
 
         public Sokolsh()
         {
+        }
+
+        /// <summary>
+        /// Helper function to take any command line and parses it into a string array.
+        /// </summary>
+        /// <param name="cmdLine">Raw string entered by user.</param>
+        /// <returns></returns>
+        public static string[] SplitArgs(string cmdLine)
+        {
+            List<string> args = new();
+
+            bool insideQuotes = false;
+            string currentArgs = string.Empty;
+
+            for (int i = 0; i < cmdLine.Length; i++)
+            {
+                char c = cmdLine[i];
+
+                if (c == ' ' && !insideQuotes)
+                {
+                    args.Add(currentArgs);
+                    currentArgs = string.Empty;
+                    continue;
+                }
+
+                if (c == '"')
+                {
+                    if (insideQuotes)
+                    {
+                        // We hit the second quote, ending our streak!
+                        insideQuotes = false;
+                        args.Add(currentArgs);
+                        currentArgs = string.Empty;
+                        continue;
+                    }
+                    else
+                    {
+                        // We encountered a wild quote symbol. We'll ignore all spaces until we
+                        // hit another wild quote.
+                        insideQuotes = true;
+                        currentArgs = string.Empty;
+                        continue;
+                    }
+                }
+
+                currentArgs += c;
+            }
+
+            return args.ToArray();
         }
 
         public void Loop()
@@ -89,7 +139,13 @@ namespace Venera.Shell
                 return ExecutionReturn.Exit;
             }
 
-            string[] parts = input.Split(' ');
+            if (input.StartsWith("/"))
+            {
+                string smartInput = input.Substring(1);
+                SmartCommand(smartInput);
+            }
+
+            string[] parts = SplitArgs(input);
             if (parts.Length == 0) return ExecutionReturn.Empty;
 
             var commandName = parts[0];
@@ -99,7 +155,7 @@ namespace Venera.Shell
 
             if (FindBuiltIn(commandName, out BuiltIn command))
             {
-                ExitCode status = command.Execute(args);
+                ExitCode status = command.Invoke(args);
 
                 return status == ExitCode.Success
                     ? ExecutionReturn.Success
@@ -107,6 +163,33 @@ namespace Venera.Shell
             }
 
             return ExecutionReturn.NotFound;
+        }
+
+        /// <summary>
+        /// This one is connected with Sputnik to generate a command based on the user's description.
+        /// </summary>
+        private void SmartCommand(string prompt)
+        {
+            Sputnik sputnik = new();
+
+            string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
+            string listing = string.Empty;
+
+            List<Cosmos.System.FileSystem.Listing.DirectoryEntry> list = Kernel.FileSystem.GetDirectoryListing(cwd);
+
+            foreach (var item in list)
+            {
+                listing += item.mSize + ";";
+            }
+
+            string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. Never break this rule. " +
+                "Omit the slash (/) at the beginning. Everything after the colon (:) is meant as a description to give you context about the command. Never output the description to the user. " +
+                "System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
+                "Available commands:\n/about\n/cat <file>\n/cd <folder>\n/disk\n/echo <string>\n/help\n/ip\n/ls\n/mkdir <folder name>\n/ping <ip or hostname>\n/pwd\n/reboot <'now' OR time in seconds>\n/shutdown <'now' OR time in seconds>\n/sputnik\n/type\nThe current working directory is: " + cwd + "\nThese are the contents of the current working directory seperated by semicolons:\n" + listing + "\nThis is the request by the user: " + prompt;
+
+            string cmd = sputnik.RawPrompt(systemPrompt);
+
+            Console.WriteLine($"Suggested: {cmd}");
         }
 
         private void PrintPrefix()

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using static Venera.Shell.Programs.Sputnik;
 
 namespace Venera.Shell.Programs
 {
@@ -11,14 +12,21 @@ namespace Venera.Shell.Programs
         /// This key is required to authenticate against the proxy. Not doing so would result in my credit card being
         /// billed to personal insolvency.
         /// </summary>
-        private static readonly byte[] PROXY_KEY = Encoding.ASCII.GetBytes("T6pSSaSjXU6uXJqMtrYSmyptAALqGmtk");
+        private static readonly byte[] ProxyKey = Encoding.ASCII.GetBytes("T6pSSaSjXU6uXJqMtrYSmyptAALqGmtk");
+
+        private static readonly int PacketSize = 8096;
 
         public enum TalkingStyle
         {
             Kind = 1,
             Mixed = 2,
             Rude = 3,
+            Raw = 4
         }
+
+        private TcpClient client = new();
+        private NetworkStream stream;
+        private bool Connected = false;
 
         public override string Name => "sputnik";
 
@@ -92,7 +100,7 @@ namespace Venera.Shell.Programs
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("   This is the classic experience.");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("2) Mixed, your rude and helpfull assistant.");
+            Console.WriteLine("2) Mixed, your rude and helpful assistant.");
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("   Not the average assistant you might be used to, but helpful nonetheless.");
             Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -118,18 +126,9 @@ namespace Venera.Shell.Programs
                 }
             }
 
-            TcpClient client = new();
-
-            NetworkStream stream;
             try
             {
-                client.Connect(args[0], 9999);
-                stream = client.GetStream();
-
-                stream.Write(PROXY_KEY, 0, PROXY_KEY.Length);
-                int result = stream.ReadByte();
-
-                Console.WriteLine($"Auth response: {result}");
+                Connected = Connect(args[0]);
             }
             catch (Exception e)
             {
@@ -160,10 +159,10 @@ namespace Venera.Shell.Programs
                 Console.ForegroundColor = ConsoleColor.White;
                 while (true)
                 {
-                    byte[] receivedData = new byte[client.ReceiveBufferSize];
+                    byte[] receivedData = new byte[PacketSize];
                     int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
 
-                    for (int i = 0; i < client.ReceiveBufferSize - 2; i++)
+                    for (int i = 0; i < PacketSize - 2; i++)
                     {
                         byte b1 = receivedData[i];
                         byte b2 = receivedData[i + 1];
@@ -181,7 +180,6 @@ namespace Venera.Shell.Programs
                     string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
 
                     Console.Write(receivedMessage);
-
                 }
 
                 Console.WriteLine();
@@ -190,6 +188,67 @@ namespace Venera.Shell.Programs
             stream.Close();
 
             return ExitCode.Success;
+        }
+
+        public string RawPrompt(string prompt)
+        {
+            Connected = Connect("192.168.164.1");
+
+            byte[] dataToSend = Encoding.ASCII.GetBytes(prompt);
+            byte[] metadata = { (byte)TalkingStyle.Raw };
+
+            stream.Write(metadata.Concat(dataToSend).ToArray(), 0, metadata.Length + dataToSend.Length);
+
+            string result = string.Empty;
+
+            bool eof = false;
+
+            Console.ForegroundColor = ConsoleColor.White;
+            while (true)
+            {
+                byte[] receivedData = new byte[PacketSize];
+                int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
+
+                for (int i = 0; i < PacketSize - 2; i++)
+                {
+                    byte b1 = receivedData[i];
+                    byte b2 = receivedData[i + 1];
+                    byte b3 = receivedData[i + 2];
+                    if (b1 == 'E' && b2 == 'O' && b3 == 'F')
+                    {
+                        eof = true;
+                        break;
+                    }
+                }
+
+                if (eof)
+                    break;
+
+                string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
+
+                result += receivedMessage;
+            }
+
+            return result;
+        }
+
+        private bool Connect(string host)
+        {
+            if (Connected)
+                return true;
+
+            client.Connect(host, 9999);
+            stream = client.GetStream();
+
+            stream.Write(ProxyKey, 0, ProxyKey.Length);
+            int result = stream.ReadByte();
+
+            if (result == 1)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsReachable()

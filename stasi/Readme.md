@@ -42,7 +42,7 @@ usermod <username>
 
 Jedes der Argumente ist hierbei optional.
 
-## stasi.uid
+## stasi.userinfo
 Mit dem Befehl `userinfo` können Informationen über einen Benutzer abgerufen werden. Der Befehl hat folgende Syntax:
 ```
 userinfo [<username>]

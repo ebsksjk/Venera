@@ -33,6 +33,7 @@ namespace Venera.Shell
                 new VoPo.faketop(),
                 new VoPo.Interrupts.manint(),
                 new Kosmovim.kosmovim(),
+                new Kosmovim.genjunk(),
                 new stasi.useradd(),
                 new stasi.userdel(),
                 new stasi.usermod(),

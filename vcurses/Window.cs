@@ -30,6 +30,7 @@ namespace Venera.vcurses
             curX = 0;
             curY = 0;
             content = new char[xSize * ySize];
+            Array.Fill(content, background);
             isTouched = true;
         }
 
@@ -97,19 +98,19 @@ namespace Venera.vcurses
 
         public void box()
         {
-            mvaddchar(0, 0, '╔');
-            mvaddchar(xSize-1, 0, '╗');
-            mvaddchar(0, ySize-1, '╚');
-            mvaddchar(xSize-1, ySize - 1, '╝');
-            for (int i = 1; i < xSize-2; i++)
+            content[0] = '╔';
+            content[xSize - 1] = '╗';
+            content[(ySize-1) * xSize] = '╚';
+            content[(ySize-1) * xSize + xSize - 1] = '╝';
+            for (int i = 1; i < xSize - 1; i++)
             {
-                mvaddchar(i, 0, '═');
-                mvaddchar(i, ySize - 1, '═');
+                content[i] = '═';
+                content[(ySize-1) * xSize + i] = '═';
             }
-            for (int i = 1; i < ySize-2; i++)
+            for (int i = 1; i < ySize-1; i++)
             {
-                mvaddchar(0, i, '║');
-                mvaddchar(xSize - 1, i, '║');
+                content[i * xSize] = '║';
+                content[i * xSize + xSize - 1] = '║';
             }
         }
 
@@ -117,8 +118,10 @@ namespace Venera.vcurses
         {
             if(parent == null)
             {
-                Console.SetCursorPosition(xPos, yPos);
-                Console.Write(new string(content));
+                Console.SetCursorPosition(0, 0);
+                string s = new string(content);
+                s.Remove(s.Length - 2);
+                Console.Write(s);
                 return;
             }
             if(children.Length > 0)

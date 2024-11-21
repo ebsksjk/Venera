@@ -8,7 +8,9 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Print working directory";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
             Console.WriteLine(cwd);

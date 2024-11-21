@@ -4,12 +4,12 @@ using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
-using System.IO;
 
 namespace Venera
 {
@@ -19,6 +19,7 @@ namespace Venera
         public static string OS_VERSION = "0.1";
 
         private static Environment<string> _environment;
+        public static Sokolsh SokolshInstance;
 
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
@@ -46,7 +47,8 @@ namespace Venera
             if (!Directory.Exists("0:\\Sys\\proc"))
             {
                 Directory.CreateDirectory("0:\\Sys\\proc");
-            } else if (Directory.GetFiles("0:\\Sys\\proc").Length != 0 )
+            }
+            else if (Directory.GetFiles("0:\\Sys\\proc").Length != 0)
             {
                 string[] pList = Directory.GetFiles("0:\\Sys\\proc");
                 if (!(pList.Length == 0 || pList == null))
@@ -60,7 +62,7 @@ namespace Venera
                     }
                 }
             }
-            if(File.Exists("0:\\Sys\\PT"))
+            if (File.Exists("0:\\Sys\\PT"))
             {
                 File.Delete("0:\\Sys\\PT");
             }
@@ -87,8 +89,8 @@ namespace Venera
         protected override void Run()
         {
 
-            Sokolsh sokolsh = new Sokolsh();
-            sokolsh.Loop();
+            SokolshInstance = new Sokolsh();
+            SokolshInstance.Loop();
 
             Console.Clear();
             Console.SetCursorPosition(0, 0);
@@ -96,7 +98,7 @@ namespace Venera
             Console.WriteLine("Closing Processes....");
             File.Delete("0:\\Sys\\PT");
             string[] pList = Directory.GetFiles("0:\\Sys\\proc");
-            if(!(pList.Length == 0 || pList == null))
+            if (!(pList.Length == 0 || pList == null))
             {
                 foreach (string p in pList)
                 {
@@ -105,11 +107,12 @@ namespace Venera
                     Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
                     File.Delete($"0:\\Sys\\proc\\{p}");
                 }
-            } else
+            }
+            else
             {
                 Console.WriteLine("No processes were running");
             }
-            
+
 
             Thread.Sleep(500);
             Sys.Power.Shutdown();

@@ -17,7 +17,6 @@ namespace Venera.Shell
                 new About(),
                 new Help(),
                 new Clear(),
-                new Programs.Type(),
                 new Echo(),
                 new Disk(),
                 new Ls(),
@@ -29,9 +28,11 @@ namespace Venera.Shell
                 new Ip(),
                 new Ping(),
                 new Sputnik(),
+                new Man(),
+                new ArgTest(),
                 new VoPo.ELFInfo(),
-                new VoPo.RunApp(),
-                new VoPo.faketop(),
+                //new VoPo.RunApp(),
+                new VoPo.Faketop(),
                 new VoPo.Interrupts.manint(),
             };
 
@@ -45,9 +46,9 @@ namespace Venera.Shell
         /// Helper function to take any command line and parses it into a string array.
         /// </summary>
         /// <param name="cmdLine">Raw string entered by user.</param>
-        /// <returns></returns>
         public static string[] SplitArgs(string cmdLine)
         {
+            Kernel.PrintDebug($"Split args from: {cmdLine}");
             List<string> args = new();
 
             bool insideQuotes = false;
@@ -56,6 +57,15 @@ namespace Venera.Shell
             for (int i = 0; i < cmdLine.Length; i++)
             {
                 char c = cmdLine[i];
+                Kernel.PrintDebug($"Loop {i}/{cmdLine.Length} = '{c}'");
+
+                // If we hit the last char, we add it to the list and break instantly.
+                if (i == cmdLine.Length - 1)
+                {
+                    currentArgs += c;
+                    args.Add(currentArgs);
+                    break;
+                }
 
                 if (c == ' ' && !insideQuotes)
                 {
@@ -76,8 +86,7 @@ namespace Venera.Shell
                     }
                     else
                     {
-                        // We encountered a wild quote symbol. We'll ignore all spaces until we
-                        // hit another wild quote.
+                        // We encountered a wild quote symbol. We'll ignore all spaces until we hit another.
                         insideQuotes = true;
                         currentArgs = string.Empty;
                         continue;
@@ -86,6 +95,9 @@ namespace Venera.Shell
 
                 currentArgs += c;
             }
+
+            string[] arr = args.ToArray();
+            Kernel.PrintDebug($"Split length = \"{arr.Length}\"; args = {string.Join(", ", arr)}");
 
             return args.ToArray();
         }
@@ -117,7 +129,7 @@ namespace Venera.Shell
             }
         }
 
-        private bool FindBuiltIn(string name, out BuiltIn result)
+        public bool FindBuiltIn(string name, out BuiltIn result)
         {
             foreach (BuiltIn builtIn in _availableBuiltIns)
             {
@@ -145,7 +157,7 @@ namespace Venera.Shell
                 SmartCommand(smartInput);
             }
 
-            string[] parts = SplitArgs(input);
+            string[] parts = SplitArgs(input.Trim());
             if (parts.Length == 0) return ExecutionReturn.Empty;
 
             var commandName = parts[0];
@@ -156,6 +168,11 @@ namespace Venera.Shell
             if (FindBuiltIn(commandName, out BuiltIn command))
             {
                 ExitCode status = command.Invoke(args);
+
+                if (status == ExitCode.Usage)
+                {
+                    Console.WriteLine(command.GenerateUsage());
+                }
 
                 return status == ExitCode.Success
                     ? ExecutionReturn.Success

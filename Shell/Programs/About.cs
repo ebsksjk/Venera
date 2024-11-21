@@ -12,7 +12,9 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Display information about this operating system and hardware.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             Console.WriteLine($"{Kernel.OS_NAME} {Kernel.OS_VERSION}");
 

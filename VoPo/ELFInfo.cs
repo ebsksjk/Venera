@@ -1,7 +1,7 @@
-﻿using System;
-using Venera.Shell;
+﻿using CosmosELFCore;
+using System;
 using System.IO;
-using CosmosELFCore;
+using Venera.Shell;
 
 namespace Venera.VoPo
 {
@@ -10,11 +10,53 @@ namespace Venera.VoPo
         public override string Name => "readelf";
 
         public override string Description => "Display information about an elf file.";
+        public override CommandDescription ArgumentDescription => new()
+        {
+            Arguments = [
+                new(
+                    valueName: "enable_sections",
+                    description: "Print sections",
+                    shortForm: 'S',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "enable_header",
+                    description: "Print header",
+                    shortForm: 'h',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "enable_relocations",
+                    description: "Print relocations",
+                    shortForm: 'r',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "enable_str_table",
+                    description: "Print string table",
+                    shortForm: 't',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "enable_symbols",
+                    description: "Print symbols",
+                    shortForm: 's',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "file",
+                    description: "Target binary file",
+                    argsPosition: 0,
+                    required: true,
+                    type: typeof(string)
+                )
+            ]
+        };
 
-        public override ExitCode Execute(string[] args)
+        protected override ExitCode Execute()
         {
 
-            if (args.Length == 0)
+            if (Args.Length == 0)
             {
                 Console.WriteLine("Usage: elffile [-Shrts] <args>");
                 return ExitCode.Error;
@@ -27,54 +69,37 @@ namespace Venera.VoPo
             bool displayRelocation = false;
             bool displayStringTable = false;
 
-            if (args[^1].StartsWith(@"\"))
+            string elfPath = (string)GetArgument(0);
+            if (elfPath.StartsWith(@"\"))
             {
                 //if it is an absolute path
-                path = $"0:{args[^1]}";
+                path = $"0:{elfPath}";
             }
             else
             {
                 //if it is a relative path
                 //convert it into the corresponding absolute path
-                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[^1]}";
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{elfPath}";
             }
 
-            for(var i = 0; i < args.Length-1; i++)
-            {
-                switch (args[i])
-                {
-                    case "-h":
-                        displayHeader = true;
-                        break;
-                    case "-S":
-                        displaySections = true;
-                        break;
-                    case "-s":
-                        displaySymbols = true;
-                        break;
-                    case "-r":
-                        displayRelocation = true;
-                        break;
-                    case "-t":
-                        displayStringTable = true;
-                        break;
-                    default:
-                        Console.WriteLine($"Sokolsh: elfino: Invalid argument {args[i]}");
-                        return ExitCode.Error;
-                }
-            }
+            displayHeader = (bool)GetArgument("h");
+            displaySections = (bool)GetArgument("S");
+            displaySymbols = (bool)GetArgument("s");
+            displayRelocation = (bool)GetArgument("r");
+            displayStringTable = (bool)GetArgument("t");
+
             try
-            {   
+            {
                 Console.WriteLine($"Opening file {path}!");
                 byte[] binfile = File.ReadAllBytes(path);
                 ElfParser p = new ElfParser(binfile);
-                if(displayHeader)
+                if (displayHeader)
                     p.printHeader();
-                if(displaySections)
+                if (displaySections)
                     p.printSectionHeaders();
-                if(displaySymbols)
+                if (displaySymbols)
                     p.printSymbols();
-                if(displayRelocation)
+                if (displayRelocation)
                     p.printRelocationInformation();
                 if (displayStringTable)
                     p.printStringTable();

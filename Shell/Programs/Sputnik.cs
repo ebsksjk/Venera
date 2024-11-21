@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using static Venera.Shell.Programs.Sputnik;
 
 namespace Venera.Shell.Programs
 {
@@ -32,9 +31,22 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Ask our AI bot anything you want.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "host",
+                    description: "Host of the remote TCP proxy",
+                    argsPosition: 0,
+                    valueDefault: "klier.dev",
+                    type: typeof(string)
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
                 Console.WriteLine("Sputnik: You must provide the IP address of the AI proxy.");
             }
@@ -83,7 +95,7 @@ namespace Venera.Shell.Programs
 
                 if (key.KeyChar == 'n')
                 {
-                    Environment.Exit(0);
+                    return ExitCode.Success;
                 }
                 else if (key.KeyChar == 'y')
                 {
@@ -128,7 +140,7 @@ namespace Venera.Shell.Programs
 
             try
             {
-                Connected = Connect(args[0]);
+                Connected = Connect((string)GetArgument(0));
             }
             catch (Exception e)
             {

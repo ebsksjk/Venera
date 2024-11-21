@@ -11,7 +11,9 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Display information about your network configuration.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             Console.WriteLine($"IPv4 address:\t{NetworkConfiguration.CurrentAddress.ToString()}");
 

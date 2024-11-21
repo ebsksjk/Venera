@@ -12,18 +12,29 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Make directory";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
+        {
+            Arguments = [
+                new(
+                    valueName: "directory_name",
+                    description: "Name of new directory",
+                    type: typeof(string),
+                    argsPosition: 0
+                ),
+            ]
+        };
+
+        protected override ExitCode Execute()
         {
             string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
 
-            if (args.Length == 0)
+            string path = (string)GetArgument(0);
+            if (path == null)
             {
-                Console.WriteLine($"{Name}: Missing argument");
-
-                return ExitCode.Error;
+                return ExitCode.Usage;
             }
 
-            foreach (string item in args)
+            foreach (string item in Args)
             {
                 try
                 {

@@ -12,31 +12,16 @@ namespace Venera.Shell.Programs
         public override CommandDescription ArgumentDescription => new()
         {
             UsageText = "myapp [options] <input-file>",
-            Arguments = new[]
-            {
+            Arguments = [
                 new CommandArgument
-                {
-                    ShortForm = 'o',
-                    LongForm = "output",
-                    Description = "Specify the output file path",
-                    ValueName = "output_path",
-                    Type = typeof(string)
-                },
-                new CommandArgument
-                {
-                    ShortForm = 'v',
-                    LongForm = "verbose",
-                    Description = "Enable verbose logging",
-                    Type = typeof(bool)
-                },
-                new CommandArgument
-                {
-                    ArgsPosition = 0,
-                    Description = "Input file to process",
-                    ValueName = "input_file",
-                    Type = typeof(string)
-                }
-            }
+                (
+                    valueName: "output_path",
+                    description: "Specify the output file path",
+                    type: typeof(string),
+                    shortForm: 'o',
+                    longForm: "output"
+                )
+            ]
         };
 
         protected override ExitCode Execute()

@@ -12,7 +12,9 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Prints this list.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             int longestName = "Command".Length;
 

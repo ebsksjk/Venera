@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
@@ -13,15 +9,30 @@ namespace Venera.Shell.Programs
 
         public override string Description => "output plaintext from files";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            UsageText = "myapp [options] <input-file>",
+            Arguments = [
+                new CommandArgument
+                (
+                    valueName: "output_path",
+                    description: "Specify the output file path",
+                    type: typeof(string),
+                    shortForm: 'o',
+                    longForm: "output"
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
                 Console.WriteLine($"Sokolsh: cat: No Argument provided");
                 return ExitCode.Error;
             }
 
-            string path = args[0].AbsoluteOrRelativePath();
+            string path = Args[0].AbsoluteOrRelativePath();
 
             try
             {
@@ -34,7 +45,7 @@ namespace Venera.Shell.Programs
                 Console.WriteLine($"Sokolsh: cat: File {path} does not exist");
                 return ExitCode.Error;
             }
-            
+
             return ExitCode.Success;
         }
     }

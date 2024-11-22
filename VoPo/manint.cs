@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CosmosELFCore;
+using IL2CPU.API;
+using IL2CPU.API.Attribs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CosmosELFCore;
-using IL2CPU.API;
-using IL2CPU.API.Attribs;
 using Venera.Shell;
 using XSharp;
 using XSharp.Assembler;
@@ -18,7 +18,10 @@ namespace Venera.VoPo.Interrupts
 
         public override string Description => "manually issues an interrupt (for testing)";
 
-        public override ExitCode Execute(string[] args){
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
+        {
             Console.WriteLine("Issuing interrupt 0x80");
             callInt();
             Console.WriteLine("Interrupt issued");

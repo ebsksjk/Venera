@@ -22,6 +22,7 @@ namespace Venera
         public static string OS_VERSION = "0.1";
 
         private static Environment<string> _environment;
+        public static Sokolsh SokolshInstance;
 
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
@@ -102,14 +103,15 @@ namespace Venera
         protected override void Run()
         {
 
+            SokolshInstance = new Sokolsh();
             Login.loop();
 
             Console.Clear();
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("System is powering off ...");
-            Console.WriteLine("Closing Processes....");
             File.Delete("0:\\Venera\\Sys\\PT");
             string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
+            if(!(pList.Length == 0 || pList == null))
             if(!(pList.Length == 0 || pList == null))
             {
                 foreach (string p in pList)
@@ -119,11 +121,12 @@ namespace Venera
                     Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
                     File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
                 }
-            } else
+            }
+            else
             {
                 Console.WriteLine("No processes were running");
             }
-            
+
 
             Thread.Sleep(500);
             Sys.Power.Shutdown();

@@ -12,15 +12,30 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Ping a remote host.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "host",
+                    description: "IP or domain of target host.",
+                    argsPosition: 0,
+                    valueDefault: string.Empty,
+                    type: typeof(string)
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            string host = (string)GetArgument(0);
+
+            Kernel.PrintDebug($"Host: {host ?? "N/A"}");
+            if (host == null)
             {
-                Console.WriteLine("Sokolsh: ping: Destination address required");
-                return ExitCode.Error;
+                return ExitCode.Usage;
             }
 
-            string[] split = args[0].Split('.');
+            string[] split = host.Split('.');
             byte[] ip = new byte[4];
 
             if (split.Length == 4)
@@ -43,13 +58,13 @@ namespace Venera.Shell.Programs
                     xClient.Connect(new Address(1, 1, 1, 1));
 
                     /** Send DNS ask for a single domain name **/
-                    xClient.SendAsk(args[0]);
+                    xClient.SendAsk(host);
 
                     Address d = xClient.Receive();
 
                     if (d == null)
                     {
-                        Console.WriteLine($"ping: {args[0]}: Name or service not known");
+                        Console.WriteLine($"ping: {host}: Name or service not known");
                         return ExitCode.Error;
                     }
 
@@ -59,8 +74,8 @@ namespace Venera.Shell.Programs
 
             Address dest = new(ip[0], ip[1], ip[2], ip[3]);
 
-            string comment = args[0] == "127.0.0.1" ? "// You're pinging localhost? Are you stupid?" : "";
-            Console.WriteLine($"PING {args[0]} ({dest.ToString()}) {comment}");
+            string comment = host == "127.0.0.1" ? "// You're pinging localhost? Are you stupid?" : "";
+            Console.WriteLine($"PING {host} ({dest.ToString()}) {comment}");
 
             using (var xClient = new ICMPClient())
             {

@@ -9,9 +9,11 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "disk";
 
-        public override string Description => "View all disks and partitions. DO NOT USE";
+        public override string Description => "View all disks and partitions.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             List<Cosmos.System.FileSystem.Disk> disks = Kernel.FileSystem.GetDisks();
 

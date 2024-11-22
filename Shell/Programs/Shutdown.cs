@@ -13,17 +13,29 @@ namespace Venera.Shell.Programs
 
         public override string Description => "shutdown in n Seconds";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            int wait = 60;
-            if (args.Length > 0)
+            Arguments = [
+                new(
+                    valueName: "timeout",
+                    description: "Shutdown in n seconds",
+                    argsPosition: 0,
+                    valueDefault: "60",
+                    type: typeof(string)
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            string waitArgs = (string)GetArgument(0);
+
+            int.TryParse(waitArgs, out int wait);
+            if (waitArgs == "now")
             {
-                _ = int.TryParse(args[0], out wait);
-                if (args[0] == "now")
-                {
-                    wait = 0;
-                }
+                wait = 0;
             }
+
             Thread.Sleep(wait * 1000);
             Cosmos.System.Power.Shutdown();
             return ExitCode.Success;

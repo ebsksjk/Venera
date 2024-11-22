@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Venera.Shell
 {
@@ -44,6 +42,31 @@ namespace Venera.Shell
             Kernel.PrintDebug($"Invoke {Name} ...");
             Args = args;
 
+            // Check if all requirements are satisfied.
+            CommandArgument[] required = ArgumentDescription.Arguments.Where(x => x.Required).ToArray();
+            if (required.Length > 0)
+            {
+                foreach (CommandArgument arg in required)
+                {
+                    object val;
+                    if (arg.ArgsPosition != int.MinValue)
+                    {
+                        val = GetArgument(arg.ArgsPosition);
+                    }
+                    else
+                    {
+                        val = GetArgument(arg.LongForm ?? arg.ShortForm.ToString());
+                    }
+
+                    if (val == null)
+                    {
+                        Console.WriteLine(GenerateUsage());
+                        return ExitCode.Error;
+                    }
+                }
+            }
+
+
             // TODO: Future error handling prior to execution.
 
             ExitCode exitCode;
@@ -56,6 +79,11 @@ namespace Venera.Shell
             {
                 Kernel.PrintDebug($"Something is wrong, I can feel it: ({ex.GetType().ToString()}) {ex.Message}");
                 exitCode = ExitCode.Error;
+            }
+
+            if (exitCode == ExitCode.Usage)
+            {
+                Console.WriteLine(GenerateUsage());
             }
 
             // TODO: Future code after execution.
@@ -153,7 +181,7 @@ namespace Venera.Shell
         {
             Kernel.PrintDebug($"Get argument at {argsIndex}");
 
-            foreach (var arg in ArgumentDescription.Arguments)
+            foreach (CommandArgument arg in ArgumentDescription.Arguments)
             {
                 Kernel.PrintDebug($"Arg {arg.ArgsPosition}: {arg.ValueName}");
             }
@@ -167,7 +195,7 @@ namespace Venera.Shell
                 Kernel.PrintDebug("Hell nah, found nothing");
                 throw new ArgumentException($"Argument at position \"{argsIndex}\" has not been defined in the argument description by command {Name}.");
             }
-            Kernel.PrintDebug($"Identified argument {cmdArg.ValueName}");
+            Kernel.PrintDebug($"Identified argument {cmdArg.ValueName} (index: {cmdArg.ArgsPosition}, short: {cmdArg.ShortForm}, long: {cmdArg.LongForm})");
 
             // Try to locate the target argument inside the argument list.
             int location = IndexOfArgument(cmdArg);

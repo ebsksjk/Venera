@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Venera.Shell;
+using Venera.stasi;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Venera
@@ -81,6 +82,39 @@ namespace Venera
 
             return true;
 
+        }
+
+        //do only use this when you have paths... otherwise it would be **undefined behaviour**
+        public static bool isAccessible(this string str)
+        {
+            //PANIC
+            if(Login.curUser == null)
+            {
+                //PANIC
+                return true;
+            }
+
+            //yes. I know this is a bad way to do it. But I am lazy and this works.
+            if (Login.curUser.Username == "root")
+            {
+                return true;
+            }
+
+            if (str.Contains("0:\\Users\\"))
+            {
+                if (!str.Contains("0:\\Users\\" + Login.curUser.Username))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

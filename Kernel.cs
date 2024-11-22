@@ -4,12 +4,15 @@ using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
+using Venera.stasi;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
 using System.IO;
+using System.Text;
 
 namespace Venera
 {
@@ -26,7 +29,7 @@ namespace Venera
 
         protected override void BeforeRun()
         {
-            Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
+            //Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, ["a"], "tty_puts");
@@ -39,31 +42,40 @@ namespace Venera
 
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
-            if (!Directory.Exists("0:\\Sys"))
+            if (!Directory.Exists("0:\\Venera\\Sys"))
             {
-                Directory.CreateDirectory("0:\\Sys");
+                Directory.CreateDirectory("0:\\Venera\\Sys");
             }
-            if (!Directory.Exists("0:\\Sys\\proc"))
+            if (!Directory.Exists("0:\\Venera\\Sys\\proc"))
             {
-                Directory.CreateDirectory("0:\\Sys\\proc");
-            } else if (Directory.GetFiles("0:\\Sys\\proc").Length != 0 )
+                Directory.CreateDirectory("0:\\Venera\\Sys\\proc");
+            } else if (Directory.GetFiles("0:\\Venera\\Sys\\proc").Length != 0 )
             {
-                string[] pList = Directory.GetFiles("0:\\Sys\\proc");
+                string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
                 if (!(pList.Length == 0 || pList == null))
                 {
                     foreach (string p in pList)
                     {
                         if (p == null) continue;
 
-                        Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
-                        File.Delete($"0:\\Sys\\proc\\{p}");
+                        Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
+                        File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
                     }
                 }
             }
-            if(File.Exists("0:\\Sys\\PT"))
+            if(File.Exists("0:\\Venera\\Sys\\PT"))
             {
-                File.Delete("0:\\Sys\\PT");
+                File.Delete("0:\\Venera\\Sys\\PT");
             }
+            if(!Directory.Exists("0:\\Venera"))
+            {
+                Directory.CreateDirectory("0:\\Venera");
+            }
+            if(!Directory.Exists("0:\\Users"))
+            {
+                Directory.CreateDirectory("0:\\Users");
+            }
+
 
             ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
@@ -82,28 +94,30 @@ namespace Venera
                 //This will automatically set the IP config after DHCP response
                 xClient.SendDiscoverPacket();
             }
+            Encoding.RegisterProvider(Cosmos.System.ExtendedASCII.CosmosEncodingProvider.Instance);
+            Console.OutputEncoding = Encoding.GetEncoding(437);
+            Console.InputEncoding = Encoding.GetEncoding(437);
         }
 
         protected override void Run()
         {
 
-            Sokolsh sokolsh = new Sokolsh();
-            sokolsh.Loop();
+            Login.loop();
 
             Console.Clear();
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("System is powering off ...");
             Console.WriteLine("Closing Processes....");
-            File.Delete("0:\\Sys\\PT");
-            string[] pList = Directory.GetFiles("0:\\Sys\\proc");
+            File.Delete("0:\\Venera\\Sys\\PT");
+            string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
             if(!(pList.Length == 0 || pList == null))
             {
                 foreach (string p in pList)
                 {
                     if (p == null) continue;
 
-                    Console.WriteLine($"Deleting 0:\\Sys\\proc\\{p}...");
-                    File.Delete($"0:\\Sys\\proc\\{p}");
+                    Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
+                    File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
                 }
             } else
             {

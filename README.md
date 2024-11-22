@@ -10,9 +10,9 @@ For instructions on how to compile executables for Venera, see VoPo/CompileGoodi
 ## Processes
 Processes are de facto ELF executables. They are loaded into memory und executed. 
 Processes are registered in a process table, which is a list of processes internally.
-To access the list of runned processes, you can either use 'faketop', or read 0:\Sys\PT or each individual process file in 0:\Sys\proc\.
+To access the list of runned processes, you can either use 'faketop', or read 0:\Venera\Sys\PT or each individual process file in 0:\Venera\Sys\proc\.
 
-PT and the files in 0:\Sys\proc\ are representative of every elf file run since booting, as there is no multitasking yet.
+PT and the files in 0:\Venera\Sys\proc\ are representative of every elf file run since booting, as there is no multitasking yet.
 The files have the following format:
 ```
 <PID> <name> <entrypoint> <path of executable> <start of process>

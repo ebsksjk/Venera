@@ -3,37 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Venera.Shell;
 
 namespace Venera.stasi
 {
-    class useradd : Shell.BuiltIn
+    class UserAdd : Shell.BuiltIn
     {
         public override string Name => "useradd";
 
         public override string Description => "Adds a user";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "username",
+                    description: "System/Login name of new user",
+                    type: typeof(string),
+                    required: true,
+                    shortForm: 'u',
+                    longForm: "username"
+                ),
+                new(
+                    valueName: "name",
+                    description: "Full name of new user.",
+                    type: typeof(string),
+                    shortForm: 'n',
+                    longForm: "name"
+                ),
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
                 Console.WriteLine("Usage: useradd -u username [-n name of user]");
                 return ExitCode.Error;
             }
 
-            string username = null;
-            string name = null;
-            foreach (string arg in args)
-            {
-                if (arg == "-u")
-                {
-                    username = args[Array.IndexOf(args, arg) + 1];
-                }
-                else if (arg == "-n")
-                {
-                    name = args[Array.IndexOf(args, arg) + 1];
-                }
-            }
-            if(username == null)
+            string username = (string)GetArgument("username");
+            string name = (string)GetArgument("name");
+
+            if (username == null)
             {
                 Console.WriteLine("Usage: useradd -u username [-n name of user]");
                 return ExitCode.Error;

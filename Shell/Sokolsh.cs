@@ -34,12 +34,12 @@ namespace Venera.Shell
                 new VoPo.RunApp(),
                 new VoPo.Faketop(),
                 new VoPo.Interrupts.manint(),
-                new Kosmovim.kosmovim(),
-                new Kosmovim.genjunk(),
-                new stasi.useradd(),
-                new stasi.userdel(),
-                new stasi.usermod(),
-                new stasi.userinfo(),
+                new Kosmovim.KosmoVim(),
+                new Kosmovim.GenJunk(),
+                new stasi.UserAdd(),
+                new stasi.UserDel(),
+                new stasi.UserMod(),
+                new stasi.UserInfo(),
                 new Rm(),
             };
 
@@ -110,7 +110,7 @@ namespace Venera.Shell
             return args.ToArray();
         }
 
-        public void Loop()
+        public void Loop(string homeDir)
         {
             Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, homeDir);
             while (true)

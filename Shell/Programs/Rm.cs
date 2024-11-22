@@ -1,31 +1,47 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
-    internal class Rm: BuiltIn
+    internal class Rm : BuiltIn
     {
         public override string Name => "rm";
 
         public override string Description => "delete file";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if(args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "file",
+                    description: "File to wipe out of existence.",
+                    type: typeof(string),
+                    required: true,
+                    argsPosition: 0
+                ),
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
-                Console.WriteLine("Usage: rm <file>");
+                return ExitCode.Usage;
+            }
+
+            string file = (string)GetArgument(0);
+            if (!File.Exists(file))
+            {
+                Console.WriteLine($"Sokolsh: rm: File {file} does not exist");
                 return ExitCode.Error;
             }
-            if (!File.Exists(args[0]))
-            {
-                Console.WriteLine($"Sokolsh: rm: File {args[0]} does not exist");
-                return ExitCode.Error;
-            }
-            File.Delete(args[0]);
+
+            File.Delete(file);
+
             return ExitCode.Success;
         }
     }

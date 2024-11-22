@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,21 +8,41 @@ using Venera.Shell;
 
 namespace Venera.Kosmovim
 {
-    class genjunk : BuiltIn
+    class GenJunk : BuiltIn
     {
         public override string Name => "genjunk";
 
         public override string Description => "generate junk file";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length < 2)
+            Arguments = [
+                new(
+                    valueName: "nc",
+                    description: "Character count, how much to generate.",
+                    type: typeof(int),
+                    required: true,
+                    argsPosition: 0
+                ),
+                new(
+                    valueName: "file",
+                    description: "Output file",
+                    type: typeof(string),
+                    required: true,
+                    argsPosition: 1
+                ),
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length < 2)
             {
                 Console.WriteLine("Usage: genjunk <nc> <file>");
                 return ExitCode.Error;
             }
 
-            string path = args[1].AbsoluteOrRelativePath();
+            string path = Args[1].AbsoluteOrRelativePath();
             Kernel.PrintDebug($"path: {path}");
             if (File.Exists(path))
             {
@@ -30,7 +50,7 @@ namespace Venera.Kosmovim
                 return ExitCode.Error;
             }
             //write random text to file
-            File.WriteAllText(path, CreateString(int.Parse(args[0])));
+            File.WriteAllText(path, CreateString(int.Parse(Args[0])));
 
             return ExitCode.Success;
         }

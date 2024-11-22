@@ -1,38 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Venera.Shell;
 
 namespace Venera.stasi
 {
-    internal class userinfo : Shell.BuiltIn
+    internal class UserInfo : BuiltIn
     {
         public override string Name => "userinfo";
 
         public override string Description => "Prints information about a user";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
+        {
+            Arguments = [
+                new(
+                    valueName: "username",
+                    description: "System/Login name of new user",
+                    type: typeof(string),
+                    argsPosition: 0
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
         {
             bool self = false;
-            if (args.Length == 0)
+            if (Args.Length == 0)
             {
                 self = true;
             }
-            else {
-                if (!User.Exists(args[0]))
+            else
+            {
+                if (!User.Exists((string)GetArgument(0)))
                 {
                     Console.WriteLine("This user does not exist!");
                     return ExitCode.Error;
                 }
             }
-            
+
 
             UserObj o;
             if (self)
             {
                 o = Login.curUser;
-                if(o == null)
+                if (o == null)
                 {
                     Console.WriteLine("PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC PANIC");
                     return ExitCode.Error;
@@ -40,7 +50,7 @@ namespace Venera.stasi
             }
             else
             {
-                o = User.getUser(args[0]);
+                o = User.getUser((string)GetArgument(0));
             }
             Console.WriteLine($"Username: {o.Username}");
             Console.WriteLine($"Name: {o.Name}");

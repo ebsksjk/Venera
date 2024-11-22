@@ -1,21 +1,24 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Mime;
+using Venera.Shell;
 using Venera.vcurses;
 
 namespace Venera.Kosmovim
 {
-    class kosmovim : Shell.BuiltIn
+    class KosmoVim : Shell.BuiltIn
     {
-        public override string Name => "vim"; //Venera Integrated Manipulator
+        public override string Name => "vim"; // Venera Integrated Manipulator
 
-        public override string Description => "edit plaintext files";
+        public override string Description => "Edit plaintext files";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => throw new NotImplementedException();
+
+        protected override ExitCode Execute()
         {
             Console.Clear();
             Screen screen = new Screen();

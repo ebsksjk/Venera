@@ -60,9 +60,9 @@ namespace Venera.Shell.Programs
                     return ExitCode.Error;
                 }
 
-                if(dir.mFullPath.isAccessible() == false)
+                if (dir.mFullPath.isAccessible() == false)
                 {
-                    Console.WriteLine($"Sokolsh: cd: {args} is not accessible");
+                    Console.WriteLine($"Sokolsh: cd: {Args} is not accessible");
                     return ExitCode.Error;
                 }
                 Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{dir.mFullPath.ToString().EnsureBackslash()}");

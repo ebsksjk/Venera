@@ -1,11 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Venera.Shell;
-using System.Threading;
 
 namespace Venera.stasi
 {
@@ -25,7 +25,7 @@ namespace Venera.stasi
             }
             string[] lines = File.ReadAllLines(User.db);
             //Kernel.PrintDebug(File.ReadAllText(User.db));
-            if (lines == null || lines.Length == 0 || lines[0].Length <=1)
+            if (lines == null || lines.Length == 0 || lines[0].Length <= 1)
             {
                 Console.WriteLine("ERROR: users file is empty. This is not expected behaviour and you should not see this error. This is unrecoverable.");
                 return false;
@@ -59,7 +59,7 @@ namespace Venera.stasi
                 {
                     curUID = uint.Parse(parts[0]);
                     curUser = User.getUser(username);
-                    if(curUser == null)
+                    if (curUser == null)
                     {
                         Console.WriteLine("ERROR: users file is corrupted and/or unreadable. This is not expected behaviour and you should not see this error. This is unrecoverable.");
                         return false;
@@ -100,12 +100,11 @@ namespace Venera.stasi
                 {
                     break;
                 }
-                if(username == "PANIC")
+                if (username == "PANIC")
                 {
                     Console.WriteLine("Dropping in an emergency shell... Come back when you fixed this mess...");
                     curUser = null;
-                    Sokolsh sokolsh = new Sokolsh();
-                    sokolsh.Loop("0:\\");
+                    Kernel.SokolshInstance.Loop("0:\\");
                     continue;
                 }
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
@@ -122,9 +121,8 @@ namespace Venera.stasi
                 if (login(username, password))
                 {
                     Console.WriteLine("Login successful");
-                    Sokolsh sokolsh = new Sokolsh();
                     Kernel.PrintDebug(curHome);
-                    sokolsh.Loop(curHome);
+                    Kernel.SokolshInstance.Loop(curHome);
                     Console.WriteLine("exited loop!!!");
                 }
                 else

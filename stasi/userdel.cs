@@ -3,28 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Venera.Shell;
 
 namespace Venera.stasi
 {
-    public class userdel : Shell.BuiltIn
+    public class UserDel : Shell.BuiltIn
     {
         public override string Name => "userdel";
 
         public override string Description => "Deletes a user";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "username",
+                    description: "System/Login name of user to kill.",
+                    type: typeof(string),
+                    required: true,
+                    shortForm: 'u',
+                    longForm: "username"
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
-                Console.WriteLine("Usage: userdel <username>");
-                return ExitCode.Error;
+                return ExitCode.Usage;
             }
-            if (!User.Exists(args[0]))
+
+            string username = (string)GetArgument("username");
+            if (!User.Exists(username))
             {
                 Console.WriteLine("This user does not exist!");
                 return ExitCode.Error;
             }
-            User.deleteUser(args[0]);
+            User.deleteUser(username);
+
             return ExitCode.Success;
         }
     }

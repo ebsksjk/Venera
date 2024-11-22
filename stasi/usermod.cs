@@ -1,27 +1,41 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Venera.Shell;
 
 namespace Venera.stasi
 {
-    public class usermod : Shell.BuiltIn
+    public class UserMod : Shell.BuiltIn
     {
         public override string Name => "usermod";
 
         public override string Description => "Modifies a user";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            if (args.Length == 0)
+            Arguments = [
+                new(
+                    valueName: "username",
+                    description: "System/Login name of user to modify.",
+                    type: typeof(string),
+                    argsPosition: 0
+                )
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            if (Args.Length == 0)
             {
-                Console.WriteLine("Usage: usermod <username>");
-                return ExitCode.Error;
+                return ExitCode.Usage;
             }
 
-            if (!User.Exists(args[0]))
+            string username = (string)GetArgument(0);
+
+            if (!User.Exists(username))
             {
                 Console.WriteLine("This user does not exist!");
                 return ExitCode.Error;
@@ -30,7 +44,7 @@ namespace Venera.stasi
             string newName = null;
             string newPassword = null;
             string newUsername = null;
-            
+
             Console.Write("Enter new username for user ([ENTER] to keep): ");
             newUsername = Console.ReadLine();
             Console.Write("Enter new name for user ([ENTER] to keep): ");
@@ -41,16 +55,16 @@ namespace Venera.stasi
 
             if (!string.IsNullOrWhiteSpace(newName) || !string.IsNullOrWhiteSpace(newPassword) || !string.IsNullOrWhiteSpace(newUsername))
             {
-                UserObj o = User.getUser(args[0]);
-                User.deleteUser(args[0]);
+                UserObj o = User.getUser(username);
+                User.deleteUser(username);
                 User.createUser((newUsername != o.Username ? newUsername : o.Username), (newName != o.Name ? newName : o.Name), (newPassword != o.Password ? newPassword : o.Password));
-                if(newUsername != o.Username)
+                if (newUsername != o.Username)
                 {
                     Console.WriteLine($"Username changed from {o.Username} to {newUsername}");
 
                     UserObj n = User.getUser(newUsername);
 
-                    if(Login.curUser.Username == o.Username)
+                    if (Login.curUser.Username == o.Username)
                     {
                         Login.curUser = n;
                         Login.curHome = Login.curUser.Home;

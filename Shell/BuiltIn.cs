@@ -54,7 +54,7 @@ namespace Venera.Shell
             }
             catch (Exception ex)
             {
-                Kernel.PrintDebug($"Something is wrong, I can feel it: {ex.Message}");
+                Kernel.PrintDebug($"Something is wrong, I can feel it: ({ex.GetType().ToString()}) {ex.Message}");
                 exitCode = ExitCode.Error;
             }
 
@@ -221,7 +221,7 @@ namespace Venera.Shell
             ).ToArray();
 
             CommandArgument[] mandatoryArguments = ArgumentDescription.Arguments.Where(x =>
-                x.Required // && x.ArgsPosition == null
+                x.Required || x.ArgsPosition != int.MinValue
             ).ToArray();
 
             // Nested function because I need to do this at least twice and only inside this function.

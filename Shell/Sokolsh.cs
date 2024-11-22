@@ -31,7 +31,7 @@ namespace Venera.Shell
                 new Man(),
                 new ArgTest(),
                 new VoPo.ELFInfo(),
-                //new VoPo.RunApp(),
+                new VoPo.RunApp(),
                 new VoPo.Faketop(),
                 new VoPo.Interrupts.manint(),
             };
@@ -82,6 +82,7 @@ namespace Venera.Shell
                         insideQuotes = false;
                         args.Add(currentArgs);
                         currentArgs = string.Empty;
+                        i++;
                         continue;
                     }
                     else

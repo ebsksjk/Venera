@@ -1,76 +1,96 @@
-﻿//using System;
-//using Venera.Shell;
-//using System.IO;
-//using CosmosELFCore;
-//using XSharp.x86.Params;
-//using System.Collections.Generic;
+﻿using CosmosELFCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Venera.Shell;
+using XSharp.x86.Params;
 
-//namespace Venera.VoPo
-//{
-//    public class RunApp : BuiltIn
-//    {
-//        public override string Name => "runapp";
+namespace Venera.VoPo
+{
+    public class RunApp : BuiltIn
+    {
+        public override string Name => "runapp";
 
-//        public override string Description => "Runs an entry point of a given application. Trys to run main, if no entry point is given.";
+        public override string Description => "Runs an entry point of a given application. Trys to run main, if no entry point is given.";
 
-//        public override ExitCode Execute(string[] args)
-//        {
+        public override CommandDescription ArgumentDescription => new()
+        {
+            Arguments = [
+                new(
+                    valueName: "args",
+                    description: "List of arguments to pass to the program.",
+                    type: typeof(string[]),
+                    argsPosition: 0
+                ),
+                new(
+                    valueName: "entrypoints",
+                    description: "List of entrypoints to execute",
+                    type: typeof(string[]),
+                    shortForm: 'e',
+                    longForm: "entrypoints"
+                ),
+            ]
+        };
 
-//            if (args.Length == 0)
-//            {
-//                Console.WriteLine("Usage: runapp [-e <ep>] -a [args] <args> ");
-//                return ExitCode.Error;
-//            }
+        protected override ExitCode Execute()
+        {
 
-//            string path;
-//            string entrypoints = "main";
-//            List<Object> arguments = new List<Object>();
+            if (Args.Length == 0)
+            {
+                Console.WriteLine("Usage: runapp [-e <ep>] -a [args] <args> ");
+                return ExitCode.Error;
+            }
 
-//            if (args[^1].StartsWith(@"\"))
-//            {
-//                //if it is an absolute path
-//                path = $"0:{args[^1]}";
-//            }
-//            else
-//            {
-//                //if it is a relative path
-//                //convert it into the corresponding absolute path
-//                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{args[^1]}";
-//            }
+            string path;
+            string entrypoints = "main";
+            List<Object> arguments = new List<Object>();
 
-//            if(args.Length > 1 && args[0] == "-e") {
-//                entrypoints = args[1];
-//            }
+            if (Args[^1].StartsWith(@"\"))
+            {
+                //if it is an absolute path
+                path = $"0:{Args[^1]}";
+            }
+            else
+            {
+                //if it is a relative path
+                //convert it into the corresponding absolute path
+                path = $"{Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory).EnsureBackslash()}{Args[^1]}";
+            }
 
-//            if ((args.Length > 1 || args.Length > 3) && (args[2] == "-a" || args[0] == "-a"))
-//            {
-//                int index = 0;
-//                index = (args[0] == "-a") ? 1 : 3;
+            if (Args.Length > 1 && Args[0] == "-e")
+            {
+                entrypoints = Args[1];
+            }
 
-//                for (int i = index; i < args.Length -1 ; i++)
-//                {
-//                    if (int.TryParse(args[i], out int result))
-//                    {
-//                        Kernel.PrintDebug($"Pushing int: {result}");
-//                        arguments.Add((object)result);
-//                    }
-//                    else
-//                    {
-//                        Kernel.PrintDebug($"Pushing string: {args[i]}");
-//                        arguments.Add((object)args[i]);
-//                    }
-//                }
-//            }
+            if ((Args.Length > 1 || Args.Length > 3) && (Args[2] == "-a" || Args[0] == "-a"))
+            {
+                int index = 0;
+                index = (Args[0] == "-a") ? 1 : 3;
 
-//            foreach (var arg in arguments)
-//            {
-//                Kernel.PrintDebug($"Argument: {arg}");
-//            }
+                for (int i = index; i < Args.Length - 1; i++)
+                {
+                    if (int.TryParse(Args[i], out int result))
+                    {
+                        Kernel.PrintDebug($"Pushing int: {result}");
+                        arguments.Add((object)result);
+                    }
+                    else
+                    {
+                        Kernel.PrintDebug($"Pushing string: {Args[i]}");
+                        arguments.Add((object)Args[i]);
+                    }
+                }
+            }
 
-//            ApplicationRunner.runApplicationEntryPoint($"runapp call", File.ReadAllBytes(path), arguments, entrypoints, path);
+            foreach (var arg in arguments)
+            {
+                Kernel.PrintDebug($"Argument: {arg}");
+            }
 
-//            return ExitCode.Success;
-//        }
+            ApplicationRunner.runApplicationEntryPoint($"runapp call", File.ReadAllBytes(path), arguments, entrypoints, path);
 
-//    }
-//}
+            return ExitCode.Success;
+        }
+
+    }
+}

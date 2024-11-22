@@ -53,6 +53,12 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
+            Console.WriteLine($"Parsed command line arguments:");
+            Console.WriteLine($"host: {(string)GetArgument(0)}");
+            Console.WriteLine($"port: {(int)GetArgument("port")} | {(int)GetArgument("p")}");
+            Console.WriteLine($"log-file: {(string)GetArgument("log-file")} | {(string)GetArgument("L")}");
+            Console.WriteLine($"humanreadable: {((bool)GetArgument("h") ? "true" : "false")}");
+            Console.WriteLine($"consent: {((bool)GetArgument("consent") ? "true" : "false")}");
             return ExitCode.Success;
         }
     }

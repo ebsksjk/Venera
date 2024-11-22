@@ -113,6 +113,14 @@ public class CommandArgument
         {
             return $"<...{ValueName}>";
         }
+        else if (ArgsPosition >= 0 && !Required)
+        {
+            return $"(<{ValueName}>)";
+        }
+        else if (ArgsPosition >= 0 && Required)
+        {
+            return $"<{ValueName}>";
+        }
 
         return $"<{ValueName}>";
     }

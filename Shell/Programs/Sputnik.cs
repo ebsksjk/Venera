@@ -198,6 +198,7 @@ namespace Venera.Shell.Programs
             }
 
             stream.Close();
+            Connected = false;
 
             return ExitCode.Success;
         }

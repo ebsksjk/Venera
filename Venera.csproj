@@ -30,6 +30,9 @@
 		<PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
 		<PackageReference Include="XSharp" Version="10.0.0" />
     </ItemGroup>
+	<ItemGroup>
+		<PlugsReference Include="$(MSBuildProjectDirectory)\..\Venera.BlueScreen\bin\Debug\net6.0\Venera.BlueScreen.dll" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="isoFiles\*" CopyToOutputDirectory="PreserveNewest" />
@@ -39,5 +42,10 @@
 	  <Folder Include="isoFiles\" />
 	  <Folder Include="VoPo\CompileGoodies\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Venera.BlueScreen\Venera.BlueScreen.csproj" />
+	</ItemGroup>
+	
 
 </Project>

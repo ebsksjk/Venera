@@ -44,6 +44,7 @@ namespace Venera.Shell
                 new Klier(),
                 new froeh(),
                 new Pride(),
+                new SadFace(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

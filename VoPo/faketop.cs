@@ -12,7 +12,7 @@ namespace Venera.VoPo
     {
         public override string Name => "faketop";
 
-        public override string Description => "get all runned programs with info";
+        public override string Description => "get all executed programs with info";
 
         public override CommandDescription ArgumentDescription => new();
 

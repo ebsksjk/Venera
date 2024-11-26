@@ -17,7 +17,7 @@ namespace Venera.Shell.Programs
             Arguments = [
                 new(
                     valueName: "directory",
-                    description: "Path to target directry",
+                    description: "Path to target directory",
                     type: typeof(string),
                     argsPosition: 0
                 ),

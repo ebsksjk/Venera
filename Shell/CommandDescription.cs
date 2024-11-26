@@ -98,14 +98,14 @@ public class CommandArgument
 
     public override string ToString()
     {
-        if (LongForm != null)
-        {
-            return $"--{LongForm} <{ValueName}>";
-        }
-
         if (ShortForm != ShortFormDefault)
         {
             return $"-{ShortForm} <{ValueName}>";
+        }
+
+        if (LongForm != null)
+        {
+            return $"--{LongForm} <{ValueName}>";
         }
 
         // If this is a "endless" argument type at the very end.

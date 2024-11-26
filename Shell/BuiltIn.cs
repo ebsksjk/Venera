@@ -210,7 +210,14 @@ namespace Venera.Shell
                 {
                     if (cmdArg.Type == typeof(int))
                     {
-                        return int.Parse(cmdArg.ValueDefault);
+                        if (int.TryParse(cmdArg.ValueDefault, out int parsed))
+                        {
+                            return parsed;
+                        }
+                        else
+                        {
+                            return GetDefaultArgument(cmdArg);
+                        }
                     }
 
                     return cmdArg.ValueDefault;
@@ -232,7 +239,7 @@ namespace Venera.Shell
                 if (!int.TryParse(argValue, out int argInt))
                 {
                     Console.WriteLine($"Sokolsh: Expected integer for argument {cmdArg} but got \"{argValue}\" instead.");
-                    return null;
+                    return GetDefaultArgument(cmdArg);
                 }
 
                 return argInt;
@@ -331,6 +338,7 @@ namespace Venera.Shell
         /// <returns>Index of argument on the command line. <b>-1 if not found.</b></returns>
         private int IndexOfArgument(CommandArgument arg)
         {
+            Kernel.PrintDebug($"[I] Search argument at {arg.ArgsPosition}");
             /*
              * If our target argument is expected at a indexed position.
              * 
@@ -352,7 +360,7 @@ namespace Venera.Shell
                  */
                 if (arg.ArgsPosition == -1)
                 {
-                    Kernel.PrintDebug("Reverse search ...");
+                    Kernel.PrintDebug("[I] Reverse search ...");
 
                     // i > 0 because we don't want the program name.
                     for (int i = Args.Length - 1; i > 0; i--)
@@ -376,40 +384,74 @@ namespace Venera.Shell
                 int nonQuoteArgs = 0;
                 for (int i = 0; i < Args.Length; i++)
                 {
+                    Kernel.PrintDebug($"[I] Iterate {i} / {Args.Length}");
                     string sArg = Args[i];
+                    string sub = sArg.Substring(2);
 
                     CommandArgument tmpArg = null;
 
                     if (sArg.StartsWith("-"))
                     {
+                        Kernel.PrintDebug($"[I] Found -ish at {i} = {sArg}");
                         // For arguments like --output, --listen
                         if (sArg.StartsWith("--"))
                         {
-                            // Find defined argument
-                            tmpArg = ArgumentDescription.Arguments.First(x => x.LongForm == sArg.Substring(3));
+                            // Find (long) defined argument
+                            Kernel.PrintDebug($"[I]   Found valid --ish at {i} = {sArg} (substring: {sArg.Substring(2)})");
+                            try
+                            {
+                                tmpArg = ArgumentDescription.Arguments.First(x =>
+                                {
+                                    Kernel.PrintDebug($"[IL] {(x.LongForm ?? "N/A")}");
+                                    bool r = x.LongForm != null && x.LongForm.Equals(sub);
+                                    return r;
+                                });
+                            }
+                            catch (Exception)
+                            {
+                            }
                         }
                         else
                         {
-                            // Find defined argument
-                            tmpArg = ArgumentDescription.Arguments.First(x => x.ShortForm == sArg[1]);
+                            // Find (short) defined argument
+                            // sArg[1] is always the used short form character. "-a"[1] = 'a'
+                            Kernel.PrintDebug($"[I]   Found valid -ish at {i} = {sArg}");
+                            tmpArg = ArgumentDescription.Arguments.First(x =>
+                            {
+                                Kernel.PrintDebug($"Compare \"FUCKING HELL\" with {sArg}");
+                                bool r = x.ShortForm != CommandArgument.ShortFormDefault && x.ShortForm == sArg[1];
+                                Kernel.PrintDebug($"Done.");
+
+                                return r;
+                            });
                         }
 
                         if (tmpArg == null)
                         {
-                            throw new Exception($"Spotted undefined argument {sArg} for {Name}.");
+                            Kernel.PrintDebug($"[I] Spotted undefined argument {sArg} for {Name}.");
+                            return -1;
                         }
 
+                        Kernel.PrintDebug("[I] Is it bool?");
                         if (tmpArg.Type == typeof(bool))
                         {
+                            Kernel.PrintDebug($"[I]   Found valid bool at {i}");
+
                             // Just advance as normal though the array and check next argument.
                             continue;
                         }
 
-                        // We skip one more ahead because the next argument must be a value.
-                        i++;
+                        Kernel.PrintDebug($"[I] i ({i}) < Args.Length - 2 ({Args.Length - 2})?");
+                        if (i < Args.Length - 2)
+                        {
+                            Kernel.PrintDebug($"[I]   Found valid non-bool at {i}. Skip to {i + 1}");
+                            // We skip one more ahead because the next argument must be a value.
+                            i++;
+                        }
                     }
                     else
                     {
+                        Kernel.PrintDebug($"[I] Is arg.ArgsPosition ({arg.ArgsPosition}) == nonQuoteArgs ({nonQuoteArgs})?");
                         if (arg.ArgsPosition == nonQuoteArgs)
                         {
                             return i;
@@ -420,6 +462,7 @@ namespace Venera.Shell
                     }
                 }
 
+                Kernel.PrintDebug($"[I] Exhausted indexed search. Return -1. (Args.Length: {Args.Length}");
                 return -1;
             }
 
@@ -431,7 +474,7 @@ namespace Venera.Shell
                 // For arguments like --output, --listen
                 if (sArg.StartsWith("--"))
                 {
-                    if (arg.LongForm == sArg.Substring(3))
+                    if (arg.LongForm == sArg.Substring(2))
                     {
                         return i;
                     }
@@ -447,6 +490,7 @@ namespace Venera.Shell
                 }
             }
 
+            Kernel.PrintDebug("[I] Exhausted search. Return -1");
             return -1;
         }
     }

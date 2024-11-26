@@ -64,7 +64,6 @@ namespace Venera.Shell
             for (int i = 0; i < cmdLine.Length; i++)
             {
                 char c = cmdLine[i];
-                Kernel.PrintDebug($"Loop {i}/{cmdLine.Length} = '{c}'");
 
                 // If we hit the last char, we add it to the list and break instantly.
                 if (i == cmdLine.Length - 1)

@@ -1,6 +1,7 @@
-﻿using IL2CPU.API.Attribs;
-using System.Xml.Linq;
+﻿using Cosmos.System;
+using IL2CPU.API.Attribs;
 using static Cosmos.Core.INTs;
+using Console = System.Console;
 
 [Plug(Target = typeof(Cosmos.Core.INTs))]
 internal class INTs
@@ -42,20 +43,21 @@ internal class INTs
         PutErrorString(14, Console.WindowWidth / 2 - 33, "Please visit https://ebsksjk.gay/STOPCODE for further information.");
 
         Console.CursorVisible = false;
-        while (true)
+        while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Enter)
         {
-            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "   ");
-            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "OwO");
+            int i = 0;
             int x = 0;
-            for(int i = 0; i < 1000000; i++)
+
+            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "OwO");
+
+            for (int j = 0; j < 100000; j++)
             {
-                x += Console.WindowHeight - i;
+                i += Console.WindowHeight -1;
             }
-            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, ">w<");
-            int y = 0;
-            for (int i = 0; i < 1000000; i++)
+            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "owo");
+            for (int j = 0; j < 100000; j++)
             {
-                y += Console.WindowHeight - i;
+                x += Console.WindowHeight - 1;
             }
         }
     }
@@ -89,6 +91,21 @@ internal class INTs
             {
                 PutErrorChar(j, i, ' ', 0x1F);
             }
+        }
+    }
+
+    public static void HandleInterrupt_80(ref IRQContext aContext)
+    {
+        Console.WriteLine("Interrupt 0x80 called");
+        if (aContext.Interrupt == 0x80) // Example system call interrupt
+        {
+            uint syscallNumber = aContext.Interrupt;
+            //Syscalls.HandleSyscall(syscallNumber, args.Skip(1).ToArray());
+            Kernel.PrintDebug("handleInterrupt Syscall " + syscallNumber + " called");
+        }
+        else
+        {
+            // Handle other interrupts
         }
     }
 }

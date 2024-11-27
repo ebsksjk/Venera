@@ -25,9 +25,28 @@ namespace Venera.Shell.Programs
                     type: typeof(bool)
                 ),
                 new(
+                    valueName: "enby",
+                    description: "nb rights?",
+                    shortForm: 'n',
+                    type: typeof(bool)
+                ),
+                new(
+                    valueName: "gay",
+                    description: "gay rights?",
+                    shortForm: 'g',
+                    type: (typeof(bool))
+                ),
+                new(
+                    valueName: "bi",
+                    description: "bi rights?",
+                    shortForm: 'b',
+                    type: (typeof(bool))
+                ),
+                new(
                     valueName: "name",
                     description: "someone's name...",
                     argsPosition: 0,
+                    valueDefault: "null",
                     type: typeof(string))
             ]
         };
@@ -36,12 +55,41 @@ namespace Venera.Shell.Programs
         {
 
             bool trans = (bool)GetArgument("t");
+            bool nb = (bool)GetArgument("n");
+            bool gay = (bool)GetArgument("g");
+            bool bi = (bool)GetArgument("b");
+
+            string name = (string)GetArgument(0);
+            switch (name.ToLower())
+            {
+                case "mara":
+                    trans = true;
+                    break;
+
+                case "niklas":
+                    nb = true;
+                    break;
+
+                case "nicolas":
+                    gay = true;
+                    break;
+
+                default:
+                    break;
+            }
+
             Console.Clear();
             Console.SetCursorPosition(0, 0);
             Console.CursorVisible = false;
             if (trans)
             {
                 gays.getTransPride(Console.WindowHeight).ForEach(l => l.draw());
+            }else if (nb)
+            {
+                gays.getNonBinaryPride(Console.WindowHeight).ForEach(l => l.draw());
+            } else if (gay)
+            {
+                gays.getGayPride(Console.WindowHeight).ForEach(l => l.draw());
             }
             else { 
                 gays.getRainbowPride(Console.WindowHeight).ForEach(l => l.draw()); 
@@ -116,6 +164,46 @@ namespace Venera.Shell.Programs
             lines.Add(new Line(lineHeight, ConsoleColor.Magenta));
             lines.Add(new Line(lineHeight, ConsoleColor.White));
             lines.Add(new Line(lineHeight, ConsoleColor.Magenta));
+            lines.Add(new Line(lineHeight, ConsoleColor.Blue));
+            return lines;
+        }
+
+        public static List<Line> getNonBinaryPride(int height)
+        {
+            int lineHeight = height / 4;
+            Kernel.PrintDebug($"Line height: {lineHeight}; Console height: {height}");
+            List<Line> lines = new List<Line>();
+            lines.Add(new Line(lineHeight, ConsoleColor.Yellow));
+            lines.Add(new Line(lineHeight, ConsoleColor.White));
+            lines.Add(new Line(lineHeight, ConsoleColor.DarkMagenta));
+            lines.Add(new Line(lineHeight, ConsoleColor.Black));
+            return lines;
+        }
+
+        public static List<Line> getGayPride(int height)
+        {
+            int lineHeight = height / 7;
+            Kernel.PrintDebug($"Line height: {lineHeight}; Console height: {height}");
+            List<Line> lines = new List<Line>();
+            lines.Add(new Line(lineHeight, ConsoleColor.DarkCyan));
+            lines.Add(new Line(lineHeight, ConsoleColor.Cyan));
+            lines.Add(new Line(lineHeight, ConsoleColor.Gray));
+            lines.Add(new Line(lineHeight, ConsoleColor.White));
+            lines.Add(new Line(lineHeight, ConsoleColor.Gray));
+            lines.Add(new Line(lineHeight, ConsoleColor.Blue));
+            lines.Add(new Line(lineHeight, ConsoleColor.DarkGray));
+            return lines;
+        }
+
+        public static List<Line> getBiFlag(int height)
+        {
+            int lineHeight = height / 5;
+            Kernel.PrintDebug($"Line height: {lineHeight}; Console height: {height}");
+            List<Line> lines = new List<Line>();
+            lines.Add(new Line(lineHeight, ConsoleColor.Magenta));
+            lines.Add(new Line(lineHeight, ConsoleColor.Magenta));
+            lines.Add(new Line(lineHeight, ConsoleColor.DarkMagenta));
+            lines.Add(new Line(lineHeight, ConsoleColor.Blue));
             lines.Add(new Line(lineHeight, ConsoleColor.Blue));
             return lines;
         }

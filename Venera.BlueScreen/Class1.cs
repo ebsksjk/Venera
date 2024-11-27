@@ -38,28 +38,45 @@ internal class INTs
         PutErrorString(7, qr_len, "A wittle fucko boingo!");
         PutErrorString(8, qr_len, "The code furrys are working VEWY HAWD to fix it!");
 
-        PutErrorString(12, Console.WindowWidth /2 - ((6 + name.Length)/2), "Name: " + name);
-        PutErrorString(13, Console.WindowWidth / 2 - ((6 + desc.Length) / 2), "Description: " + desc);
+        PutErrorString(9, qr_len, "Name: " + name);
+        PutErrorString(10, qr_len, "Description: " + desc);
         PutErrorString(14, Console.WindowWidth / 2 - 33, "Please visit https://ebsksjk.gay/STOPCODE for further information.");
 
         Console.CursorVisible = false;
+        int x = 0;
         while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Enter)
         {
-            int i = 0;
-            int x = 0;
-
-            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "OwO");
-
-            for (int j = 0; j < 100000; j++)
+            if (x < 1000)
             {
-                i += Console.WindowHeight -1;
+                PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "OwO");
+            } else if(x > 1000 && x < 2000)
+            {
+                PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "owo");
             }
-            PutErrorString(Console.WindowHeight - 1, Console.WindowWidth - 4, "owo");
-            for (int j = 0; j < 100000; j++)
+
+            if(x < 500)
             {
-                x += Console.WindowHeight - 1;
+                PutErrorString(Console.WindowHeight - 5, Console.WindowWidth / 2 - 5, "| 0%");
+            } else if(x > 500 && x < 1000)
+            {
+                PutErrorString(Console.WindowHeight - 5, Console.WindowWidth / 2 - 5, "/ 0%");
+            }
+            else if (x > 1000 && x < 1500)
+            {
+                PutErrorString(Console.WindowHeight - 5, Console.WindowWidth / 2 - 5, "- 0%");
+            }
+            else if (x > 1500 && x < 2000)
+            {
+                PutErrorString(Console.WindowHeight - 5, Console.WindowWidth / 2 - 5, "\\ 0%");
+            }
+
+            x++;
+            if(x > 2000)
+            {
+                x = 0;
             }
         }
+        Power.Reboot();
     }
 
     private static void PutErrorChar(int line, int col, char c, int color)

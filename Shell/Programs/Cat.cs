@@ -11,39 +11,35 @@ namespace Venera.Shell.Programs
 
         public override CommandDescription ArgumentDescription => new()
         {
-            UsageText = "myapp [options] <input-file>",
             Arguments = [
                 new CommandArgument
                 (
-                    valueName: "output_path",
-                    description: "Specify the output file path",
-                    type: typeof(string),
-                    shortForm: 'o',
-                    longForm: "output"
+                    valueName: "file_paths",
+                    description: "Specify the input files to read.",
+                    type: typeof(string[]),
+                    argsPosition: -1,
+                    required: true
                 )
             ]
         };
 
         protected override ExitCode Execute()
         {
-            if (Args.Length == 0)
+            foreach (string filename in (string[])GetArgument(-1))
             {
-                Console.WriteLine($"Sokolsh: cat: No Argument provided");
-                return ExitCode.Error;
-            }
+                string path = Args[0].AbsoluteOrRelativePath();
 
-            string path = Args[0].AbsoluteOrRelativePath();
+                try
+                {
 
-            try
-            {
+                    Console.WriteLine(File.ReadAllText(path));
 
-                Console.WriteLine(File.ReadAllText(path));
-
-            }
-            catch (Exception)
-            {
-                Console.WriteLine($"Sokolsh: cat: File {path} does not exist");
-                return ExitCode.Error;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Sokolsh: cat: File {path} does not exist");
+                    return ExitCode.Error;
+                }
             }
 
             return ExitCode.Success;

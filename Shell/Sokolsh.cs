@@ -68,7 +68,11 @@ namespace Venera.Shell
                 // If we hit the last char, we add it to the list and break instantly.
                 if (i == cmdLine.Length - 1)
                 {
-                    currentArgs += c;
+                    if (c != '"')
+                    {
+                        currentArgs += c;
+                    }
+
                     args.Add(currentArgs);
                     break;
                 }
@@ -177,10 +181,10 @@ namespace Venera.Shell
             {
                 ExitCode status = command.Invoke(args);
 
-                if (status == ExitCode.Usage)
-                {
-                    Console.WriteLine(command.GenerateUsage());
-                }
+                //if (status == ExitCode.Usage)
+                //{
+                //    Console.WriteLine(command.GenerateUsage());
+                //}
 
                 return status == ExitCode.Success
                     ? ExecutionReturn.Success

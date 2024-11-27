@@ -15,6 +15,7 @@ namespace Venera.Shell.Programs
                     valueName: "builtin_name",
                     description: "Name of the program need the manual for.",
                     type: typeof(string),
+                    required: true,
                     argsPosition: 0
                 )
             ]

@@ -26,7 +26,6 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            Console.WriteLine("Inside ls");
             string userSpecifiedPath = (string)GetArgument(0);
 
             string path = string.IsNullOrEmpty(userSpecifiedPath)

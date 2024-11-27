@@ -28,6 +28,8 @@ namespace Venera.Shell
         /// </summary>
         public abstract CommandDescription ArgumentDescription { get; }
 
+        private bool CommandParseError { get; set; } = false;
+
         #endregion
 
         #region Public methods
@@ -49,6 +51,8 @@ namespace Venera.Shell
                 foreach (CommandArgument arg in required)
                 {
                     object val;
+                    CommandParseError = false;
+
                     if (arg.ArgsPosition != int.MinValue)
                     {
                         val = GetArgument(arg.ArgsPosition);
@@ -58,12 +62,44 @@ namespace Venera.Shell
                         val = GetArgument(arg.LongForm ?? arg.ShortForm.ToString());
                     }
 
+                    if (val != null && arg.Type == typeof(bool) && !(bool)val)
+                    {
+                        Console.WriteLine($"Sokolsh: Required argument {arg.ToString()} is missing. See 'man {Name}' for usage.");
+                        return ExitCode.Usage;
+                    }
+
                     if (val == null)
                     {
-                        Console.WriteLine(GenerateUsage());
-                        return ExitCode.Error;
+                        Console.WriteLine($"Sokolsh: Required argument {arg.ToString()} is missing. See 'man {Name}' for usage.");
+                        return ExitCode.Usage;
                     }
                 }
+            }
+
+            // Loop again but try all arguments and fail if there are any parsing errors.
+            foreach (CommandArgument arg in ArgumentDescription.Arguments)
+            {
+                object val;
+                CommandParseError = false;
+
+                if (arg.ArgsPosition != int.MinValue)
+                {
+                    val = GetArgument(arg.ArgsPosition);
+                }
+                else
+                {
+                    val = GetArgument(arg.LongForm ?? arg.ShortForm.ToString());
+                }
+
+                if (CommandParseError)
+                {
+                    CommandParseError = false;
+
+                    Console.WriteLine($"Sokolsh: Argument {arg.ToString()} was set incorrectly. See 'man {Name}' for usage.");
+                    return ExitCode.Usage;
+                }
+
+                CommandParseError = false;
             }
 
 
@@ -137,6 +173,7 @@ namespace Venera.Shell
             // If our target argument is type of boolean, then return true if it exists, false if not.
             if (cmdArg.Type == typeof(bool))
             {
+                Kernel.PrintDebug($"Found bool at {location}");
                 return location >= 0;
             }
 
@@ -144,6 +181,11 @@ namespace Venera.Shell
             // So if our target argument doesn't exist, we return null.
             if (location == -1)
             {
+                if (cmdArg.Required)
+                {
+                    CommandParseError = true;
+                }
+
                 return GetDefaultArgument(cmdArg);
             }
 
@@ -151,6 +193,11 @@ namespace Venera.Shell
             // myapp -v --output-path [MISSING HERE]
             if ((Args.Length - 1) == location)
             {
+                if (cmdArg.Required)
+                {
+                    CommandParseError = true;
+                }
+
                 return null;
             }
 
@@ -159,6 +206,11 @@ namespace Venera.Shell
             // A argument value may not start with another - symbol.
             if (argValue.StartsWith("-"))
             {
+                if (cmdArg.Required)
+                {
+                    CommandParseError = true;
+                }
+
                 return null;
             }
 
@@ -167,8 +219,15 @@ namespace Venera.Shell
             {
                 if (!int.TryParse(argValue, out int argInt))
                 {
-                    Console.WriteLine($"Sokolsh: Expected integer for argument {cmdArg} but got \"{argValue}\" instead.");
-                    return null;
+                    Console.WriteLine($"Sokolsh: Expected integer for argument {cmdArg.ValueName} but got \"{argValue}\" instead.");
+                    CommandParseError = true;
+
+                    return GetDefaultArgument(cmdArg);
+                }
+
+                if (cmdArg.Required)
+                {
+                    CommandParseError = true;
                 }
 
                 return argInt;
@@ -214,13 +273,17 @@ namespace Venera.Shell
                         {
                             return parsed;
                         }
-                        else
-                        {
-                            return GetDefaultArgument(cmdArg);
-                        }
+
+                        CommandParseError = true;
+                        return GetDefaultArgument(cmdArg);
                     }
 
                     return cmdArg.ValueDefault;
+                }
+
+                if (cmdArg.Required)
+                {
+                    CommandParseError = true;
                 }
 
                 return null;
@@ -232,13 +295,15 @@ namespace Venera.Shell
             }
 
             string argValue = Args[location];
+            Kernel.PrintDebug($"argValue: {argValue} of type {cmdArg.Type.ToString()}");
 
             // Handle integers
             if (cmdArg.Type == typeof(int))
             {
                 if (!int.TryParse(argValue, out int argInt))
                 {
-                    Console.WriteLine($"Sokolsh: Expected integer for argument {cmdArg} but got \"{argValue}\" instead.");
+                    Console.WriteLine($"Sokolsh: Expected integer for argument {cmdArg.ToString()} but got \"{argValue}\" instead.");
+                    CommandParseError = true;
                     return GetDefaultArgument(cmdArg);
                 }
 
@@ -253,6 +318,10 @@ namespace Venera.Shell
             // A command has commands if there are possible arguments that aren't required.
             CommandArgument[] options = ArgumentDescription.Arguments.Where(x =>
                 x.ShortForm != CommandArgument.ShortFormDefault || x.LongForm != null
+            ).ToArray();
+
+            CommandArgument[] paramArgs = ArgumentDescription.Arguments.Where(x =>
+                x.ShortForm == CommandArgument.ShortFormDefault && x.LongForm == null && x.ArgsPosition != int.MinValue
             ).ToArray();
 
             CommandArgument[] mandatoryArguments = ArgumentDescription.Arguments.Where(x =>
@@ -275,6 +344,10 @@ namespace Venera.Shell
                 {
                     leftForms += $"--{cmd.LongForm}";
                 }
+                else
+                {
+                    leftForms += cmd.ToString();
+                }
 
                 return leftForms;
             }
@@ -284,13 +357,13 @@ namespace Venera.Shell
                 $"{(options.Length > 0 ? "[OPTIONS]" : "")} " +
                 $"{(mandatoryArguments.Length > 0 ? string.Join(" ", mandatoryArguments.Select(x => x.ToString())) : "")}";
 
-            if (options.Length > 0)
+            if (paramArgs.Length > 0)
             {
-                result += "\n\nOptions:\n";
+                result += "\n\nParameters:\n";
 
                 // Calculate max length of the left side to get the required padding.
                 int padding = 0;
-                foreach (CommandArgument cmd in options)
+                foreach (CommandArgument cmd in paramArgs)
                 {
                     int length = GenerateLeftHand(cmd).Length;
 
@@ -304,7 +377,33 @@ namespace Venera.Shell
                 padding += 2;
 
                 // Print it for real.
-                foreach (CommandArgument cmd in options)
+                foreach (CommandArgument cmd in paramArgs)
+                {
+                    result += $"{GenerateLeftHand(cmd).Pad(padding)}{cmd.Description}\n";
+                }
+            }
+
+            if (options.Length > 0)
+            {
+                result += "\n\nOptions:\n";
+
+                // Calculate max length of the left side to get the required padding.
+                int padding = 0;
+                foreach (CommandArgument cmd in options.Where(x => x.ArgsPosition == int.MinValue))
+                {
+                    int length = GenerateLeftHand(cmd).Length;
+
+                    if (length > padding)
+                    {
+                        padding = length;
+                    }
+                }
+
+                // Add some more padding for better readability.
+                padding += 2;
+
+                // Print it for real.
+                foreach (CommandArgument cmd in options.Where(x => x.ArgsPosition == int.MinValue))
                 {
                     result += $"{GenerateLeftHand(cmd).Pad(padding)}{cmd.Description}\n";
                 }

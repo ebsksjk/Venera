@@ -86,7 +86,7 @@ public class CommandArgument
         if (Type == typeof(string[]))
         {
             LongForm = "";
-            ShortForm = 'ü';
+            ShortForm = ShortFormDefault;
             ArgsPosition = -1;
         }
 
@@ -100,18 +100,28 @@ public class CommandArgument
     {
         if (ShortForm != ShortFormDefault)
         {
+            if (Type == typeof(bool))
+            {
+                return $"-{ShortForm}";
+            }
+
             return $"-{ShortForm} <{ValueName}>";
         }
 
         if (LongForm != null)
         {
+            if (Type == typeof(bool))
+            {
+                return $"--{LongForm}";
+            }
+
             return $"--{LongForm} <{ValueName}>";
         }
 
         // If this is a "endless" argument type at the very end.
         if (ArgsPosition == -1 && Type == typeof(string[]))
         {
-            return $"<...{ValueName}>";
+            return $"<{ValueName}...>";
         }
         else if (ArgsPosition >= 0 && !Required)
         {

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
-    public class Clear : BuiltIn
+    public class Klier : BuiltIn
     {
-        public override string Name => "clear";
+        public override string Name => "klier";
 
-        public override string Description => "Clears the screen.";
+        public override string Description => "kliers the screen";
 
         public override CommandDescription ArgumentDescription => new();
 

@@ -6,20 +6,17 @@ using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
-    public class Clear : BuiltIn
+    class SadFace : BuiltIn
     {
-        public override string Name => "clear";
+        public override string Name => ":(";
 
-        public override string Description => "Clears the screen.";
+        public override string Description => "sadfaces (venera blue screen equivalent)";
 
         public override CommandDescription ArgumentDescription => new();
 
         protected override ExitCode Execute()
         {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
-            Console.ForegroundColor = ConsoleColor.White;
-
+            Console.WriteLine(":(");
             return ExitCode.Success;
         }
     }

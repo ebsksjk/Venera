@@ -41,6 +41,10 @@ namespace Venera.Shell
                 new stasi.UserMod(),
                 new stasi.UserInfo(),
                 new Rm(),
+                new Klier(),
+                new froeh(),
+                new Pride(),
+                new SadFace(),
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }

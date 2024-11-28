@@ -10,7 +10,7 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "clear";
 
-        public override string Description => "clears the screen";
+        public override string Description => "Clears the screen.";
 
         public override CommandDescription ArgumentDescription => new();
 

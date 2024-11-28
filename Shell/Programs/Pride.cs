@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
-
-    
-    
     class Pride : BuiltIn
     {
         public override string Name => "pride";
 
-        public override string Description => "prides the screen";
+        public override string Description => "Prides the screen";
 
         public override CommandDescription ArgumentDescription => new()
         {

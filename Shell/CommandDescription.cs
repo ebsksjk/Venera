@@ -4,6 +4,10 @@ namespace Venera.Shell;
 
 public class CommandArgument
 {
+    /// <summary>
+    /// Replacement for null because chars can't be null and nullables don't work
+    /// within CosmosOS for some reason.
+    /// </summary>
     public static readonly char ShortFormDefault = '°';
 
     /// <summary>
@@ -85,7 +89,7 @@ public class CommandArgument
 
         if (Type == typeof(string[]))
         {
-            LongForm = "";
+            LongForm = null;
             ShortForm = ShortFormDefault;
             ArgsPosition = -1;
         }
@@ -98,6 +102,20 @@ public class CommandArgument
 
     public override string ToString()
     {
+        // If this is a "endless" argument type at the very end.
+        if (ArgsPosition == -1 && Type == typeof(string[]))
+        {
+            return $"<{ValueName}...>";
+        }
+        else if (ArgsPosition >= 0 && !Required)
+        {
+            return $"(<{ValueName}>)";
+        }
+        else if (ArgsPosition >= 0 && Required)
+        {
+            return $"<{ValueName}>";
+        }
+
         if (ShortForm != ShortFormDefault)
         {
             if (Type == typeof(bool))
@@ -116,20 +134,6 @@ public class CommandArgument
             }
 
             return $"--{LongForm} <{ValueName}>";
-        }
-
-        // If this is a "endless" argument type at the very end.
-        if (ArgsPosition == -1 && Type == typeof(string[]))
-        {
-            return $"<{ValueName}...>";
-        }
-        else if (ArgsPosition >= 0 && !Required)
-        {
-            return $"(<{ValueName}>)";
-        }
-        else if (ArgsPosition >= 0 && Required)
-        {
-            return $"<{ValueName}>";
         }
 
         return $"<{ValueName}>";

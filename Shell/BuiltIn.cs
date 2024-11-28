@@ -313,19 +313,23 @@ namespace Venera.Shell
             return argValue;
         }
 
+        // Not good code but if it works, it works I guess.
         public string GenerateUsage()
         {
             // A command has commands if there are possible arguments that aren't required.
+            // -y, --host
             CommandArgument[] options = ArgumentDescription.Arguments.Where(x =>
-                x.ShortForm != CommandArgument.ShortFormDefault || x.LongForm != null
+                (x.ShortForm != CommandArgument.ShortFormDefault || x.LongForm != null) && x.ArgsPosition == int.MinValue
             ).ToArray();
 
+            // <host> <port>
             CommandArgument[] paramArgs = ArgumentDescription.Arguments.Where(x =>
                 x.ShortForm == CommandArgument.ShortFormDefault && x.LongForm == null && x.ArgsPosition != int.MinValue
             ).ToArray();
 
+            // All of the above but required
             CommandArgument[] mandatoryArguments = ArgumentDescription.Arguments.Where(x =>
-                x.Required || x.ArgsPosition != int.MinValue
+                x.Required
             ).ToArray();
 
             // Nested function because I need to do this at least twice and only inside this function.
@@ -385,7 +389,7 @@ namespace Venera.Shell
 
             if (options.Length > 0)
             {
-                result += "\n\nOptions:\n";
+                result += "\nOptions:\n";
 
                 // Calculate max length of the left side to get the required padding.
                 int padding = 0;

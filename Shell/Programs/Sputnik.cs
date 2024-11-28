@@ -20,7 +20,8 @@ namespace Venera.Shell.Programs
             Kind = 1,
             Mixed = 2,
             Rude = 3,
-            Raw = 4
+            Raw = 4,
+            Calc = 5
         }
 
         private TcpClient client = new();
@@ -203,24 +204,30 @@ namespace Venera.Shell.Programs
             return ExitCode.Success;
         }
 
-        public string RawPrompt(string prompt)
+        /// <summary>
+        /// Useful for contextless prompts that require no streaming.
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="talkingStyle"></param>
+        /// <returns></returns>
+        public static string QuickPrompt(string prompt, TalkingStyle talkingStyle = TalkingStyle.Raw)
         {
-            Connected = Connect("192.168.164.1");
+            Sputnik instance = new Sputnik();
+            instance.Connect("192.168.164.1");
 
             byte[] dataToSend = Encoding.ASCII.GetBytes(prompt);
-            byte[] metadata = { (byte)TalkingStyle.Raw };
+            byte[] metadata = { (byte)talkingStyle };
 
-            stream.Write(metadata.Concat(dataToSend).ToArray(), 0, metadata.Length + dataToSend.Length);
+            instance.stream.Write(metadata.Concat(dataToSend).ToArray(), 0, metadata.Length + dataToSend.Length);
 
             string result = string.Empty;
 
             bool eof = false;
 
-            Console.ForegroundColor = ConsoleColor.White;
             while (true)
             {
                 byte[] receivedData = new byte[PacketSize];
-                int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
+                int bytesRead = instance.stream.Read(receivedData, 0, receivedData.Length);
 
                 for (int i = 0; i < PacketSize - 2; i++)
                 {

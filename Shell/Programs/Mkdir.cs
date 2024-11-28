@@ -19,7 +19,8 @@ namespace Venera.Shell.Programs
                     valueName: "directory_name",
                     description: "Name of new directory",
                     type: typeof(string),
-                    argsPosition: 0
+                    argsPosition: 0,
+                    required: true
                 ),
             ]
         };

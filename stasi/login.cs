@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -73,6 +74,44 @@ namespace Venera.stasi
             return false;
         }
 
+        public static string getConsoleString(bool password=false)
+        {
+            string ret = "";
+            while(true)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    return ret;
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (ret.Length > 0)
+                    {
+                        ret = ret.Substring(0, ret.Length - 1);
+                        int x; int y;
+                        (x, y) = Console.GetCursorPosition();
+                        Console.SetCursorPosition(x - 1, y);
+                        Console.Write(' '); 
+                        Console.SetCursorPosition(x - 1, y);
+                    }
+                }
+                else
+                {
+                    ret += key.KeyChar;
+                    if(password)
+                    {
+                        Console.Write("*");
+                    }
+                    else
+                    {
+                        Console.Write(key.KeyChar);
+                    }
+                }
+            }
+        }
+
         public static void loop()
         {
             while (true)
@@ -94,8 +133,15 @@ namespace Venera.stasi
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 11);
                 Console.WriteLine("╔══════════════════════════════════════════════╗");
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 12);
-                Console.Write("║  Username: ");
-                string username = Console.ReadLine();
+                Console.WriteLine("║ Username:                                    ║");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
+                Console.WriteLine("║ Password:                                    ║");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
+                Console.WriteLine("╚══════════════════════════════════════════════╝");
+
+
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 12);
+                string username = getConsoleString();
                 if (username == "quit")
                 {
                     break;
@@ -107,11 +153,9 @@ namespace Venera.stasi
                     Kernel.SokolshInstance.Loop("0:\\");
                     continue;
                 }
-                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
-                Console.Write("║  Password: ");
-                string password = Console.ReadLine();
-                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
-                Console.WriteLine("╚══════════════════════════════════════════════╝");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 13);
+                string password = getConsoleString(true);
+                
 
                 if (!User.Exists("root"))
                 {
@@ -120,6 +164,7 @@ namespace Venera.stasi
 
                 if (login(username, password))
                 {
+                    Console.SetCursorPosition(Console.WindowWidth / 2 - (16 / 2), 14);
                     Console.WriteLine("Login successful");
                     Kernel.PrintDebug(curHome);
                     Kernel.SokolshInstance.Loop(curHome);
@@ -127,6 +172,7 @@ namespace Venera.stasi
                 }
                 else
                 {
+                    Console.SetCursorPosition(Console.WindowWidth / 2 - (26 / 2), 14);
                     Console.WriteLine("Login failed. Try again!!!!");
                     Thread.Sleep(500);
                 }

@@ -34,7 +34,16 @@ namespace Venera.Kosmovim
 
         protected override ExitCode Execute()
         {
-            
+            int cH = wheight - 2;
+            int cW = wwidth - 2;
+            char[] content = new char[(wwidth - 2) * (wheight - 2)];
+            for(int i = 0; i < wwidth - 2; i++)
+            {
+                for(int j = 0; j < wheight - 2; j++)
+                {
+                    content[cW * i + j] = ' ';
+                }
+            }
             ClearScreen();
             box();
             if((string)GetArgument(0) == "null")
@@ -47,10 +56,36 @@ namespace Venera.Kosmovim
             Kernel.PrintDebug($"file: {f}");
             string fCon = File.ReadAllText(f.AbsoluteOrRelativePath());
             Kernel.PrintDebug($"file con: {fCon}");
-            (curX, curY) = (1, 1);
-            PutString(1, 1, fCon);
-            Console.SetCursorPosition(10, 10);
-            Console.ReadKey();
+            for (int i = 0; i < fCon.Length; i++)
+            {
+                content[cW * curX + curY] = fCon[i];
+                curX++;
+                if (curX >= wwidth - 2)
+                {
+                    curX = 0;
+                    curY++;
+                }
+                if (curY >= wheight - 2)
+                {
+                    break;
+                }
+            }
+            while (!Console.KeyAvailable || Console.ReadKey(true).Key != ConsoleKey.Escape)
+            {
+                //get input
+                ConsoleKeyInfo cki = Console.ReadKey(true);
+
+                //handle input
+
+                //draw screen
+                for (int i = 0; i < wwidth - 2; i++)
+                {
+                    for(int j = 0; j < wheight - 2; j++)
+                    {
+                        PutChar(j, i, content[cW * i + j]);
+                    }
+                }
+            }
             Console.SetCursorPosition(0, 0);
             Console.Clear();
 

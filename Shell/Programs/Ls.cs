@@ -17,7 +17,7 @@ namespace Venera.Shell.Programs
             Arguments = [
                 new(
                     valueName: "directory",
-                    description: "Path to target directry",
+                    description: "Path to target directory",
                     type: typeof(string),
                     argsPosition: 0
                 ),
@@ -26,7 +26,6 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            Console.WriteLine("Inside ls");
             string userSpecifiedPath = (string)GetArgument(0);
 
             string path = string.IsNullOrEmpty(userSpecifiedPath)

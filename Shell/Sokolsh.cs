@@ -17,6 +17,7 @@ namespace Venera.Shell
                 new About(),
                 new Help(),
                 new Clear(),
+                new Calc(),
                 new Echo(),
                 new Disk(),
                 new Ls(),
@@ -68,12 +69,15 @@ namespace Venera.Shell
             for (int i = 0; i < cmdLine.Length; i++)
             {
                 char c = cmdLine[i];
-                Kernel.PrintDebug($"Loop {i}/{cmdLine.Length} = '{c}'");
 
                 // If we hit the last char, we add it to the list and break instantly.
                 if (i == cmdLine.Length - 1)
                 {
-                    currentArgs += c;
+                    if (c != '"')
+                    {
+                        currentArgs += c;
+                    }
+
                     args.Add(currentArgs);
                     break;
                 }
@@ -182,10 +186,10 @@ namespace Venera.Shell
             {
                 ExitCode status = command.Invoke(args);
 
-                if (status == ExitCode.Usage)
-                {
-                    Console.WriteLine(command.GenerateUsage());
-                }
+                //if (status == ExitCode.Usage)
+                //{
+                //    Console.WriteLine(command.GenerateUsage());
+                //}
 
                 return status == ExitCode.Success
                     ? ExecutionReturn.Success
@@ -200,8 +204,6 @@ namespace Venera.Shell
         /// </summary>
         private void SmartCommand(string prompt)
         {
-            Sputnik sputnik = new();
-
             string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
             string listing = string.Empty;
 
@@ -217,7 +219,7 @@ namespace Venera.Shell
                 "System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
                 "Available commands:\n/about\n/cat <file>\n/cd <folder>\n/disk\n/echo <string>\n/help\n/ip\n/ls\n/mkdir <folder name>\n/ping <ip or hostname>\n/pwd\n/reboot <'now' OR time in seconds>\n/shutdown <'now' OR time in seconds>\n/sputnik\n/type\nThe current working directory is: " + cwd + "\nThese are the contents of the current working directory seperated by semicolons:\n" + listing + "\nThis is the request by the user: " + prompt;
 
-            string cmd = sputnik.RawPrompt(systemPrompt);
+            string cmd = Sputnik.QuickPrompt(systemPrompt);
 
             Console.WriteLine($"Suggested: {cmd}");
         }

@@ -20,12 +20,13 @@ namespace Venera.VoPo
                     valueName: "args",
                     description: "List of arguments to pass to the program.",
                     type: typeof(string[]),
-                    argsPosition: 0
+                    valueDefault: "",
+                    argsPosition: -1
                 ),
                 new(
                     valueName: "entrypoints",
                     description: "List of entrypoints to execute",
-                    type: typeof(string[]),
+                    type: typeof(string),
                     shortForm: 'e',
                     longForm: "entrypoints"
                 ),

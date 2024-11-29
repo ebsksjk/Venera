@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Venera.Shell.Programs
 {
@@ -11,7 +7,7 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "rm";
 
-        public override string Description => "delete file";
+        public override string Description => "Delete a file from disk.";
 
         public override CommandDescription ArgumentDescription => new()
         {
@@ -36,7 +32,7 @@ namespace Venera.Shell.Programs
             string file = (string)GetArgument(0);
             if (!File.Exists(file))
             {
-                Console.WriteLine($"Sokolsh: rm: File {file} does not exist");
+                Console.WriteLine($"rm: File {file} does not exist");
                 return ExitCode.Error;
             }
 

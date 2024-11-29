@@ -15,8 +15,8 @@ namespace Venera.Shell.Programs
                     valueName: "text",
                     description: "String to output",
                     type: typeof(string[]),
-                    valueDefault: "",
-                    argsPosition: -1
+                    argsPosition: -1,
+                    required: true
                 )
             ]
         };

@@ -20,7 +20,8 @@ namespace Venera.Shell.Programs
                     description: "IP or domain of target host.",
                     argsPosition: 0,
                     valueDefault: string.Empty,
-                    type: typeof(string)
+                    type: typeof(string),
+                    required: true
                 )
             ]
         };

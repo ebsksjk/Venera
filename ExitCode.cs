@@ -17,5 +17,6 @@ namespace Venera
         /// An unknown error occured and the program had to exit early.
         /// </summary>
         Error = 1,
+        Usage = 2,
     }
 }

@@ -12,9 +12,25 @@ namespace Venera.Shell.Programs
 
         public override string Description => "List current directory";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
         {
-            string path = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
+            Arguments = [
+                new(
+                    valueName: "directory",
+                    description: "Path to target directory",
+                    type: typeof(string),
+                    argsPosition: 0
+                ),
+            ]
+        };
+
+        protected override ExitCode Execute()
+        {
+            string userSpecifiedPath = (string)GetArgument(0);
+
+            string path = string.IsNullOrEmpty(userSpecifiedPath)
+                ? Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory)
+                : userSpecifiedPath;
 
             try
             {

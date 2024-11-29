@@ -12,9 +12,41 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Prints this list.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new()
+        {
+            Arguments = [
+                new(
+                    valueName: "command",
+                    description: "commandify yourself",
+                    argsPosition: 0,
+                    valueDefault: "null",
+                    type: typeof(string))
+            ]
+        };
+
+        protected override ExitCode Execute()
         {
             int longestName = "Command".Length;
+            string command = (string)GetArgument(0);
+            if(command == "love")
+            {
+                Console.WriteLine(
+                    @"   please love yourself <3
+
+   _______________                        |*\_/*|________
+  |  ___________  |     .-.     .-.      ||_/-\_|______  |
+  | |           | |    .****. .****.     | |           | |
+  | |   0   0   | |    .*****.*****.     | |   0   0   | |
+  | |     -     | |     .*********.      | |     -     | |
+  | |   \___/   | |      .*******.       | |   \___/   | |
+  | |___     ___| |       .*****.        | |___________| |
+  |_____|\_/|_____|        .***.         |_______________|
+    _|__|/ \|_|_.............*.............._|________|_
+   / ********** \                          / ********** \
+ /  ************  \                      /  ************  \
+--------------------                    --------------------");
+                return ExitCode.Success;
+            }
 
             foreach (BuiltIn builtIn in Sokolsh.AvailableBuiltIns)
             {

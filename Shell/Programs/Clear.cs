@@ -10,9 +10,11 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "clear";
 
-        public override string Description => "Clears the screen";
+        public override string Description => "Clears the screen.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             Console.Clear();
             Console.SetCursorPosition(0, 0);

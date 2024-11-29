@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venera", "Venera.csproj", "{D3948A4A-4786-4102-8FAD-674926FC768E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venera", "Venera.csproj", "{D3948A4A-4786-4102-8FAD-674926FC768E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venera.BlueScreen", "Venera.BlueScreen\Venera.BlueScreen.csproj", "{C8BC17A0-2A8B-4C13-A35F-4C9F73DFFF16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D3948A4A-4786-4102-8FAD-674926FC768E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3948A4A-4786-4102-8FAD-674926FC768E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3948A4A-4786-4102-8FAD-674926FC768E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8BC17A0-2A8B-4C13-A35F-4C9F73DFFF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8BC17A0-2A8B-4C13-A35F-4C9F73DFFF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8BC17A0-2A8B-4C13-A35F-4C9F73DFFF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8BC17A0-2A8B-4C13-A35F-4C9F73DFFF16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

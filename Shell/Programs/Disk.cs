@@ -11,13 +11,24 @@ namespace Venera.Shell.Programs
 
         public override string Description => "View all disks and partitions.";
 
-        public override ExitCode Execute(string[] args)
+        public override CommandDescription ArgumentDescription => new();
+
+        protected override ExitCode Execute()
         {
             List<Cosmos.System.FileSystem.Disk> disks = Kernel.FileSystem.GetDisks();
 
             foreach (Cosmos.System.FileSystem.Disk disk in disks)
             {
-                Console.WriteLine($"{disk.Host.Type} ({disk.Size} bytes:");
+                string type = disk.Host.Type switch
+                {
+                    //determining the Type of the mounted disk
+                    Cosmos.HAL.BlockDevice.BlockDeviceType.HardDrive => "HDD",
+                    Cosmos.HAL.BlockDevice.BlockDeviceType.RemovableCD => "CD",
+                    _ => "Removable"
+                };
+
+                Console.WriteLine($"{type} ({disk.Size} bytes:");
+
 
                 foreach (ManagedPartition part in disk.Partitions)
                 {

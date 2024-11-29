@@ -7,9 +7,9 @@ namespace CosmosELFCore
 {
     public unsafe class UnmanagedExecutable
     {
-        private MemoryStream _stream;
-        private ElfFile _elf;
-        private byte* _finalExecutible;
+        private MemoryStream _stream;       //this is the original file
+        private ElfFile _elf;               //this is the parsed file
+        private byte* _finalExecutible;     //this is the final loaded executable
 
         public UnmanagedExecutable(byte* elfbin)
         {
@@ -74,7 +74,7 @@ namespace CosmosELFCore
                 if (header.Type == SectionType.NotPresentInFile)
                 {
                     //update the meta data
-                    header.Offset = writer.BaseStream.Posistion;
+                    header.Offset = writer.BaseStream.Position;
 
                     for (int i = 0; i < header.Size; i++)
                     {
@@ -85,10 +85,10 @@ namespace CosmosELFCore
                 {
                     //read the data from the original file
                     var reader = new BinaryReader(_stream);
-                    reader.BaseStream.Posistion = header.Offset;
+                    reader.BaseStream.Position = header.Offset;
 
                     //update the meta data
-                    header.Offset = writer.BaseStream.Posistion;
+                    header.Offset = writer.BaseStream.Position;
 
                     //write the data from the old file into the loaded executable
                     for (int i = 0; i < header.Size; i++)
@@ -145,11 +145,15 @@ namespace CosmosELFCore
                     Invoker.CallCode();
                     Invoker.LoadState();
 
-                    break;
-                }
+                    return Invoker.Stack[0];
+                } 
             }
 
-            return Invoker.Stack[0];
+            Console.WriteLine($"The function/entrypoint {function} could not be found in the current executable." +
+                        $" It may be spelled incorrectly, does not exist or the file is corrupted");
+            return 999;
+
+
         }
     }
 }

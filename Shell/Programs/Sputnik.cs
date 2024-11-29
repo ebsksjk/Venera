@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cosmos.System.Network.IPv4;
+using Cosmos.System.Network.IPv4.UDP.DNS;
+using System;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -12,6 +14,8 @@ namespace Venera.Shell.Programs
         /// billed to personal insolvency.
         /// </summary>
         private static readonly byte[] ProxyKey = Encoding.ASCII.GetBytes("T6pSSaSjXU6uXJqMtrYSmyptAALqGmtk");
+
+        private static readonly string RemoteServer = "klier.dev";
 
         private static readonly int PacketSize = 8096;
 
@@ -32,27 +36,13 @@ namespace Venera.Shell.Programs
 
         public override string Description => "Ask our AI bot anything you want.";
 
-        public override CommandDescription ArgumentDescription => new()
-        {
-            Arguments = [
-                new(
-                    valueName: "host",
-                    description: "Host of the remote TCP proxy",
-                    argsPosition: 0,
-                    valueDefault: "klier.dev",
-                    type: typeof(string)
-                )
-            ]
-        };
+        public override CommandDescription ArgumentDescription => new();
 
         protected override ExitCode Execute()
         {
-            if (Args.Length == 0)
-            {
-                Console.WriteLine("Sputnik: You must provide the IP address of the AI proxy.");
-            }
-
             TalkingStyle talkingStyle = TalkingStyle.Rude;
+
+            #region Disclaimer
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("[!!!] ");
@@ -106,6 +96,10 @@ namespace Venera.Shell.Programs
                 }
             }
 
+            #endregion
+
+            #region Style
+
             Console.WriteLine("How would you like Sputnik to talk to you?");
             Console.WriteLine("==============================================================");
             Console.ForegroundColor = ConsoleColor.Green;
@@ -139,9 +133,12 @@ namespace Venera.Shell.Programs
                 }
             }
 
+            #endregion
+
             try
             {
-                Connected = Connect((string)GetArgument(0));
+                Connected = Connect();
+                Console.WriteLine($"Connected and authenticated with {RemoteServer}:9999.");
             }
             catch (Exception e)
             {
@@ -204,6 +201,27 @@ namespace Venera.Shell.Programs
             return ExitCode.Success;
         }
 
+        public static string GetRemoteHost()
+        {
+            using (var xClient = new DnsClient())
+            {
+                xClient.Connect(new Address(1, 1, 1, 1));
+
+
+                xClient.SendAsk(RemoteServer);
+                Address destination = xClient.Receive(timeout: 1000);
+
+                if (destination == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return destination.ToString();
+                }
+            }
+        }
+
         /// <summary>
         /// Useful for contextless prompts that require no streaming.
         /// </summary>
@@ -213,7 +231,7 @@ namespace Venera.Shell.Programs
         public static string QuickPrompt(string prompt, TalkingStyle talkingStyle = TalkingStyle.Raw)
         {
             Sputnik instance = new Sputnik();
-            instance.Connect("192.168.164.1");
+            instance.Connect();
 
             byte[] dataToSend = Encoding.ASCII.GetBytes(prompt);
             byte[] metadata = { (byte)talkingStyle };
@@ -252,28 +270,26 @@ namespace Venera.Shell.Programs
             return result;
         }
 
-        private bool Connect(string host)
+        private bool Connect()
         {
             if (Connected)
                 return true;
 
-            client.Connect(host, 9999);
+            client = new();
+            client.Connect(GetRemoteHost(), 9999);
             stream = client.GetStream();
 
+            // Authenticate
             stream.Write(ProxyKey, 0, ProxyKey.Length);
             int result = stream.ReadByte();
 
+            // Authentication successful.
             if (result == 1)
             {
                 return true;
             }
 
             return false;
-        }
-
-        private bool IsReachable()
-        {
-            return true;
         }
     }
 }

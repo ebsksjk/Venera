@@ -72,7 +72,7 @@ namespace Venera.Shell.Programs
 
             using (var xClient = new DnsClient())
             {
-                xClient.Connect(new Address(1, 1, 1, 1)); //DNS Server address. We recommend a Google or Cloudflare DNS, but you can use any you like!
+                xClient.Connect(new Address(1, 1, 1, 1));
 
                 string[] domains = { "google.com", "github.com", "klier.dev" };
 

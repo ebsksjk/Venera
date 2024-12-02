@@ -3,6 +3,7 @@ using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading;
 using Venera.Shell;
 using Venera.stasi;
@@ -48,7 +49,8 @@ namespace Venera
             if (!Directory.Exists("0:\\Venera\\Sys\\proc"))
             {
                 Directory.CreateDirectory("0:\\Venera\\Sys\\proc");
-            } else if (Directory.GetFiles("0:\\Venera\\Sys\\proc").Length != 0 )
+            }
+            else if (Directory.GetFiles("0:\\Venera\\Sys\\proc").Length != 0)
             {
                 string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
                 if (!(pList.Length == 0 || pList == null))
@@ -62,15 +64,15 @@ namespace Venera
                     }
                 }
             }
-            if(File.Exists("0:\\Venera\\Sys\\PT"))
+            if (File.Exists("0:\\Venera\\Sys\\PT"))
             {
                 File.Delete("0:\\Venera\\Sys\\PT");
             }
-            if(!Directory.Exists("0:\\Venera"))
+            if (!Directory.Exists("0:\\Venera"))
             {
                 Directory.CreateDirectory("0:\\Venera");
             }
-            if(!Directory.Exists("0:\\Users"))
+            if (!Directory.Exists("0:\\Users"))
             {
                 Directory.CreateDirectory("0:\\Users");
             }
@@ -101,7 +103,6 @@ namespace Venera
 
         protected override void Run()
         {
-
             SokolshInstance = new Sokolsh();
             Login.loop();
 
@@ -110,21 +111,21 @@ namespace Venera
             Console.WriteLine("System is powering off ...");
             File.Delete("0:\\Venera\\Sys\\PT");
             string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
-            if(!(pList.Length == 0 || pList == null))
-            if(!(pList.Length == 0 || pList == null))
-            {
-                foreach (string p in pList)
+            if (!(pList.Length == 0 || pList == null))
+                if (!(pList.Length == 0 || pList == null))
                 {
-                    if (p == null) continue;
+                    foreach (string p in pList)
+                    {
+                        if (p == null) continue;
 
-                    Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
-                    File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
+                        Console.WriteLine($"Deleting 0:\\Venera\\Sys\\proc\\{p}...");
+                        File.Delete($"0:\\Venera\\Sys\\proc\\{p}");
+                    }
                 }
-            }
-            else
-            {
-                Console.WriteLine("No processes were running");
-            }
+                else
+                {
+                    Console.WriteLine("No processes were running");
+                }
 
 
             Thread.Sleep(500);

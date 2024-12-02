@@ -62,7 +62,10 @@ namespace Venera.Shell.Programs
             }
 
             TalkingStyle talkingStyle = TalkingStyle.Rude;
+#region Disclaimer
 
+            if (!IsDisclaimerAccepted())
+            {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("[!!!] ");
             Console.WriteLine("Please read the following disclaimer before you proceed:");

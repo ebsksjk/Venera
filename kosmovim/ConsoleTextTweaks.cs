@@ -130,9 +130,10 @@ namespace Venera.Kosmovim
         //ich bin nicht stolz auf diese abnormnimation.
         //aber, quelle: https://en.wikipedia.org/wiki/Code_page_437
         public static byte getAsciiFromChar(char x) {
+            Kernel.PrintDebug($"Trying to get ascii from char {x} (prob: {(byte)x})");
             switch (x)
             {
-                /*case '\0': return 0;
+                /*case '\0': return 0;*/
                 case '☺': return 1;
                 case '☻': return 2;
                 case '♥': return 3;
@@ -146,8 +147,8 @@ namespace Venera.Kosmovim
                 case '♂': return 11;
                 case '♀': return 12;
                 case '♪': return 13;
-                case '♫': return 14;*/
-                case '☼': return 15;/*
+                case '♫': return 14;
+                case '☼': return 15;
                 case '►': return 16;
                 case '◄': return 17;
                 case '↕': return 18;
@@ -163,9 +164,9 @@ namespace Venera.Kosmovim
                 case '∟': return 28;
                 case '↔': return 29;
                 case '▲': return 30;
-                case '▼': return 31;*/
+                case '▼': return 31;
                 case ' ': return 32;
-                case '!': return 33;/*
+                case '!': return 33;
                 case '"': return 34;
                 case '#': return 35;
                 case '$': return 36;
@@ -179,7 +180,7 @@ namespace Venera.Kosmovim
                 case ',': return 44;
                 case '-': return 45;
                 case '.': return 46;
-                case '/': return 47;*/
+                case '/': return 47;
                 case '0': return 48;
                 case '1': return 49;
                 case '2': return 50;
@@ -254,7 +255,7 @@ namespace Venera.Kosmovim
                 case 'w': return 119;
                 case 'x': return 120;
                 case 'y': return 121;
-                case 'z': return 122;/*
+                case 'z': return 122;
                 case '{': return 123;
                 case '|': return 124;
                 case '}': return 125;
@@ -307,11 +308,11 @@ namespace Venera.Kosmovim
                 case '¼': return 172;
                 case '¡': return 173;
                 case '«': return 174;
-                case '»': return 175;*/
+                case '»': return 175;
                 case '░': return 176;
                 case '▒': return 177;
                 case '▓': return 178;
-                /*case '│': return 179;
+                case '│': return 179;
                 case '┤': return 180;
                 case '╡': return 181;
                 case '╢': return 182;
@@ -350,9 +351,9 @@ namespace Venera.Kosmovim
                 case '╫': return 215;
                 case '╪': return 216;
                 case '┘': return 217;
-                case '┌': return 218;*/
+                case '┌': return 218;
                 case '█': return 219;
-                /*case '▄': return 220;
+                case '▄': return 220;
                 case '▌': return 221;
                 case '▐': return 222;
                 case '▀': return 223;
@@ -386,7 +387,7 @@ namespace Venera.Kosmovim
                 case '√': return 251;
                 case 'ⁿ': return 252;
                 case '²': return 253;
-                case '■': return 254;*/
+                case '■': return 254;
                 default: return 63;
             }
 

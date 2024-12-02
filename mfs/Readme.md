@@ -1,5 +1,5 @@
 # Intro
-Das **S**ystem zur **T**ransparenz und **A**dministration von **S**icherheits- und **I**dentitätsdaten ist die Nutzerverwaltung von Venera.
+Das **M**anagementsytem **f**ür **S**ystensicherheit ist die Nutzerverwaltung von Venera.
 
 Aufgrund des FAT32-Dateisystems ist eine Unix-artige Nutzerrechteverwaltung nicht möglich. 
 Daher wird die Nutzerverwaltung von Venera über eine eigene "Datenbank" realisiert.
@@ -16,11 +16,11 @@ Hierbei sind:
 
 Home-Verzeichnisse liegen per default in `0:\Users\<username>\`.
 
-Das S.T.A.S.I nutzt als rudimentäre Sicherheit, dass ein angemeldeter Nutzer nur Zugriff auf sein eigenes Home-Verzeichnis hat.
+Das MfS nutzt als rudimentäre Sicherheit, dass ein angemeldeter Nutzer nur Zugriff auf sein eigenes Home-Verzeichnis hat.
 Zugriff auf andere Verzeichnisse wird verweigert.
 
 # Befehle
-## stasi.useradd
+## mfs.useradd
 Mit dem Befehl `useradd` können neue Benutzer hinzugefügt werden. Der Befehl hat folgende Syntax:
 ```
 useradd -u <username> [-n <name>] 
@@ -28,13 +28,13 @@ useradd -u <username> [-n <name>]
 
 Der Befehl fragt interaktiv nach einem Passwort für den neuen Benutzer.
 
-## stasi.userdel
+## mfs.userdel
 Mit dem Befehl `userdel` können Benutzer gelöscht werden. Der Befehl hat folgende Syntax:
 ```
 userdel <username>
 ```
 
-## stasi.usermod
+## mfs.usermod
 Mit dem Befehl `usermod` können Benutzer bearbeitet werden. Der Befehl hat folgende Syntax:
 ```
 usermod <username>
@@ -42,7 +42,7 @@ usermod <username>
 
 Jedes der Argumente ist hierbei optional.
 
-## stasi.userinfo
+## mfs.userinfo
 Mit dem Befehl `userinfo` können Informationen über einen Benutzer abgerufen werden. Der Befehl hat folgende Syntax:
 ```
 userinfo [<username>]

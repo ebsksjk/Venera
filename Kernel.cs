@@ -1,18 +1,17 @@
-﻿using Cosmos.Core;
-using Cosmos.Core_Asm;
+﻿
 using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
-using System;
-using System.IO;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using Venera.Shell;
 using Venera.stasi;
+using System;
 using XSharp.x86.Params;
 using Sys = Cosmos.System;
+using System.Text;
+using Cosmos.System.ExtendedASCII;
 
 namespace Venera
 {
@@ -99,6 +98,7 @@ namespace Venera
             Encoding.RegisterProvider(Cosmos.System.ExtendedASCII.CosmosEncodingProvider.Instance);
             Console.OutputEncoding = Encoding.GetEncoding(437);
             Console.InputEncoding = Encoding.GetEncoding(437);
+            Sys.KeyboardManager.SetKeyLayout(new Cosmos.System.ScanMaps.DEStandardLayout());
         }
 
         protected override void Run()

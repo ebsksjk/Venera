@@ -58,33 +58,33 @@ namespace Venera.Shell.Programs
             Console.Write("[!!!] ");
             Console.WriteLine("Please read the following disclaimer before you proceed:");
             Console.WriteLine("==============================================================");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Press ANY KEY to show disclaimer.");
             Console.ReadKey();
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\n1. Your data is transmitted in cleartext.");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Venera is not capable of encryption. Therefore, your data cannot be encrypted in transit and is " +
                 "vulnerable to MITM attacks. Do not use it for sensitive information.");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\n2. Your data is proxied.");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Venera is not capable of running local LLMs nor to make HTTPS requests. Therefore, your data is " +
                 "sent to a TCP proxy hosted by Nicolas Klier. Your Sputnik dialogue is not logged by the proxy. The context is " +
                 "kept in memory as long as your TCP connection is open. I do log the amount of spent tokens to keep track of " +
                 "billing. It's free for you, not for me :p");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\n3. Your data is processed by OpenRouter.");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("The proxy forwards your requests to OpenRouter.ai. OpenRouter anonymises your request and " +
                 "forwards it to the current cheapest AI provider. OpenRouter itself does not log your requests but some " +
                 "providers might. Therefore, avoid personal data. The privacy policy of OpenRouter applies: " +
                 "https://openrouter.ai/privacy");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\n3. AI hallucinates content.");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Take everything with a grain of salt. Depending on the preset you choose next, it may insult you, " +
                 "wish you dead or instruct you on how to build a bomb. Do not take its answers seriously and have fun.");
 
@@ -123,7 +123,7 @@ namespace Venera.Shell.Programs
 
             while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Black;
                 Console.Write("\nType '1', '2' or '3' to set Sputnik's style: ");
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.WriteLine();
@@ -169,7 +169,7 @@ namespace Venera.Shell.Programs
 
                 bool eof = false;
 
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
                 while (true)
                 {
                     byte[] receivedData = new byte[PacketSize];

@@ -489,7 +489,7 @@ namespace Venera.Shell
                 {
                     Kernel.PrintDebug($"[I] Iterate {i} / {Args.Length}");
                     string sArg = Args[i];
-                    string sub = sArg.Substring(2);
+                    string sub = sArg.Substring(1);
 
                     CommandArgument tmpArg = null;
 

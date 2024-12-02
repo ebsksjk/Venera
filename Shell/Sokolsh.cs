@@ -49,7 +49,8 @@ namespace Venera.Shell
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }
-
+        public static List<string> lastCommands;
+        public static int curLine = 0;
         public Sokolsh()
         {
         }
@@ -121,12 +122,18 @@ namespace Venera.Shell
         public void Loop(string homeDir)
         {
             Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, homeDir);
+            lastCommands = new List<string>();
+
             while (true)
             {
                 PrintPrefix();
+                (int x, curLine) = Console.GetCursorPosition();
 
-                string input = Console.ReadLine();
-
+                string input = LoopInput();
+                Kernel.PrintDebug($"input: {input}");
+                lastCommands.Add(input);
+                Kernel.PrintDebug($"count: {lastCommands.Count}");
+                //Kernel.PrintDebug($"Last commands: {string.Join(", ", lastCommands)}");
                 switch (Execute(input))
                 {
                     case ExecutionReturn.Empty:
@@ -143,6 +150,67 @@ namespace Venera.Shell
                         // Exit current shell. This will end the operating system, ideally.
                         return;
                 }
+            }
+        }
+
+        private string LoopInput()
+        {
+            string command = "";
+            int lastCommandIndex = lastCommands.Count - 1;
+            Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+            while (true)
+            {
+                if (Console.KeyAvailable)
+                {
+                    
+                    ConsoleKeyInfo key = Console.ReadKey(true); // Non-blocking key read
+
+                    // Handle Enter key (submit action)
+                    if (key.Key == ConsoleKey.Enter)
+                    {
+                        Console.WriteLine();
+                        lastCommandIndex = lastCommands.Count - 1;
+                        return command;
+                    }
+                    // Handle Backspace key (remove last character)
+                    else if (key.Key == ConsoleKey.Backspace)
+                    {
+                        if (command.Length > 0)
+                        {
+                            command = command.Substring(0, command.Length - 1);
+                            int x, y;
+                            (x, y) = Console.GetCursorPosition();
+                            Console.SetCursorPosition(x - 1, y);
+                            Console.Write(' ');
+                            Console.SetCursorPosition(x - 1, y);
+                        }
+                    } else if (key.Key == ConsoleKey.UpArrow)
+                    {
+                        Kernel.PrintDebug("upppp!!!");
+                        Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+                        Kernel.PrintDebug($"Last command count: {lastCommands.Count}");
+                        Kernel.PrintDebug($"command: {command}");
+                        Kernel.PrintDebug($"Last command: {lastCommands[lastCommandIndex]}");
+
+                        command = lastCommands[lastCommandIndex];
+                        Console.SetCursorPosition(GetPrefix().Length, curLine);
+                        Console.Write("                                                                         ");
+                        Console.SetCursorPosition(GetPrefix().Length, curLine);
+                        Console.Write(command);
+                        lastCommandIndex--;
+                        if (lastCommandIndex < 0)
+                        {
+                            lastCommandIndex = lastCommands.Count -1;
+                        }
+                    }
+                    else
+                    {
+                        command += key.KeyChar;
+                        Console.Write(key.KeyChar); // Otherwise, print the actual character
+                    }
+                }
+
+                Kosmovim.ConsoleTextTweaks.sparkle();
             }
         }
 
@@ -231,6 +299,16 @@ namespace Venera.Shell
             Console.Write(cwd);
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(" $ ");
+        }
+
+        private string GetPrefix()
+        {
+            string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
+            string ret = "";
+            ret += cwd;
+            ret += " $ ";
+
+            return ret;
         }
     }
 }

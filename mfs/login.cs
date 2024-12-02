@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Venera.Shell;
+using Venera.Kosmovim;
 
 namespace Venera.stasi
 {
@@ -74,58 +75,52 @@ namespace Venera.stasi
             return false;
         }
 
-        public static string getConsoleString(bool password=false)
-        {
-            string ret = "";
-            while(true)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    return ret;
-                }
-                else if (key.Key == ConsoleKey.Backspace)
-                {
-                    if (ret.Length > 0)
-                    {
-                        ret = ret.Substring(0, ret.Length - 1);
-                        int x; int y;
-                        (x, y) = Console.GetCursorPosition();
-                        Console.SetCursorPosition(x - 1, y);
-                        Console.Write(' '); 
-                        Console.SetCursorPosition(x - 1, y);
-                    }
-                }
-                else
-                {
-                    ret += key.KeyChar;
-                    if(password)
-                    {
-                        Console.Write("*");
-                    }
-                    else
-                    {
-                        Console.Write(key.KeyChar);
-                    }
-                }
-            }
-        }
-
         public static void loop()
         {
             while (true)
             {
-                Console.Clear();
+                
+                Console.BackgroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Black;
+                ConsoleTextTweaks.ClearScreen(0x7C);
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine();
-                Console.WriteLine(" ░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░ ");
-                Console.WriteLine(" ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("  ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█▓▒░▒▓█▓▒░▒▓██████▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░");
-                Console.WriteLine("   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("    ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                string[] logo = new string[] {" ░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░  ",
+                                              " ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "  ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█▓▒░▒▓█▓▒░▒▓██████▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░ ",
+                                              "   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "    ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ "};
+                int curX = 0;
+                int curY = 1;
+                foreach (string v1 in logo)
+                {
+                    foreach (char x in v1)
+                    {
+                        if (x == '█')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x76);
+
+                        } else if(x == '▓')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x74);
+                        }
+                        else if (x == '▒')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7E);
+                        }
+                        else
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7C);
+                        }
+                        curX++;
+
+                    }
+                    curY++;
+                    curX = 0;
+                }
+
                 Console.WriteLine();
 
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (37 / 2), 10);
@@ -141,7 +136,7 @@ namespace Venera.stasi
 
 
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 12);
-                string username = getConsoleString();
+                string username = ConsoleTextTweaks.getConsoleString();
                 if (username == "quit")
                 {
                     break;
@@ -154,7 +149,7 @@ namespace Venera.stasi
                     continue;
                 }
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 13);
-                string password = getConsoleString(true);
+                string password = ConsoleTextTweaks.getConsoleString(true);
                 
 
                 if (!User.Exists("root"))

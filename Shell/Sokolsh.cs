@@ -50,8 +50,17 @@ namespace Venera.Shell
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }
 
+        public static string UsageText { get; private set; }
+
         public Sokolsh()
         {
+            Console.Write("Sokolsh: Prepare smart command ...");
+            UsageText = string.Empty;
+            foreach (BuiltIn builtIn in AvailableBuiltIns)
+            {
+                UsageText += $"---\n{builtIn.GenerateUsage()}\n";
+            }
+            Console.WriteLine(" Done.");
         }
 
         /// <summary>
@@ -172,6 +181,8 @@ namespace Venera.Shell
             {
                 string smartInput = input.Substring(1);
                 SmartCommand(smartInput);
+
+                return ExecutionReturn.Success;
             }
 
             string[] parts = SplitArgs(input.Trim());
@@ -217,11 +228,31 @@ namespace Venera.Shell
             string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. Never break this rule. " +
                 "Omit the slash (/) at the beginning. Everything after the colon (:) is meant as a description to give you context about the command. Never output the description to the user. " +
                 "System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
-                "Available commands:\n/about\n/cat <file>\n/cd <folder>\n/disk\n/echo <string>\n/help\n/ip\n/ls\n/mkdir <folder name>\n/ping <ip or hostname>\n/pwd\n/reboot <'now' OR time in seconds>\n/shutdown <'now' OR time in seconds>\n/sputnik\n/type\nThe current working directory is: " + cwd + "\nThese are the contents of the current working directory seperated by semicolons:\n" + listing + "\nThis is the request by the user: " + prompt;
+                $"Available commands are listed below. Each command is seperated by \"---\":\n{UsageText}\n\n--- END OF COMMANDS---\n" +
+                $"The current working directory is:{cwd}\nThese are the contents of the current working directory seperated by semicolons:\n{listing}\nThis is the request by the user: {prompt}";
 
+            Kernel.PrintDebug(systemPrompt);
             string cmd = Sputnik.QuickPrompt(systemPrompt);
 
-            Console.WriteLine($"Suggested: {cmd}");
+            if (cmd == null)
+            {
+                return;
+            }
+
+            Console.Write($"Sputnik suggests:\n $ ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(cmd);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\nType ENTER to accept and execute, or ANY KEY to reject: ");
+            ConsoleKeyInfo key = Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Execute(cmd);
+            }
+
         }
 
         private void PrintPrefix()

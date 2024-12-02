@@ -33,6 +33,12 @@ namespace Venera.Shell.Programs
             }
 
             string response = Sputnik.QuickPrompt(mathTerm, Sputnik.TalkingStyle.Calc);
+
+            if (response == null)
+            {
+                return ExitCode.Error;
+            }
+
             Console.WriteLine(response);
 
             return ExitCode.Success;

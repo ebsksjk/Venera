@@ -39,10 +39,13 @@ namespace Venera
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);
 
+            Console.WriteLine("Welcome on Venera");
+            Kernel.PrintDebug("Welcome on Venera");
+            // in BeforeRun() or when user calls a "command"
+
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
-
-            Chromat = new Chromat();
+            Kernel.PrintDebug("Set cwd! to 0:\\");
             if (!Directory.Exists("0:\\Venera\\Sys"))
             {
                 Directory.CreateDirectory("0:\\Venera\\Sys");
@@ -53,6 +56,7 @@ namespace Venera
             }
             else if (Directory.GetFiles("0:\\Venera\\Sys\\proc").Length != 0)
             {
+                Kernel.PrintDebug("Process dir not empty, clearing....");
                 string[] pList = Directory.GetFiles("0:\\Venera\\Sys\\proc");
                 if (!(pList.Length == 0 || pList == null))
                 {
@@ -77,12 +81,13 @@ namespace Venera
             {
                 Directory.CreateDirectory("0:\\Users");
             }
+            Kernel.PrintDebug("Created Venera dirs!");
 
-
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
-            //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
-            //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
+            Kernel.PrintDebug("trying to print welcome message from test elf");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["Welcome on Venera!"], "tty_puts", "1:\\comp.so");
+            Kernel.PrintDebug("ran test elf!!!");
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
+            Kernel.PrintDebug("Set COM speed");
 
             //VoPo.Interrupts.InterruptHandler.Initialize();
             //CPU.UpdateIDT(true);
@@ -96,15 +101,19 @@ namespace Venera
                 //This will automatically set the IP config after DHCP response
                 xClient.SendDiscoverPacket();
             }
+            Kernel.PrintDebug("Created DHCP client!");
             Encoding.RegisterProvider(Cosmos.System.ExtendedASCII.CosmosEncodingProvider.Instance);
             Console.OutputEncoding = Encoding.GetEncoding(437);
             Console.InputEncoding = Encoding.GetEncoding(437);
+            Kernel.PrintDebug("Set System encoding!");
             Sys.KeyboardManager.SetKeyLayout(new Cosmos.System.ScanMaps.DEStandardLayout());
+            Kernel.PrintDebug("Set Keyboard layout!");
         }
 
         protected override void Run()
         {
             SokolshInstance = new Sokolsh();
+            Kernel.PrintDebug("Created Shell instance! - dropping into login shell:");
             Login.loop();
 
             Console.Clear();

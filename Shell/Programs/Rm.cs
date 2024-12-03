@@ -29,7 +29,7 @@ namespace Venera.Shell.Programs
                 return ExitCode.Usage;
             }
 
-            string file = (string)GetArgument(0);
+            string file = ((string)GetArgument(0)).AbsoluteOrRelativePath();
             if (!File.Exists(file))
             {
                 Console.WriteLine($"rm: File {file} does not exist");

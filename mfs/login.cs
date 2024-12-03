@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Venera.Shell;
+using Venera.Kosmovim;
 
 namespace Venera.stasi
 {
@@ -77,16 +79,48 @@ namespace Venera.stasi
         {
             while (true)
             {
-                Console.Clear();
+                
+                Console.BackgroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Black;
+                ConsoleTextTweaks.ClearScreen(0x7C);
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine();
-                Console.WriteLine(" ░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░ ");
-                Console.WriteLine(" ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("  ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█▓▒░▒▓█▓▒░▒▓██████▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░");
-                Console.WriteLine("   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
-                Console.WriteLine("    ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░");
+                string[] logo = new string[] {" ░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░  ",
+                                              " ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "  ░▒▓█▓▒▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "  ░▒▓█▓▒▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█▓▒░▒▓█▓▒░▒▓██████▓▒░ ░▒▓███████▓▒░░▒▓████████▓▒░ ",
+                                              "   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "   ░▒▓█▓▓█▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ",
+                                              "    ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ "};
+                int curX = 0;
+                int curY = 1;
+                foreach (string v1 in logo)
+                {
+                    foreach (char x in v1)
+                    {
+                        if (x == '█')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x76);
+
+                        } else if(x == '▓')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x74);
+                        }
+                        else if (x == '▒')
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7E);
+                        }
+                        else
+                        {
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7C);
+                        }
+                        curX++;
+
+                    }
+                    curY++;
+                    curX = 0;
+                }
+
                 Console.WriteLine();
 
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (37 / 2), 10);
@@ -94,8 +128,15 @@ namespace Venera.stasi
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 11);
                 Console.WriteLine("╔══════════════════════════════════════════════╗");
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 12);
-                Console.Write("║  Username: ");
-                string username = Console.ReadLine();
+                Console.WriteLine("║ Username:                                    ║");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
+                Console.WriteLine("║ Password:                                    ║");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
+                Console.WriteLine("╚══════════════════════════════════════════════╝");
+
+
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 12);
+                string username = ConsoleTextTweaks.getConsoleString();
                 if (username == "quit")
                 {
                     break;
@@ -107,11 +148,9 @@ namespace Venera.stasi
                     Kernel.SokolshInstance.Loop("0:\\");
                     continue;
                 }
-                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 13);
-                Console.Write("║  Password: ");
-                string password = Console.ReadLine();
-                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2), 14);
-                Console.WriteLine("╚══════════════════════════════════════════════╝");
+                Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 13);
+                string password = ConsoleTextTweaks.getConsoleString(true);
+                
 
                 if (!User.Exists("root"))
                 {
@@ -120,6 +159,7 @@ namespace Venera.stasi
 
                 if (login(username, password))
                 {
+                    Console.SetCursorPosition(Console.WindowWidth / 2 - (16 / 2), 14);
                     Console.WriteLine("Login successful");
                     Kernel.PrintDebug(curHome);
                     Kernel.SokolshInstance.Loop(curHome);
@@ -127,6 +167,7 @@ namespace Venera.stasi
                 }
                 else
                 {
+                    Console.SetCursorPosition(Console.WindowWidth / 2 - (26 / 2), 14);
                     Console.WriteLine("Login failed. Try again!!!!");
                     Thread.Sleep(500);
                 }

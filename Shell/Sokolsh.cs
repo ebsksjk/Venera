@@ -49,9 +49,19 @@ namespace Venera.Shell
             };
 
         public static List<BuiltIn> AvailableBuiltIns { get { return _availableBuiltIns; } }
+        public static List<string> lastCommands;
+        public static int curLine = 0;
 
+        public static string UsageText { get; private set; }
         public Sokolsh()
         {
+            Console.Write("Sokolsh: Prepare smart command ...");
+            UsageText = string.Empty;
+            foreach (BuiltIn builtIn in AvailableBuiltIns)
+            {
+                UsageText += $"---\n{builtIn.GenerateUsage()}\n";
+            }
+            Console.WriteLine(" Done.");
         }
 
         /// <summary>
@@ -121,12 +131,18 @@ namespace Venera.Shell
         public void Loop(string homeDir)
         {
             Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, homeDir);
+            lastCommands = new List<string>();
+
             while (true)
             {
                 PrintPrefix();
+                (int x, curLine) = Console.GetCursorPosition();
 
-                string input = Console.ReadLine();
-
+                string input = LoopInput();
+                Kernel.PrintDebug($"input: {input}");
+                lastCommands.Add(input);
+                Kernel.PrintDebug($"count: {lastCommands.Count}");
+                //Kernel.PrintDebug($"Last commands: {string.Join(", ", lastCommands)}");
                 switch (Execute(input))
                 {
                     case ExecutionReturn.Empty:
@@ -143,6 +159,67 @@ namespace Venera.Shell
                         // Exit current shell. This will end the operating system, ideally.
                         return;
                 }
+            }
+        }
+
+        private string LoopInput()
+        {
+            string command = "";
+            int lastCommandIndex = lastCommands.Count - 1;
+            Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+            while (true)
+            {
+                if (Console.KeyAvailable)
+                {
+                    
+                    ConsoleKeyInfo key = Console.ReadKey(true); // Non-blocking key read
+
+                    // Handle Enter key (submit action)
+                    if (key.Key == ConsoleKey.Enter)
+                    {
+                        Console.WriteLine();
+                        lastCommandIndex = lastCommands.Count - 1;
+                        return command;
+                    }
+                    // Handle Backspace key (remove last character)
+                    else if (key.Key == ConsoleKey.Backspace)
+                    {
+                        if (command.Length > 0)
+                        {
+                            command = command.Substring(0, command.Length - 1);
+                            int x, y;
+                            (x, y) = Console.GetCursorPosition();
+                            Console.SetCursorPosition(x - 1, y);
+                            Console.Write(' ');
+                            Console.SetCursorPosition(x - 1, y);
+                        }
+                    } else if (key.Key == ConsoleKey.UpArrow)
+                    {
+                        Kernel.PrintDebug("upppp!!!");
+                        Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+                        Kernel.PrintDebug($"Last command count: {lastCommands.Count}");
+                        Kernel.PrintDebug($"command: {command}");
+                        Kernel.PrintDebug($"Last command: {lastCommands[lastCommandIndex]}");
+
+                        command = lastCommands[lastCommandIndex];
+                        Console.SetCursorPosition(GetPrefix().Length, curLine);
+                        Console.Write("                                                                         ");
+                        Console.SetCursorPosition(GetPrefix().Length, curLine);
+                        Console.Write(command);
+                        lastCommandIndex--;
+                        if (lastCommandIndex < 0)
+                        {
+                            lastCommandIndex = lastCommands.Count -1;
+                        }
+                    }
+                    else
+                    {
+                        command += key.KeyChar;
+                        Console.Write(key.KeyChar); // Otherwise, print the actual character
+                    }
+                }
+
+                Kosmovim.ConsoleTextTweaks.sparkle();
             }
         }
 
@@ -172,6 +249,8 @@ namespace Venera.Shell
             {
                 string smartInput = input.Substring(1);
                 SmartCommand(smartInput);
+
+                return ExecutionReturn.Success;
             }
 
             string[] parts = SplitArgs(input.Trim());
@@ -217,11 +296,31 @@ namespace Venera.Shell
             string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. Never break this rule. " +
                 "Omit the slash (/) at the beginning. Everything after the colon (:) is meant as a description to give you context about the command. Never output the description to the user. " +
                 "System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
-                "Available commands:\n/about\n/cat <file>\n/cd <folder>\n/disk\n/echo <string>\n/help\n/ip\n/ls\n/mkdir <folder name>\n/ping <ip or hostname>\n/pwd\n/reboot <'now' OR time in seconds>\n/shutdown <'now' OR time in seconds>\n/sputnik\n/type\nThe current working directory is: " + cwd + "\nThese are the contents of the current working directory seperated by semicolons:\n" + listing + "\nThis is the request by the user: " + prompt;
+                $"Available commands are listed below. Each command is seperated by \"---\":\n{UsageText}\n\n--- END OF COMMANDS---\n" +
+                $"The current working directory is:{cwd}\nThese are the contents of the current working directory seperated by semicolons:\n{listing}\nThis is the request by the user: {prompt}";
 
+            Kernel.PrintDebug(systemPrompt);
             string cmd = Sputnik.QuickPrompt(systemPrompt);
 
-            Console.WriteLine($"Suggested: {cmd}");
+            if (cmd == null)
+            {
+                return;
+            }
+
+            Console.Write($"Sputnik suggests:\n $ ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(cmd);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\nType ENTER to accept and execute, or ANY KEY to reject: ");
+            ConsoleKeyInfo key = Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Execute(cmd);
+            }
+
         }
 
         private void PrintPrefix()
@@ -231,6 +330,16 @@ namespace Venera.Shell
             Console.Write(cwd);
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(" $ ");
+        }
+
+        private string GetPrefix()
+        {
+            string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
+            string ret = "";
+            ret += cwd;
+            ret += " $ ";
+
+            return ret;
         }
     }
 }

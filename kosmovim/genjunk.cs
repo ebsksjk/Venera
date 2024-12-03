@@ -36,12 +36,14 @@ namespace Venera.Kosmovim
 
         protected override ExitCode Execute()
         {
+            Kernel.PrintDebug("HALLO IST DA JEMAND????? :33");
             if (Args.Length < 2)
             {
                 Console.WriteLine("Usage: genjunk <nc> <file>");
                 return ExitCode.Error;
             }
-
+            Kernel.PrintDebug("HALLO IST DA JEMAND?????");
+            Kernel.PrintDebug($"Args: {Args.Length}, {Args[1]}");
             string path = Args[1].AbsoluteOrRelativePath();
             Kernel.PrintDebug($"path: {path}");
             if (File.Exists(path))

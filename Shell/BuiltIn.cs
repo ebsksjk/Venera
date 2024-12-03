@@ -123,7 +123,7 @@ namespace Venera.Shell
             }
 
             // TODO: Future code after execution.
-            args = null;
+            Args = null;
 
             return exitCode;
         }
@@ -152,6 +152,11 @@ namespace Venera.Shell
         protected object GetArgument(string argsName)
         {
             Kernel.PrintDebug($"Get argument {argsName}");
+
+            if (Args == null || Args.Length == 0)
+            {
+                return null;
+            }
 
             // Check if this command even has arguments defined.
             if (!ArgumentDescription.HasArguments)
@@ -239,6 +244,11 @@ namespace Venera.Shell
         protected object GetArgument(int argsIndex)
         {
             Kernel.PrintDebug($"Get argument at {argsIndex}");
+
+            if (Args == null || Args.Length == 0)
+            {
+                return null;
+            }
 
             foreach (CommandArgument arg in ArgumentDescription.Arguments)
             {
@@ -489,7 +499,7 @@ namespace Venera.Shell
                 {
                     Kernel.PrintDebug($"[I] Iterate {i} / {Args.Length}");
                     string sArg = Args[i];
-                    string sub = sArg.Substring(2);
+                    string sub = sArg.Substring(1);
 
                     CommandArgument tmpArg = null;
 

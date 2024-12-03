@@ -1,10 +1,10 @@
-﻿
 using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
+using Venera.Graphics;
 using Venera.Shell;
 using Venera.stasi;
 using System;
@@ -26,9 +26,11 @@ namespace Venera
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
         public static Sys.FileSystem.CosmosVFS FileSystem;
+        public static Chromat Chromat;
 
         protected override void BeforeRun()
         {
+            SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);
             //Cosmos.System.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.DEStandardLayout());
 
             //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), null, "tty_clear", "1:\\comp.so");
@@ -37,11 +39,10 @@ namespace Venera
             FileSystem = new Cosmos.System.FileSystem.CosmosVFS();
             VFSManager.RegisterVFS(FileSystem);
 
-            Console.WriteLine("Welcome on Venera");
-            // in BeforeRun() or when user calls a "command"
-
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
+
+            Chromat = new Chromat();
             if (!Directory.Exists("0:\\Venera\\Sys"))
             {
                 Directory.CreateDirectory("0:\\Venera\\Sys");

@@ -79,7 +79,7 @@ namespace Venera.stasi
         {
             while (true)
             {
-                
+                Kernel.PrintDebug("entering Login...");
                 Console.BackgroundColor = ConsoleColor.Gray;
                 Console.ForegroundColor = ConsoleColor.Black;
                 ConsoleTextTweaks.ClearScreen(0x7C);
@@ -94,6 +94,7 @@ namespace Venera.stasi
                                               "    ░▒▓██▓▒░  ░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ "};
                 int curX = 0;
                 int curY = 1;
+                Kernel.PrintDebug("printing logo...");
                 foreach (string v1 in logo)
                 {
                     foreach (char x in v1)

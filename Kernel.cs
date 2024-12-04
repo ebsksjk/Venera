@@ -1,17 +1,13 @@
 using Cosmos.HAL;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
+using System;
 using System.IO;
-using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
-using Venera.Graphics;
 using Venera.Shell;
 using Venera.stasi;
-using System;
-using XSharp.x86.Params;
 using Sys = Cosmos.System;
-using System.Text;
-using Cosmos.System.ExtendedASCII;
 
 namespace Venera
 {
@@ -26,7 +22,6 @@ namespace Venera
         public static Environment<string> GlobalEnvironment { get => _environment; }
 
         public static Sys.FileSystem.CosmosVFS FileSystem;
-        public static Chromat Chromat;
 
         protected override void BeforeRun()
         {
@@ -42,7 +37,11 @@ namespace Venera
             _environment = new();
             _environment.Set(DefaultEnvironments.CurrentWorkingDirectory, @"0:\");
 
-            Chromat = new Chromat();
+            if (!Directory.Exists("0:\\Venera"))
+            {
+                Directory.CreateDirectory("0:\\Venera");
+            }
+
             if (!Directory.Exists("0:\\Venera\\Sys"))
             {
                 Directory.CreateDirectory("0:\\Venera\\Sys");
@@ -69,17 +68,14 @@ namespace Venera
             {
                 File.Delete("0:\\Venera\\Sys\\PT");
             }
-            if (!Directory.Exists("0:\\Venera"))
-            {
-                Directory.CreateDirectory("0:\\Venera");
-            }
+
             if (!Directory.Exists("0:\\Users"))
             {
                 Directory.CreateDirectory("0:\\Users");
             }
 
 
-            ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
+            //ApplicationRunner.runApplicationEntryPoint("test", File.ReadAllBytes("1:\\comp.so"), ["affeaffeaffe"], "tty_puts", "1:\\comp.so");
             //ApplicationRunner.runApplicationEntryPoint("test", TestFile.test_so, null, "tty_clear");
             //ApplicationRunner.runApplication("ctest", TestFile.test_c, null);
             SerialPort.Enable(COMPort.COM1, BaudRate.BaudRate115200);

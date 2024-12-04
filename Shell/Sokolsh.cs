@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.System.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace Venera.Shell
                 new Sputnik(),
                 new Man(),
                 new ArgTest(),
+                new RunChromat(),
                 new VoPo.ELFInfo(),
                 new VoPo.RunApp(),
                 new VoPo.Faketop(),
@@ -139,9 +141,14 @@ namespace Venera.Shell
                 (int x, curLine) = Console.GetCursorPosition();
 
                 string input = LoopInput();
-                Kernel.PrintDebug($"input: {input}");
-                lastCommands.Add(input);
-                Kernel.PrintDebug($"count: {lastCommands.Count}");
+
+                if (input.Trim() != string.Empty)
+                {
+                    Kernel.PrintDebug($"input: {input}");
+                    lastCommands.Add(input);
+                    Kernel.PrintDebug($"count: {lastCommands.Count}");
+                }
+
                 //Kernel.PrintDebug($"Last commands: {string.Join(", ", lastCommands)}");
                 switch (Execute(input))
                 {
@@ -171,7 +178,7 @@ namespace Venera.Shell
             {
                 if (Console.KeyAvailable)
                 {
-                    
+
                     ConsoleKeyInfo key = Console.ReadKey(true); // Non-blocking key read
 
                     // Handle Enter key (submit action)
@@ -193,7 +200,8 @@ namespace Venera.Shell
                             Console.Write(' ');
                             Console.SetCursorPosition(x - 1, y);
                         }
-                    } else if (key.Key == ConsoleKey.UpArrow)
+                    }
+                    else if (key.Key == ConsoleKey.UpArrow && lastCommandIndex >= 0)
                     {
                         Kernel.PrintDebug("upppp!!!");
                         Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
@@ -209,7 +217,7 @@ namespace Venera.Shell
                         lastCommandIndex--;
                         if (lastCommandIndex < 0)
                         {
-                            lastCommandIndex = lastCommands.Count -1;
+                            lastCommandIndex = lastCommands.Count - 1;
                         }
                     }
                     else
@@ -219,7 +227,7 @@ namespace Venera.Shell
                     }
                 }
 
-                Kosmovim.ConsoleTextTweaks.sparkle();
+                Kosmovim.ConsoleTextTweaks.Sparkle();
             }
         }
 
@@ -252,6 +260,8 @@ namespace Venera.Shell
 
                 return ExecutionReturn.Success;
             }
+
+            // Split |
 
             string[] parts = SplitArgs(input.Trim());
             if (parts.Length == 0) return ExecutionReturn.Empty;
@@ -293,10 +303,9 @@ namespace Venera.Shell
                 listing += item.mSize + ";";
             }
 
-            string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. Never break this rule. " +
-                "Omit the slash (/) at the beginning. Everything after the colon (:) is meant as a description to give you context about the command. Never output the description to the user. " +
-                "System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
-                $"Available commands are listed below. Each command is seperated by \"---\":\n{UsageText}\n\n--- END OF COMMANDS---\n" +
+            string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. If you can't generate a fitting command, retun \"unknown\". " +
+                "Never output the description to the user. System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
+                $"Available commands are listed below in a man page like format. Each command is seperated by \"---\":\n{UsageText}\n\n--- END OF COMMANDS---\n" +
                 $"The current working directory is:{cwd}\nThese are the contents of the current working directory seperated by semicolons:\n{listing}\nThis is the request by the user: {prompt}";
 
             Kernel.PrintDebug(systemPrompt);

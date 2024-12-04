@@ -56,7 +56,7 @@ namespace Venera.Shell.Programs
             bool gay = (bool)GetArgument("g");
             bool bi = (bool)GetArgument("b");
 
-            string name = (string)GetArgument(0);
+            string name = (string)GetArgument(0) ?? string.Empty;
             switch (name.ToLower())
             {
                 case "mara":
@@ -81,21 +81,24 @@ namespace Venera.Shell.Programs
             if (trans)
             {
                 gays.getTransPride(Console.WindowHeight).ForEach(l => l.draw());
-            }else if (nb)
+            }
+            else if (nb)
             {
                 gays.getNonBinaryPride(Console.WindowHeight).ForEach(l => l.draw());
-            } else if (gay)
+            }
+            else if (gay)
             {
                 gays.getGayPride(Console.WindowHeight).ForEach(l => l.draw());
             }
-            else { 
-                gays.getRainbowPride(Console.WindowHeight).ForEach(l => l.draw()); 
+            else
+            {
+                gays.getRainbowPride(Console.WindowHeight).ForEach(l => l.draw());
             }
-            
+
             Console.ReadLine();
             return ExitCode.Success;
         }
-        
+
     }
 
     class Pixel
@@ -125,7 +128,7 @@ namespace Venera.Shell.Programs
             Console.ForegroundColor = color;
             for (int i = 0; i < height; i++)
             {
-                for(int j = 0; j < Console.WindowWidth; j++)
+                for (int j = 0; j < Console.WindowWidth; j++)
                 {
                     Console.Write("█");
                 }

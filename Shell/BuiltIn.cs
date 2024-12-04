@@ -22,6 +22,8 @@ namespace Venera.Shell
         /// </summary>
         protected string[] Args { get; set; }
 
+        protected OutputStream OutputStream { get; set; }
+
         /// <summary>
         /// This argument description is used to generate a useful help text for the user,
         /// as well as to generate full man pages and feed into Sputnik.

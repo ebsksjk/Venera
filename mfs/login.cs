@@ -100,19 +100,19 @@ namespace Venera.stasi
                     {
                         if (x == '█')
                         {
-                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x76);
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.GetAsciiFromChar(x), 0x76);
 
                         } else if(x == '▓')
                         {
-                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x74);
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.GetAsciiFromChar(x), 0x74);
                         }
                         else if (x == '▒')
                         {
-                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7E);
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.GetAsciiFromChar(x), 0x7E);
                         }
                         else
                         {
-                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.getAsciiFromChar(x), 0x7C);
+                            ConsoleTextTweaks.PutChar(curY, curX, ConsoleTextTweaks.GetAsciiFromChar(x), 0x7C);
                         }
                         curX++;
 
@@ -136,7 +136,7 @@ namespace Venera.stasi
 
 
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 12);
-                string username = ConsoleTextTweaks.getConsoleString();
+                string username = ConsoleTextTweaks.GetConsoleString();
                 if (username == "quit")
                 {
                     break;
@@ -149,7 +149,7 @@ namespace Venera.stasi
                     continue;
                 }
                 Console.SetCursorPosition(Console.WindowWidth / 2 - (48 / 2) + 12, 13);
-                string password = ConsoleTextTweaks.getConsoleString(true);
+                string password = ConsoleTextTweaks.GetConsoleString(true);
                 
 
                 if (!User.Exists("root"))

@@ -1,10 +1,12 @@
 ﻿using Cosmos.System.Network.IPv4;
 using Cosmos.System.Network.IPv4.UDP.DNS;
+using CSystem.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using Venera.Kosmovim;
 using Venera.stasi;
 
 namespace Venera.Shell.Programs
@@ -34,7 +36,8 @@ namespace Venera.Shell.Programs
 
         private TcpClient client = new();
         private NetworkStream stream;
-        private bool Connected = false;
+        private bool connected = false;
+        private ConsoleColor styleColor = ConsoleColor.Green;
 
         public override string Name => "sputnik";
 
@@ -57,55 +60,55 @@ namespace Venera.Shell.Programs
         {
             if (Login.curUser == null)
             {
-                Console.WriteLine("Sputnik: Panic user can't use Sputnik. It's not required for system recovery.");
+                Console.WriteLine("Sputnik: Panic user can't use Sputnik. It's not required for system recovery. Ask ChatGPT or something.");
                 return ExitCode.Error;
             }
 
             TalkingStyle talkingStyle = TalkingStyle.Rude;
-#region Disclaimer
+            #region Disclaimer
 
             if (!IsDisclaimerAccepted())
             {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("[!!!] ");
-            Console.WriteLine("Please read the following disclaimer before you proceed:");
-            Console.WriteLine("==============================================================");
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("Press ANY KEY to show disclaimer.");
-            Console.ReadKey();
-            Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("[!!!] ");
+                Console.WriteLine("Please read the following disclaimer before you proceed:");
+                Console.WriteLine("==============================================================");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("Press ANY KEY to show disclaimer.");
+                Console.ReadKey();
+                Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\n1. Your data is transmitted in cleartext.");
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("Venera is not capable of encryption. Therefore, your data cannot be encrypted in transit and is " +
-                "vulnerable to MITM attacks. Do not use it for sensitive information.");
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\n2. Your data is proxied.");
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("Venera is not capable of running local LLMs nor to make HTTPS requests. Therefore, your data is " +
-                "sent to a TCP proxy hosted by Nicolas Klier. Your Sputnik dialogue is not logged by the proxy. The context is " +
-                "kept in memory as long as your TCP connection is open. I do log the amount of spent tokens to keep track of " +
-                "billing. It's free for you, not for me :p");
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\n3. Your data is processed by OpenRouter.");
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("The proxy forwards your requests to OpenRouter.ai. OpenRouter anonymises your request and " +
-                "forwards it to the current cheapest AI provider. OpenRouter itself does not log your requests but some " +
-                "providers might. Therefore, avoid personal data. The privacy policy of OpenRouter applies: " +
-                "https://openrouter.ai/privacy");
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\n3. AI hallucinates content.");
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.WriteLine("Take everything with a grain of salt. Depending on the preset you choose next, it may insult you, " +
-                "wish you dead or instruct you on how to build a bomb. Do not take its answers seriously and have fun.");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n1. Your data is transmitted in cleartext.");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("Venera is not capable of encryption. Therefore, your data cannot be encrypted in transit and is " +
+                    "vulnerable to MITM attacks. Do not use it for sensitive information.");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n2. Your data is proxied.");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("Venera is not capable of running local LLMs nor to make HTTPS requests. Therefore, your data is " +
+                    "sent to a TCP proxy hosted by Nicolas Klier. Your Sputnik dialogue is not logged by the proxy. The context is " +
+                    "kept in memory as long as your TCP connection is open. I do log your IP and the amount of spent tokens to keep track of " +
+                    "billing. It's free for you, not for me :p");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n3. Your data is processed by OpenRouter.");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("The proxy forwards your requests to OpenRouter.ai. OpenRouter anonymises your request and " +
+                    "forwards it to the current cheapest AI provider. OpenRouter itself does not log your requests but some " +
+                    "providers might. Therefore, avoid personal data. The privacy policy of OpenRouter applies: " +
+                    "https://openrouter.ai/privacy");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("\n3. AI hallucinates content.");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("Take everything with a grain of salt. Depending on the preset you choose next, it may insult you, " +
+                    "wish you dead or instruct you on how to build a bomb. Do not take its answers seriously and have fun.");
 
                 while (true)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("\nType 'y' if you agree, or 'n' to exit and not use Sputnik: ");
+                    Console.Write("\nType [y]es if you agree, or [n]o to exit and not use Sputnik: ");
                     ConsoleKeyInfo key = Console.ReadKey();
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine();
 
                     if (key.KeyChar == 'n')
@@ -154,13 +157,23 @@ namespace Venera.Shell.Programs
 
                 Console.Write("\nType '1', '2' or '3' to set Sputnik's style: ");
                 ConsoleKeyInfo key = Console.ReadKey();
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine();
 
                 if (int.TryParse(key.KeyChar.ToString(), out int i))
                 {
                     if (i >= 1 && i <= 3)
                     {
+                        switch (key.KeyChar)
+                        {
+                            case '1':
+                                styleColor = ConsoleColor.Green; break;
+                            case '2':
+                                styleColor = ConsoleColor.Yellow; break;
+                            case '3':
+                                styleColor = ConsoleColor.DarkRed; break;
+                        }
+
                         talkingStyle = (TalkingStyle)i;
                         Console.Clear();
                         break;
@@ -172,7 +185,7 @@ namespace Venera.Shell.Programs
 
             try
             {
-                Connected = Connect();
+                connected = Connect();
                 Console.WriteLine($"Connected and authenticated with {client.Client.RemoteEndPoint.ToString()}.");
             }
             catch (Exception e)
@@ -184,8 +197,8 @@ namespace Venera.Shell.Programs
 
             while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("> ");
+                Console.ForegroundColor = styleColor;
+                Console.Write($"{Login.curUser.Name}> ");
 
                 string prompt = Console.ReadLine()!.Trim();
 
@@ -194,10 +207,21 @@ namespace Venera.Shell.Programs
                     break;
                 }
 
-                byte[] dataToSend = Encoding.ASCII.GetBytes(prompt);
-                byte[] metadata = { (byte)talkingStyle };
+                UserObj u = Login.curUser;
 
-                stream.Write(metadata.Concat(dataToSend).ToArray(), 0, metadata.Length + dataToSend.Length);
+                /*
+                 * Our simple protocol looks like this:
+                 * [32-bit int: Length of this sequence (excluding this int)][1-byte: Talking style][32-bit int: JSON data length][Variable JSON data][Prompt]
+                 * =>
+                 * [64][2][16]["{"foo":"bar"}"]["What exactly is Venera?"]
+                 */
+                List<byte> dataToSend = Encoding.ASCII.GetBytes(prompt).ToList();
+                List<byte> userInfo = Encoding.ASCII.GetBytes("{\"username\": \"" + u.Username + "\", \"name\": \"" + u.Name + "\"}").ToList();
+                List<byte> userInfoLength = userInfo.Count.ToBytes().ToList();
+                List<byte> totalLength = ((1 + 4) + userInfo.Count + dataToSend.Count).ToBytes().ToList();
+                byte[] finalData = [.. totalLength, (byte)talkingStyle, .. userInfoLength, .. userInfo, .. dataToSend];
+
+                stream.Write(finalData, 0, finalData.Length);
 
                 bool eof = false;
 
@@ -224,14 +248,14 @@ namespace Venera.Shell.Programs
 
                     string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
 
-                    Console.Write(receivedMessage);
+                    Console.Write(ConsoleTextTweaks.GetAsciiFromString(receivedMessage).ToArray());
                 }
 
                 Console.WriteLine();
             }
 
             stream.Close();
-            Connected = false;
+            connected = false;
 
             return ExitCode.Success;
         }
@@ -279,7 +303,8 @@ namespace Venera.Shell.Programs
         }
 
         /// <summary>
-        /// Useful for contextless prompts that require no streaming.
+        /// Useful for contextless prompts that require no streaming. This is mostly duplicated
+        /// code from above but it works.
         /// </summary>
         /// <param name="prompt"></param>
         /// <param name="talkingStyle"></param>
@@ -295,10 +320,16 @@ namespace Venera.Shell.Programs
             Sputnik instance = new Sputnik();
             instance.Connect();
 
-            byte[] dataToSend = Encoding.ASCII.GetBytes(prompt);
-            byte[] metadata = { (byte)talkingStyle };
+            UserObj u = Login.curUser;
 
-            instance.stream.Write(metadata.Concat(dataToSend).ToArray(), 0, metadata.Length + dataToSend.Length);
+            // See Execute() above. The username might not be relevant here but it's required by the protocol.
+            List<byte> dataToSend = Encoding.ASCII.GetBytes(prompt).ToList();
+            List<byte> userInfo = Encoding.ASCII.GetBytes("{\"username\": \"" + u.Username + "\", \"name\": \"" + u.Name + "\"}").ToList();
+            List<byte> userInfoLength = userInfo.Count.ToBytes().ToList();
+            List<byte> totalLength = ((1 + 4) + userInfo.Count + dataToSend.Count).ToBytes().ToList();
+            byte[] finalData = [.. totalLength, (byte)talkingStyle, .. userInfoLength, .. userInfo, .. dataToSend];
+
+            instance.stream.Write(finalData, 0, finalData.Length);
 
             string result = string.Empty;
 
@@ -336,12 +367,12 @@ namespace Venera.Shell.Programs
 
         private bool Connect()
         {
-            if (Connected)
+            if (connected)
                 return true;
 
             client = new();
 
-            client.Connect(GetRemoteHost(), 9999);
+            client.Connect("192.168.164.1", 9999);
             stream = client.GetStream();
 
             // Authenticate

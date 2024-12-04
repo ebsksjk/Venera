@@ -6,7 +6,7 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "cd";
 
-        public override string Description => "change current directory";
+        public override string Description => "Change current directory";
 
         public override CommandDescription ArgumentDescription => new()
         {

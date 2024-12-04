@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Venera.stasi;
 
 namespace Venera.Shell.Programs
 {
@@ -21,6 +23,8 @@ namespace Venera.Shell.Programs
             ]
         };
 
+        private static bool firstRun = true;
+
         private string lastPrompt;
 
         protected override ExitCode Execute()
@@ -30,6 +34,15 @@ namespace Venera.Shell.Programs
             foreach (string i in (string[])GetArgument(-1))
             {
                 mathTerm += i + ' ';
+            }
+
+            if (firstRun)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("Note on first run: ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("LLMs are good for language, not for algebra. Results may look good or be close to the real result without being correct. LLMs hallucinate.\n");
+                firstRun = false;
             }
 
             string response = Sputnik.QuickPrompt(mathTerm, Sputnik.TalkingStyle.Calc);

@@ -7,7 +7,7 @@ namespace Venera.Shell.Programs
     {
         public override string Name => "cat";
 
-        public override string Description => "output plaintext from files";
+        public override string Description => "Output plaintext from files";
 
         public override CommandDescription ArgumentDescription => new()
         {
@@ -31,9 +31,7 @@ namespace Venera.Shell.Programs
 
                 try
                 {
-
                     Console.WriteLine(File.ReadAllText(path));
-
                 }
                 catch (Exception)
                 {

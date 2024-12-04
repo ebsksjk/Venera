@@ -24,11 +24,6 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            if (Args.Length == 0)
-            {
-                return ExitCode.Usage;
-            }
-
             string file = ((string)GetArgument(0)).AbsoluteOrRelativePath();
             if (!File.Exists(file))
             {

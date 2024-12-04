@@ -48,7 +48,6 @@ namespace Venera.Kosmovim
             return ret;
         }
 
-
         public static void PutString(int line, int startCol, string msg, int color = 0x1F, int wwidth = 80, int wheight = 25)
         {
             int wX = startCol;
@@ -67,6 +66,14 @@ namespace Venera.Kosmovim
                 PutChar(wY, wX, (byte)msg[i], color);
                 wX++;
             }
+        }
+
+        public static void PutCharAtCursor(char c, int color = 0x1F)
+        {
+            (int x, int y) pos = Console.GetCursorPosition();
+
+            PutChar(pos.x + 1, pos.y + 1, (byte)c, color);
+            Console.SetCursorPosition(pos.x - 1, pos.y);
         }
 
         public static void ClearScreen(int color = 0x1F)
@@ -392,7 +399,9 @@ namespace Venera.Kosmovim
                 case 'ⁿ': return 252;
                 case '²': return 253;
                 case '■': return 254;
-                default: return 63;
+                default:
+                    Kernel.PrintDebug($"Can't find char {x}");
+                    return 63;
             }
 
             #endregion

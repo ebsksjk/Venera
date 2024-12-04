@@ -32,7 +32,7 @@ namespace Venera.Shell.Programs
             /*string command = (string)GetArgument(0);
             if(command == "love")
             {
-                Console.WriteLine(
+                WriteLine(
                     @"   please love yourself <3
 
    _______________                        |*\_/*|________
@@ -61,19 +61,19 @@ namespace Venera.Shell.Programs
             longestName += 2;
 
             int descriptionSize = Console.WindowWidth - longestName;
-            string[] cmds = new string[Sokolsh.AvailableBuiltIns.Count+1];
-            for(int i = 0; i<cmds.Length-1; i++)
+            string[] cmds = new string[Sokolsh.AvailableBuiltIns.Count + 1];
+            for (int i = 0; i < cmds.Length - 1; i++)
             {
                 BuiltIn cbi = Sokolsh.AvailableBuiltIns[i];
                 cmds[i] = new string(cbi.Name.Pad(longestName) + cbi.Description.Pad(descriptionSize));
             }
             cmds[cmds.Length - 1] = new string("exit".Pad(longestName) + "Exits the current shell.".Pad(descriptionSize));
 
-            Console.Write("Command".Pad(longestName) + "Description".Pad(descriptionSize));
+            Write("Command".Pad(longestName) + "Description".Pad(descriptionSize));
 
             for (int i = 0; i < Console.WindowWidth; i++)
             {
-                Console.Write("-");
+                Write("-");
             }
 
             int cI = 0;
@@ -114,7 +114,7 @@ namespace Venera.Shell.Programs
                     for (int i = cI; i < Console.WindowHeight + cI - 1; i++)
                     {
                         //Kernel.PrintDebug($"i: {i} @ {cmds[i]}");
-                        Console.Write(cmds[i]);
+                        Write(cmds[i]);
                     }
                 }
 

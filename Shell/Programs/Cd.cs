@@ -33,7 +33,7 @@ namespace Venera.Shell.Programs
             {
                 if (Kernel.FileSystem.IsValidDriveId(cmdPath))
                 {
-                    Console.WriteLine($"Sokolsh: cd: {cmdPath} is a valid drive Id!!!");
+                    WriteLine($"Sokolsh: cd: {cmdPath} is a valid drive Id!!!");
                 }
 
                 Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{cmdPath}");
@@ -50,20 +50,20 @@ namespace Venera.Shell.Programs
 
                 if (dir.mEntryType != Cosmos.System.FileSystem.Listing.DirectoryEntryTypeEnum.Directory)
                 {
-                    Console.WriteLine($"Sokolsh: cd: {Args} is not a directory");
+                    WriteLine($"Sokolsh: cd: {Args} is not a directory");
                     return ExitCode.Error;
                 }
 
                 if (dir.mFullPath.isAccessible() == false)
                 {
-                    Console.WriteLine($"Sokolsh: cd: {Args} is not accessible");
+                    WriteLine($"Sokolsh: cd: {Args} is not accessible");
                     return ExitCode.Error;
                 }
                 Kernel.GlobalEnvironment.Set(DefaultEnvironments.CurrentWorkingDirectory, $"{dir.mFullPath.ToString().EnsureBackslash()}");
             }
             catch (Exception)
             {
-                Console.WriteLine($"Sokolsh: cd: {path} File or Directory does not exist");
+                WriteLine($"Sokolsh: cd: {path} File or Directory does not exist");
                 return ExitCode.Error;
             }
             return ExitCode.Success;

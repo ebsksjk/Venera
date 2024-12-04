@@ -15,37 +15,37 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            Console.WriteLine($"IPv4 address:\t{NetworkConfiguration.CurrentAddress.ToString()}");
+            WriteLine($"IPv4 address:\t{NetworkConfiguration.CurrentAddress.ToString()}");
 
             if (NetworkConfiguration.CurrentNetworkConfig.IPConfig == null)
             {
-                Console.WriteLine($"Subnet mask:\tN/A");
-                Console.WriteLine($"Gateway:\t\tN/A");
+                WriteLine($"Subnet mask:\tN/A");
+                WriteLine($"Gateway:\t\tN/A");
             }
             else
             {
                 if (NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask == null)
                 {
-                    Console.WriteLine($"Subnet mask:\tN/A");
+                    WriteLine($"Subnet mask:\tN/A");
                 }
                 else
                 {
-                    Console.WriteLine($"Subnet mask:\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask.ToString()}");
+                    WriteLine($"Subnet mask:\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.SubnetMask.ToString()}");
                 }
 
-                Console.WriteLine($"Gateway:\t\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.DefaultGateway.ToString()}");
+                WriteLine($"Gateway:\t\t{NetworkConfiguration.CurrentNetworkConfig.IPConfig.DefaultGateway.ToString()}");
             }
 
-            Console.WriteLine($"MAC address:\t{NetworkConfiguration.CurrentNetworkConfig.Device.MACAddress.ToString()} ({NetworkConfiguration.CurrentNetworkConfig.Device.Name.ToString()})");
-            Console.Write($"DNS servers:\t");
+            WriteLine($"MAC address:\t{NetworkConfiguration.CurrentNetworkConfig.Device.MACAddress.ToString()} ({NetworkConfiguration.CurrentNetworkConfig.Device.Name.ToString()})");
+            Write($"DNS servers:\t");
 
             foreach (Address dns in DNSConfig.DNSNameservers)
             {
-                Console.Write($"{dns.ToString()} ");
+                Write($"{dns.ToString()} ");
             }
 
-            Console.WriteLine("\n\n=== [ CHECKS ] ===");
-            Console.Write("Internet connectivity check: ");
+            WriteLine("\n\n=== [ CHECKS ] ===");
+            Write("Internet connectivity check: ");
 
             using (var xClient = new ICMPClient())
             {
@@ -60,15 +60,15 @@ namespace Venera.Shell.Programs
 
                 if (time == 1)
                 {
-                    Console.WriteLine($"successful");
+                    WriteLine($"successful");
                 }
                 else
                 {
-                    Console.WriteLine($"failure");
+                    WriteLine($"failure");
                 }
             }
 
-            Console.Write("DNS test: ");
+            Write("DNS test: ");
 
             using (var xClient = new DnsClient())
             {
@@ -83,14 +83,14 @@ namespace Venera.Shell.Programs
 
                     if (destination == null)
                     {
-                        Console.Write($"{domain} (fail) ");
+                        Write($"{domain} (fail) ");
                     }
                     else
                     {
-                        Console.Write($"{domain} ({destination.ToString()}) ");
+                        Write($"{domain} ({destination.ToString()}) ");
                     }
                 }
-                Console.WriteLine();
+                WriteLine();
             }
 
 

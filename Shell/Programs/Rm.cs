@@ -27,7 +27,7 @@ namespace Venera.Shell.Programs
             string file = ((string)GetArgument(0)).AbsoluteOrRelativePath();
             if (!File.Exists(file))
             {
-                Console.WriteLine($"rm: File {file} does not exist");
+                WriteLine($"rm: File {file} does not exist");
                 return ExitCode.Error;
             }
 

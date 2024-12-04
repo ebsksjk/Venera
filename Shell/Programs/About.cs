@@ -16,7 +16,7 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            Console.WriteLine($"{Kernel.OS_NAME} {Kernel.OS_VERSION}");
+            WriteLine($"{Kernel.OS_NAME} {Kernel.OS_VERSION}");
 
             return ExitCode.Success;
         }

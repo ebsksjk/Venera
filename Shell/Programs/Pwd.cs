@@ -13,7 +13,7 @@ namespace Venera.Shell.Programs
         protected override ExitCode Execute()
         {
             string cwd = Kernel.GlobalEnvironment.GetFirst(DefaultEnvironments.CurrentWorkingDirectory);
-            Console.WriteLine(cwd);
+            WriteLine(cwd);
 
             return ExitCode.Success;
         }

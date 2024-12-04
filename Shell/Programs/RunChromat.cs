@@ -19,17 +19,17 @@ namespace Venera.Shell.Programs
         protected override ExitCode Execute()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("[!!!] ");
+            Write("[!!!] ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Chromat is an experimental graphical environment. You can't exit unless you reboot.\n");
+            WriteLine("Chromat is an experimental graphical environment. You can't exit unless you reboot.\n");
 
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write("\nType [y]es to continue anyway, or [n]o to quit: ");
+                Write("\nType [y]es to continue anyway, or [n]o to quit: ");
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine();
+                WriteLine();
 
                 if (key.KeyChar == 'n')
                 {

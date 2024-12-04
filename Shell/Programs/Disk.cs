@@ -27,12 +27,12 @@ namespace Venera.Shell.Programs
                     _ => "Removable"
                 };
 
-                Console.WriteLine($"{type} ({disk.Size} bytes:");
+                WriteLine($"{type} ({disk.Size} bytes:");
 
 
                 foreach (ManagedPartition part in disk.Partitions)
                 {
-                    Console.WriteLine($"\t{part.Host.Host.BlockCount}");
+                    WriteLine($"\t{part.Host.Host.BlockCount}");
                 }
             }
 

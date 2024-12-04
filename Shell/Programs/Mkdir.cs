@@ -43,7 +43,7 @@ namespace Venera.Shell.Programs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Error: {e.Message}");
+                    WriteLine($"Error: {e.Message}");
                     return ExitCode.Error;
                 }
             }

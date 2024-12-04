@@ -30,7 +30,7 @@ namespace Venera.Shell.Programs
                 ret += i + ' ';
             }
 
-            Console.WriteLine(ret);
+            WriteLine(ret);
 
             return ExitCode.Success;
         }

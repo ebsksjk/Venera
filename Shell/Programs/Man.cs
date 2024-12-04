@@ -27,11 +27,11 @@ namespace Venera.Shell.Programs
 
             if (!Kernel.SokolshInstance.FindBuiltIn(programName.ToLower(), out BuiltIn program))
             {
-                Console.WriteLine($"No program found with this name.");
+                WriteLine($"No program found with this name.");
                 return ExitCode.Error;
             }
 
-            Console.WriteLine(program.GenerateUsage());
+            WriteLine(program.GenerateUsage());
 
             return ExitCode.Success;
         }

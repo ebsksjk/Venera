@@ -48,13 +48,13 @@ namespace Venera.Shell.Programs
 
                 foreach (var item in list)
                 {
-                    Console.Write(item.mName.Pad(longestName));
-                    Console.WriteLine($"{item.mSize} bytes");
+                    Write(item.mName.Pad(longestName));
+                    WriteLine($"{item.mSize} bytes");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                WriteLine($"Error: {ex.Message}");
 
                 return ExitCode.Error;
             }

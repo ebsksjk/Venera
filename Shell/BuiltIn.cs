@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Venera.Shell.Pipes;
 
 namespace Venera.Shell
 {
@@ -22,7 +23,10 @@ namespace Venera.Shell
         /// </summary>
         protected string[] Args { get; set; }
 
-        protected OutputStream OutputStream { get; set; }
+        /// <summary>
+        /// If this command is piped, this contains the stdout of the previous command.
+        /// </summary>
+        protected byte[] Stdin { get; set; }
 
         /// <summary>
         /// This argument description is used to generate a useful help text for the user,
@@ -30,7 +34,16 @@ namespace Venera.Shell
         /// </summary>
         public abstract CommandDescription ArgumentDescription { get; }
 
+        /// <summary>
+        /// Used by Invoke() function to determine if any required argument check failed,
+        /// prior to final execution.
+        /// </summary>
         private bool CommandParseError { get; set; } = false;
+
+        /// <summary>
+        /// Used for redirect output to either the console or a byte buffer.
+        /// </summary>
+        private OutputBuffer Stdout { get; set; }
 
         #endregion
 
@@ -41,9 +54,19 @@ namespace Venera.Shell
         /// </summary>
         /// <param name="args">Parsed command line with all arguments.</param>
         /// <returns>Exit code of the invoked command.</returns>
-        public ExitCode Invoke(string[] args)
+        public ExitCode Invoke(string[] args, byte[] stdin, OutputBuffer stdout)
         {
-            Kernel.PrintDebug($"Invoke {Name} ...");
+            if (stdout.GetType() == typeof(PipedBuffer))
+            {
+                Kernel.PrintDebug($"Invoke command \"{Name}\" with piped output stream ...");
+            }
+            else
+            {
+                Kernel.PrintDebug($"Invoke command \"{Name}\" with console output stream ...");
+            }
+
+            Stdout = stdout;
+            Stdin = stdin;
             Args = args;
 
             // Check if all requirements are satisfied.
@@ -111,6 +134,7 @@ namespace Venera.Shell
 
             try
             {
+                Kernel.PrintDebug($"Tests passed. Run Execute() of {Name}");
                 exitCode = Execute();
             }
             catch (Exception ex)
@@ -140,9 +164,30 @@ namespace Venera.Shell
         /// </summary>
         protected abstract ExitCode Execute();
 
-        protected string GetApplicationStorage()
+        /// <summary>
+        /// Write something to stdout <b>without</b> line break.
+        /// </summary>
+        protected void Write(string text)
         {
-            return "";
+            Stdout.Write(text);
+        }
+
+        protected void Write(char text)
+        {
+            Stdout.Write(text);
+        }
+
+        /// <summary>
+        /// Write something to stdout <b>with</b> line break.
+        /// </summary>
+        protected void WriteLine(string text)
+        {
+            Stdout.WriteLine(text);
+        }
+
+        protected void WriteLine()
+        {
+            Stdout.WriteLine("");
         }
 
         /// <summary>
@@ -431,6 +476,8 @@ namespace Venera.Shell
 
         #endregion
 
+        #region Private methods
+
         private object GetDefaultArgument(CommandArgument cmdArg)
         {
             if (cmdArg.ValueDefault != null)
@@ -608,5 +655,7 @@ namespace Venera.Shell
             Kernel.PrintDebug("[I] Exhausted search. Return -1");
             return -1;
         }
+
+        #endregion
     }
 }

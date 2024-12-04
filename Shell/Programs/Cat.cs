@@ -31,11 +31,11 @@ namespace Venera.Shell.Programs
 
                 try
                 {
-                    Console.WriteLine(File.ReadAllText(path));
+                    WriteLine(File.ReadAllText(path));
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine($"Sokolsh: cat: File {path} does not exist");
+                    WriteLine($"Sokolsh: cat: File {path} does not exist");
                     return ExitCode.Error;
                 }
             }

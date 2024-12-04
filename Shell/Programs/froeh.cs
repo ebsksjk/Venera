@@ -22,8 +22,8 @@ namespace Venera.Shell.Programs
             {
                 for(int j = 0; j < Console.WindowWidth; j++)
                 {
-                    if(j % 2 == 0) Console.Write((char)0x01);
-                    else Console.Write((char)0x02);
+                    if(j % 2 == 0) Write((char)0x01);
+                    else Write((char)0x02);
                 }
         }
 

@@ -60,7 +60,7 @@ namespace Venera.Shell.Programs
         {
             if (Login.curUser == null)
             {
-                Console.WriteLine("Sputnik: Panic user can't use Sputnik. It's not required for system recovery. Ask ChatGPT or something.");
+                WriteLine("Sputnik: Panic user can't use Sputnik. It's not required for system recovery. Ask ChatGPT or something.");
                 return ExitCode.Error;
             }
 
@@ -70,46 +70,46 @@ namespace Venera.Shell.Programs
             if (!IsDisclaimerAccepted())
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("[!!!] ");
-                Console.WriteLine("Please read the following disclaimer before you proceed:");
-                Console.WriteLine("==============================================================");
+                Write("[!!!] ");
+                WriteLine("Please read the following disclaimer before you proceed:");
+                WriteLine("==============================================================");
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Press ANY KEY to show disclaimer.");
+                WriteLine("Press ANY KEY to show disclaimer.");
                 Console.ReadKey();
                 Console.Clear();
 
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\n1. Your data is transmitted in cleartext.");
+                WriteLine("\n1. Your data is transmitted in cleartext.");
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Venera is not capable of encryption. Therefore, your data cannot be encrypted in transit and is " +
+                WriteLine("Venera is not capable of encryption. Therefore, your data cannot be encrypted in transit and is " +
                     "vulnerable to MITM attacks. Do not use it for sensitive information.");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\n2. Your data is proxied.");
+                WriteLine("\n2. Your data is proxied.");
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Venera is not capable of running local LLMs nor to make HTTPS requests. Therefore, your data is " +
+                WriteLine("Venera is not capable of running local LLMs nor to make HTTPS requests. Therefore, your data is " +
                     "sent to a TCP proxy hosted by Nicolas Klier. Your Sputnik dialogue is not logged by the proxy. The context is " +
                     "kept in memory as long as your TCP connection is open. I do log your IP and the amount of spent tokens to keep track of " +
                     "billing. It's free for you, not for me :p");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\n3. Your data is processed by OpenRouter.");
+                WriteLine("\n3. Your data is processed by OpenRouter.");
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("The proxy forwards your requests to OpenRouter.ai. OpenRouter anonymises your request and " +
+                WriteLine("The proxy forwards your requests to OpenRouter.ai. OpenRouter anonymises your request and " +
                     "forwards it to the current cheapest AI provider. OpenRouter itself does not log your requests but some " +
                     "providers might. Therefore, avoid personal data. The privacy policy of OpenRouter applies: " +
                     "https://openrouter.ai/privacy");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\n3. AI hallucinates content.");
+                WriteLine("\n3. AI hallucinates content.");
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Take everything with a grain of salt. Depending on the preset you choose next, it may insult you, " +
+                WriteLine("Take everything with a grain of salt. Depending on the preset you choose next, it may insult you, " +
                     "wish you dead or instruct you on how to build a bomb. Do not take its answers seriously and have fun.");
 
                 while (true)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("\nType [y]es if you agree, or [n]o to exit and not use Sputnik: ");
+                    Write("\nType [y]es if you agree, or [n]o to exit and not use Sputnik: ");
                     ConsoleKeyInfo key = Console.ReadKey();
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine();
+                    WriteLine();
 
                     if (key.KeyChar == 'n')
                     {
@@ -125,7 +125,7 @@ namespace Venera.Shell.Programs
 
                         File.WriteAllText(file, string.Empty);
 
-                        Console.WriteLine("- Disclaimer accpeted.\n");
+                        WriteLine("- Disclaimer accpeted.\n");
                         break;
                     }
                 }
@@ -136,29 +136,29 @@ namespace Venera.Shell.Programs
 
             #region Style
 
-            Console.WriteLine("How would you like Sputnik to talk to you?");
-            Console.WriteLine("==============================================================");
+            WriteLine("How would you like Sputnik to talk to you?");
+            WriteLine("==============================================================");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("1) Helpful, kind and to the point.");
+            WriteLine("1) Helpful, kind and to the point.");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("   This is the classic experience.");
+            WriteLine("   This is the classic experience.");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("2) Mixed, your rude and helpful assistant.");
+            WriteLine("2) Mixed, your rude and helpful assistant.");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("   Not the average assistant you might be used to, but helpful nonetheless.");
+            WriteLine("   Not the average assistant you might be used to, but helpful nonetheless.");
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("3) Rude, never helpful and incredibly bad at insulting.");
+            WriteLine("3) Rude, never helpful and incredibly bad at insulting.");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("   Refusals are unlikely and your questions might remain unanswered.");
+            WriteLine("   Refusals are unlikely and your questions might remain unanswered.");
 
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Black;
 
-                Console.Write("\nType '1', '2' or '3' to set Sputnik's style: ");
+                Write("\nType '1', '2' or '3' to set Sputnik's style: ");
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine();
+                WriteLine();
 
                 if (int.TryParse(key.KeyChar.ToString(), out int i))
                 {
@@ -186,19 +186,19 @@ namespace Venera.Shell.Programs
             try
             {
                 connected = Connect();
-                Console.WriteLine($"Connected and authenticated with {client.Client.RemoteEndPoint.ToString()}.");
+                WriteLine($"Connected and authenticated with {client.Client.RemoteEndPoint.ToString()}.");
             }
             catch (Exception e)
             {
                 return ExitCode.Error;
             }
 
-            Console.WriteLine("=> To exit this conversation write \"exit\" or \"quit\".\n");
+            WriteLine("=> To exit this conversation write \"exit\" or \"quit\".\n");
 
             while (true)
             {
                 Console.ForegroundColor = styleColor;
-                Console.Write($"{Login.curUser.Name}> ");
+                Write($"{Login.curUser.Name}> ");
 
                 string prompt = Console.ReadLine()!.Trim();
 
@@ -231,7 +231,7 @@ namespace Venera.Shell.Programs
                     byte[] receivedData = new byte[PacketSize];
                     int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
 
-                    for (int i = 0; i < PacketSize - 2; i++)
+                    for (int i = 0; i < receivedData.Length - 2; i++)
                     {
                         byte b1 = receivedData[i];
                         byte b2 = receivedData[i + 1];
@@ -246,12 +246,15 @@ namespace Venera.Shell.Programs
                     if (eof)
                         break;
 
-                    string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
+                    string receivedMessage = Encoding.UTF8.GetString(receivedData, 0, bytesRead);
 
-                    Console.Write(ConsoleTextTweaks.GetAsciiFromString(receivedMessage).ToArray());
+                    foreach (byte b in ConsoleTextTweaks.GetAsciiFromString(receivedMessage))
+                    {
+                        Write((char)b);
+                    }
                 }
 
-                Console.WriteLine();
+                WriteLine();
             }
 
             stream.Close();

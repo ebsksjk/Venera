@@ -16,7 +16,7 @@ namespace Venera.Shell.Programs
 
         protected override ExitCode Execute()
         {
-            Console.WriteLine(":(");
+            WriteLine(":(");
             return ExitCode.Success;
         }
     }

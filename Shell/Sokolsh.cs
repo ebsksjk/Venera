@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Venera.Shell.Pipes;
 using Venera.Shell.Programs;
 
 namespace Venera.Shell
@@ -33,6 +34,7 @@ namespace Venera.Shell
                 new Man(),
                 new ArgTest(),
                 new RunChromat(),
+                new ReadStdin(),
                 new VoPo.ELFInfo(),
                 new VoPo.RunApp(),
                 new VoPo.Faketop(),
@@ -150,19 +152,19 @@ namespace Venera.Shell
                 }
 
                 //Kernel.PrintDebug($"Last commands: {string.Join(", ", lastCommands)}");
-                switch (Execute(input))
+                switch (Execute(input).StatusCode)
                 {
-                    case ExecutionReturn.Empty:
+                    case ShellResult.Empty:
                         // Do nothing, just print next line.
                         break;
-                    case ExecutionReturn.NotFound:
+                    case ShellResult.NotFound:
                         Console.WriteLine("Command not found. Enter \"help\" or \"?\" to get a list of built-in commands.");
                         break;
-                    case ExecutionReturn.Success:
-                    case ExecutionReturn.Failure:
+                    case ShellResult.Success:
+                    case ShellResult.Failure:
                         // TODO: Implement something, idk.
                         break;
-                    case ExecutionReturn.Exit:
+                    case ShellResult.Exit:
                         // Exit current shell. This will end the operating system, ideally.
                         return;
                 }
@@ -246,25 +248,59 @@ namespace Venera.Shell
             return false;
         }
 
-        private ExecutionReturn Execute(string input)
+        private ExecutionResult Execute(string input, byte[] stdin = null, bool pipe = false)
         {
+            #region Shell handled commands
+
+            // Exit is not really a built-in command is directly handled by the shell.
             if (input.StartsWith("exit"))
             {
-                return ExecutionReturn.Exit;
+                return new ExecutionResult(ShellResult.Exit, null);
             }
 
+            // Smart command is, again, no built-in and is handled directly.
             if (input.StartsWith("/"))
             {
                 string smartInput = input.Substring(1);
                 SmartCommand(smartInput);
 
-                return ExecutionReturn.Success;
+                return new ExecutionResult(ShellResult.Success, null);
             }
 
-            // Split |
+            #endregion
+
+            string[] pipedSegments = input.Split('|');
+
+            // Example: echo something something cool | stdin_read
+            if (pipedSegments.Length > 1)
+            {
+                byte[] lastStdout = null;
+
+                // This could be solved using recursion, but no.
+                for (int i = 0; i < pipedSegments.Length; i++)
+                {
+                    bool usePipe = i != pipedSegments.Length - 1;
+                    ExecutionResult executionResult = Execute(pipedSegments[i], lastStdout, usePipe);
+
+                    if (executionResult.StatusCode != ShellResult.Success)
+                    {
+                        return new ExecutionResult(executionResult.StatusCode, null);
+                    }
+
+                    if (usePipe)
+                    {
+                        lastStdout = executionResult.Stdout.Buffer;
+                    }
+                }
+
+                return new ExecutionResult(ShellResult.Success, null);
+            }
 
             string[] parts = SplitArgs(input.Trim());
-            if (parts.Length == 0) return ExecutionReturn.Empty;
+            if (parts.Length == 0)
+            {
+                return new ExecutionResult(ShellResult.Empty, null);
+            }
 
             var commandName = parts[0];
 
@@ -273,19 +309,26 @@ namespace Venera.Shell
 
             if (FindBuiltIn(commandName, out BuiltIn command))
             {
-                ExitCode status = command.Invoke(args);
+                OutputBuffer stdout;
+                ExitCode status;
 
-                //if (status == ExitCode.Usage)
-                //{
-                //    Console.WriteLine(command.GenerateUsage());
-                //}
+                if (pipe)
+                {
+                    stdout = new PipedBuffer();
+                }
+                else
+                {
+                    stdout = new ConsoleBuffer();
+                }
+
+                status = command.Invoke(args, stdin, stdout);
 
                 return status == ExitCode.Success
-                    ? ExecutionReturn.Success
-                    : ExecutionReturn.Failure;
+                    ? new ExecutionResult(ShellResult.Success, stdout)
+                    : new ExecutionResult(ShellResult.Failure, stdout);
             }
 
-            return ExecutionReturn.NotFound;
+            return new ExecutionResult(ShellResult.NotFound, null);
         }
 
         /// <summary>

@@ -4,13 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Venera.Shell
+namespace Venera.Shell.Pipes
 {
-    public class ConsoleOut : OutputStream
+    public class ConsoleBuffer : OutputBuffer
     {
-        public override byte[] Buffer { get => null; set => throw new NotImplementedException(); }
+        public override byte[] Buffer { get => null; }
 
         public override void Write(string text)
+        {
+            Console.Write(text);
+        }
+
+        public override void Write(char text)
         {
             Console.Write(text);
         }

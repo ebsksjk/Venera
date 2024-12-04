@@ -39,9 +39,9 @@ namespace Venera.Shell.Programs
             if (firstRun)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write("Note on first run: ");
+                Write("Note on first run: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("LLMs are good for language, not for algebra. Results may look good or be close to the real result without being correct. LLMs hallucinate.\n");
+                WriteLine("LLMs are good for language, not for algebra. Results may look good or be close to the real result without being correct. LLMs hallucinate.\n");
                 firstRun = false;
             }
 
@@ -52,7 +52,7 @@ namespace Venera.Shell.Programs
                 return ExitCode.Error;
             }
 
-            Console.WriteLine(response);
+            WriteLine(response);
 
             return ExitCode.Success;
         }

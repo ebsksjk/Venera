@@ -45,7 +45,7 @@ namespace Venera.Shell.Programs
                 {
                     if (!byte.TryParse(split[i], out byte octet))
                     {
-                        Console.WriteLine($"Sokolsh: ping: Destination address contains invalid octet: {split[i]}");
+                        WriteLine($"Sokolsh: ping: Destination address contains invalid octet: {split[i]}");
                         return ExitCode.Success;
                     }
 
@@ -65,7 +65,7 @@ namespace Venera.Shell.Programs
 
                     if (d == null)
                     {
-                        Console.WriteLine($"ping: {host}: Name or service not known");
+                        WriteLine($"ping: {host}: Name or service not known");
                         return ExitCode.Error;
                     }
 
@@ -76,7 +76,7 @@ namespace Venera.Shell.Programs
             Address dest = new(ip[0], ip[1], ip[2], ip[3]);
 
             string comment = host == "127.0.0.1" ? "// You're pinging localhost? Are you stupid?" : "";
-            Console.WriteLine($"PING {host} ({dest.ToString()}) {comment}");
+            WriteLine($"PING {host} ({dest.ToString()}) {comment}");
 
             using (var xClient = new ICMPClient())
             {
@@ -93,11 +93,11 @@ namespace Venera.Shell.Programs
 
                     if (time == -1)
                     {
-                        Console.WriteLine("Destination is not available.");
+                        WriteLine("Destination is not available.");
                     }
                     else
                     {
-                        Console.WriteLine($"Received from {endpoint.Address.ToString()}: icmp_seq={i} time={time}ms");
+                        WriteLine($"Received from {endpoint.Address.ToString()}: icmp_seq={i} time={time}ms");
                     }
                 }
             }

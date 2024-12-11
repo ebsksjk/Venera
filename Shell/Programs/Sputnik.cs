@@ -375,7 +375,7 @@ namespace Venera.Shell.Programs
 
             client = new();
 
-            client.Connect("192.168.164.1", 9999);
+            client.Connect(GetRemoteHost(), 9999);
             stream = client.GetStream();
 
             // Authenticate

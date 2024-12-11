@@ -37,9 +37,16 @@ namespace Venera.stasi
             string username = (string)GetArgument("username");
             if (!User.Exists(username))
             {
-                Console.WriteLine("This user does not exist!");
+                WriteLine($"userdel: User \"{username}\" does not exist!");
                 return ExitCode.Error;
             }
+
+            if (Login.curUser.Username == username)
+            {
+                WriteLine("userdel: You can't delete yourself.");
+                return ExitCode.Error;
+            }
+
             User.deleteUser(username);
 
             return ExitCode.Success;

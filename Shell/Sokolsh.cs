@@ -128,7 +128,7 @@ namespace Venera.Shell
             }
 
             string[] arr = args.ToArray();
-            Kernel.PrintDebug($"Split length = \"{arr.Length}\"; args = {string.Join(", ", arr)}");
+            //Kernel.PrintDebug($"Split length = \"{arr.Length}\"; args = {string.Join(", ", arr)}");
 
             return args.ToArray();
         }
@@ -147,12 +147,9 @@ namespace Venera.Shell
 
                 if (input.Trim() != string.Empty)
                 {
-                    Kernel.PrintDebug($"input: {input}");
                     lastCommands.Add(input);
-                    Kernel.PrintDebug($"count: {lastCommands.Count}");
                 }
 
-                //Kernel.PrintDebug($"Last commands: {string.Join(", ", lastCommands)}");
                 switch (Execute(input).StatusCode)
                 {
                     case ShellResult.Empty:
@@ -176,7 +173,7 @@ namespace Venera.Shell
         {
             string command = "";
             int lastCommandIndex = lastCommands.Count - 1;
-            Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+
             while (true)
             {
                 if (Console.KeyAvailable)
@@ -206,11 +203,11 @@ namespace Venera.Shell
                     }
                     else if (key.Key == ConsoleKey.UpArrow && lastCommandIndex >= 0)
                     {
-                        Kernel.PrintDebug("upppp!!!");
-                        Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
-                        Kernel.PrintDebug($"Last command count: {lastCommands.Count}");
-                        Kernel.PrintDebug($"command: {command}");
-                        Kernel.PrintDebug($"Last command: {lastCommands[lastCommandIndex]}");
+                        //Kernel.PrintDebug("upppp!!!");
+                        //Kernel.PrintDebug($"Last command index: {lastCommandIndex}");
+                        //Kernel.PrintDebug($"Last command count: {lastCommands.Count}");
+                        //Kernel.PrintDebug($"command: {command}");
+                        //Kernel.PrintDebug($"Last command: {lastCommands[lastCommandIndex]}");
 
                         command = lastCommands[lastCommandIndex];
                         Console.SetCursorPosition(GetPrefix().Length, curLine);

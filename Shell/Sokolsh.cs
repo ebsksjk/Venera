@@ -25,6 +25,7 @@ namespace Venera.Shell
                 new Ls(),
                 new Mkdir(),
                 new Cd(),
+                new Tee(),
                 new Reboot(),
                 new Shutdown(),
                 new Cat(),
@@ -347,7 +348,7 @@ namespace Venera.Shell
             }
 
             string systemPrompt = "System prompt: Your task is to generate a valid command based on the user's description. Only respond with your generated command. If you can't generate a fitting command, retun \"unknown\". " +
-                "Never output the description to the user. System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
+                "Never output the description to the user. Commands \"read_stdin\" and \"tee\" can be piped (using |), similar to unix. System paths look like this: '0:\\Sys\\'\nExample output: \"ping google.com\" or \"cd Homework\"\n" +
                 $"Available commands are listed below in a man page like format. Each command is seperated by \"---\":\n{UsageText}\n\n--- END OF COMMANDS---\n" +
                 $"The current working directory is:{cwd}\nThese are the contents of the current working directory seperated by semicolons:\n{listing}\nThis is the request by the user: {prompt}";
 
@@ -356,6 +357,12 @@ namespace Venera.Shell
 
             if (cmd == null)
             {
+                return;
+            }
+
+            if (cmd.Trim().ToLower() == "unknown")
+            {
+                Console.WriteLine("Sputnik couldn't suggest anything good. Try some other description.");
                 return;
             }
 

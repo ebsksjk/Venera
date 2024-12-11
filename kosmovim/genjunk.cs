@@ -12,7 +12,7 @@ namespace Venera.Kosmovim
     {
         public override string Name => "genjunk";
 
-        public override string Description => "generate junk file";
+        public override string Description => "Write random data into a file";
 
         public override CommandDescription ArgumentDescription => new()
         {
@@ -36,29 +36,27 @@ namespace Venera.Kosmovim
 
         protected override ExitCode Execute()
         {
-            Kernel.PrintDebug("HALLO IST DA JEMAND????? :33");
-            if (Args.Length < 2)
-            {
-                Console.WriteLine("Usage: genjunk <nc> <file>");
-                return ExitCode.Error;
-            }
-            Kernel.PrintDebug("HALLO IST DA JEMAND?????");
-            Kernel.PrintDebug($"Args: {Args.Length}, {Args[1]}");
-            string path = Args[1].AbsoluteOrRelativePath();
-            Kernel.PrintDebug($"path: {path}");
+            string path = ((string)GetArgument(1)).AbsoluteOrRelativePath();
+
             if (File.Exists(path))
             {
                 Console.WriteLine($"genjunk: file {path} already exists");
                 return ExitCode.Error;
             }
+
             //write random text to file
-            File.WriteAllText(path, CreateString(int.Parse(Args[0])));
+            File.WriteAllText(path, CreateString((int)GetArgument(1)));
 
             return ExitCode.Success;
         }
 
         internal string CreateString(int stringLength)
         {
+            if (stringLength <= 0)
+            {
+                return string.Empty;
+            }
+
             Random rd = new Random();
             const string allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
             char[] chars = new char[stringLength];

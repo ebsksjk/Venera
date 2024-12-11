@@ -56,7 +56,7 @@ namespace Venera.Graphics
         /// <param name="cells">How many cells on the horizontal. Positive values for the right and negative to move to the left.</param>
         public void MoveHorizontal(int cells)
         {
-            Kernel.PrintDebug($"{LinearCursorPosition} > {_chromat.Grid.Width * (_chromat.Grid.Height)}");
+            //Kernel.PrintDebug($"{LinearCursorPosition} > {_chromat.Grid.Width * (_chromat.Grid.Height)}");
             // If we reached the bottom right corner.
             if (LinearCursorPosition > (_chromat.Grid.Width * (_chromat.Grid.Height)))
             {

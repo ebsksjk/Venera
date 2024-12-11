@@ -1,7 +1,9 @@
 <img src="https://th.bing.com/th/id/OIG2.NKZTAfcTfxiSzuUPiUPP?pid=ImgGn" width="175">
 
+> Looking for our Sputnik Proxy? [Here is the source code](https://github.com/Mondei1/sputnik).
 
 # Venera
+
 A take on operating systems, using CosmOS. 
 
 For instructions on how to compile executables for Venera, see VoPo/CompileGoodies/Readme.md.

@@ -143,21 +143,23 @@ namespace Venera.Graphics
 
         public void Loop()
         {
-            int iteration = 0;
+            bool second = false;
             while (true)
             {
                 long beginRender = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 //canvas.Clear(Color.Blue);
 
                 Color color;
-                if (iteration % 10 == 0)
+
+                if (second)
                 {
-                    color = Color.Pink;
+                    color = Color.Gray;
                 }
                 else
                 {
-                    color = Color.Purple;
+                    color = Color.White;
                 }
+                second = !second;
 
                 DrawText("THE END IS NEVER ", color);
 
@@ -167,7 +169,6 @@ namespace Venera.Graphics
                 canvas.Display();
                 long endRender = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 long deltaTime = endRender - beginRender;
-                iteration++;
 
                 //Kernel.PrintDebug($"Rendering {renderQueue.Count} queue objects took {deltaTime}ms");
             }

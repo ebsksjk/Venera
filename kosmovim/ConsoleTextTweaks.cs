@@ -145,6 +145,7 @@ namespace Venera.Kosmovim
             switch (x)
             {
                 /*case '\0': return 0;*/
+                case '\n': return (byte)'\n';
                 case '☺': return 1;
                 case '☻': return 2;
                 case '♥': return 3;

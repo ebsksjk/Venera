@@ -21,7 +21,7 @@ namespace Venera.Shell.Programs
 
         private static readonly string RemoteServer = "klier.dev";
 
-        private static readonly int PacketSize = 8096;
+        private static readonly int PacketSize = 8192;
 
         private static readonly string DisclaimerFile = "sputnik";
 
@@ -198,7 +198,7 @@ namespace Venera.Shell.Programs
             while (true)
             {
                 Console.ForegroundColor = styleColor;
-                Write($"{Login.curUser.Name}> ");
+                Write($"{Login.curUser.Username}> ");
 
                 string prompt = Console.ReadLine()!.Trim();
 
@@ -375,7 +375,7 @@ namespace Venera.Shell.Programs
 
             client = new();
 
-            client.Connect(GetRemoteHost(), 9999);
+            client.Connect("192.168.164.1", 9999);
             stream = client.GetStream();
 
             // Authenticate

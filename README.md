@@ -10,6 +10,9 @@ A take on operating systems, using CosmOS.
 
 For instructions on how to compile executables for Venera, see VoPo/CompileGoodies/Readme.md.
 
+## Login
+> [!NOTE]  
+> On first boot, use username `root` and password `root` to login.
 
 ## Processes
 Processes are de facto ELF executables. They are loaded into memory und executed. 
